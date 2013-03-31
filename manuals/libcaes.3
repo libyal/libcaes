@@ -1,0 +1,72 @@
+.Dd March 31, 2013
+.Dt libcaes 3
+.Os libcaes
+.Sh NAME
+.Nm libcaes.h
+.Nd Library to support various 
+.Sh LIBRARY
+.Lb libcaes
+.Sh SYNOPSIS
+.In libcaes.h
+.Pp
+Support functions
+.Ft const char *
+.Fn libcaes_get_version "void"
+.Pp
+Error functions
+.Ft void
+.Fn libcaes_error_free "libcaes_error_t **error"
+.Ft int
+.Fn libcaes_error_fprint "libcaes_error_t *error, FILE *stream"
+.Ft int
+.Fn libcaes_error_sprint "libcaes_error_t *error, char *string, size_t size"
+.Ft int
+.Fn libcaes_error_backtrace_fprint "libcaes_error_t *error, FILE *stream"
+.Ft int
+.Fn libcaes_error_backtrace_sprint "libcaes_error_t *error, char *string, size_t size"
+.Pp
+AES functions
+.Ft int
+.Fn libcaes_context_initialize "libcaes_context_t **context, libcaes_error_t **error"
+.Ft int
+.Fn libcaes_context_free "libcaes_context_t **context, libcaes_error_t **error"
+.Ft int
+.Fn libcaes_crypt_set_key "libcaes_context_t *context, int mode, const uint8_t *key, size_t bit_size, libcaes_error_t **error"
+.Ft int
+.Fn libcaes_crypt_cbc "libcaes_context_t *context, int mode, const uint8_t *initialization_vector, size_t initialization_vector_size, const uint8_t *input_data, size_t input_data_size, uint8_t *output_data, size_t output_data_size, libcaes_error_t **error"
+.Ft int
+.Fn libcaes_crypt_ccm "libcaes_context_t *context, int mode, const uint8_t *initialization_vector, size_t initialization_vector_size, const uint8_t *input_data, size_t input_data_size, uint8_t *output_data, size_t output_data_size, libcaes_error_t **error"
+.Ft int
+.Fn libcaes_crypt_ecb "libcaes_context_t *context, int mode, const uint8_t *input_data, size_t input_data_size, uint8_t *output_data, size_t output_data_size, libcaes_error_t **error"
+.Sh DESCRIPTION
+The
+.Fn libcaes_get_version
+function is used to retrieve the library version.
+.Sh RETURN VALUES
+Most of the functions return NULL or -1 on error, dependent on the return type. For the actual return values refer to libcaes.h
+.Sh ENVIRONMENT
+None
+.Sh FILES
+None
+.Sh NOTES
+libcaes allows to be compiled with wide character support.
+To compile libcaes with wide character support use
+.Ar ./configure --enable-wide-character-type=yes
+or pass the definition
+.Ar HAVE_WIDE_CHARACTER_TYPE
+ to the compiler (i.e. in case of Microsoft Visual Studio (MSVS) C++).
+
+To have other code to determine if libcaes was compiled with wide character support it defines
+.Ar LIBPFF_WIDE_CHARACTER_TYPE
+ in libcaes/features.h.
+
+.Sh BUGS
+Please report bugs of any kind to <joachim.metz@gmail.com> or on the project website:
+https://code.google.com/p/libcaes/
+.Sh AUTHOR
+These man pages were written by Joachim Metz.
+.Sh COPYRIGHT
+Copyright (c) 2011-2013, Joachim Metz <joachim.metz@gmail.com>.
+This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.Sh SEE ALSO
+the libcaes.h include file
