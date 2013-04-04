@@ -47,8 +47,8 @@
 static int libcaes_tables_initialized = 0;
 #endif
 
-/* Initializes the AES context
- * The context must point to a NULL pointer to be allocated
+/* Creates an AES context
+ * Make sure the value context is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
 int libcaes_context_initialize(

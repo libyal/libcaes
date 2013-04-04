@@ -30,7 +30,8 @@
 
 #if defined( WINAPI ) && ( WINVER >= 0x0600 )
 
-/* Initializes the AES key
+/* Creates an AES key
+ * Make sure the value key is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
 int libcaes_key_initialize(
@@ -94,6 +95,51 @@ on_error:
 		*key = NULL;
 	}
 	return( -1 );
+}
+
+/* Frees an AES key
+ * Returns 1 if successful or -1 on error
+ */
+int libcaes_key_free(
+     libcaes_key_t **key,
+     libcerror_error_t **error )
+{
+	static char *function = "libcaes_key_free";
+	int result            = 1;
+
+	if( key == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid key.",
+		 function );
+
+		return( -1 );
+	}
+	if( *key != NULL )
+	{
+		if( memory_set(
+		     *key,
+		     0,
+		     sizeof( libcaes_key_t ) ) == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+			 "%s: unable to clear key.",
+			 function );
+
+			result = -1;
+		}
+		memory_free(
+		 *key );
+
+		*key = NULL;
+	}
+	return( result );
 }
 
 /* Sets the AES key
@@ -171,51 +217,6 @@ int libcaes_key_set(
 		return( -1 );
 	}
 	return( 1 );
-}
-
-/* Frees an AES key
- * Returns 1 if successful or -1 on error
- */
-int libcaes_key_free(
-     libcaes_key_t **key,
-     libcerror_error_t **error )
-{
-	static char *function = "libcaes_key_free";
-	int result            = 1;
-
-	if( key == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid key.",
-		 function );
-
-		return( -1 );
-	}
-	if( *key != NULL )
-	{
-		if( memory_set(
-		     *key,
-		     0,
-		     sizeof( libcaes_key_t ) ) == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_MEMORY,
-			 LIBCERROR_MEMORY_ERROR_SET_FAILED,
-			 "%s: unable to clear key.",
-			 function );
-
-			result = -1;
-		}
-		memory_free(
-		 *key );
-
-		*key = NULL;
-	}
-	return( result );
 }
 
 #endif /* defined( WINAPI ) && ( WINVER >= 0x0600 ) */

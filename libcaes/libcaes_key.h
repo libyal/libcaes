@@ -54,14 +54,14 @@ int libcaes_key_initialize(
      libcaes_key_t **key,
      libcerror_error_t **error );
 
+int libcaes_key_free(
+     libcaes_key_t **key,
+     libcerror_error_t **error );
+
 int libcaes_key_set(
      libcaes_key_t *key,
      const uint8_t *key_data,
      size_t bit_size,
-     libcerror_error_t **error );
-
-int libcaes_key_free(
-     libcaes_key_t **key,
      libcerror_error_t **error );
 
 #endif /* defined( WINAPI ) && ( WINVER >= 0x0600 ) */

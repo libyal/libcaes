@@ -48,7 +48,7 @@ const char *libcaes_get_version(
  * Error functions
  * ------------------------------------------------------------------------- */
 
-/* Frees the error including elements
+/* Frees an error
  */
 LIBCAES_EXTERN \
 void libcaes_error_free(
@@ -94,8 +94,8 @@ int libcaes_error_backtrace_sprint(
  * AES functions
  * ------------------------------------------------------------------------- */
 
-/* Initializes the AES context
- * The context must point to a NULL pointer to be allocated
+/* Creates an AES context
+ * Make sure the value context is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
 LIBCAES_EXTERN \
