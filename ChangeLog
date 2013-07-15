@@ -3,13 +3,14 @@ TODO
 * complete CFB suport
 * add OFB suport ?
 * add tests
-  - CBC
   - CCM
   - CFB
   - OFB ?
-  - XTS
+  - XTS (add more test vectors?)
   - make sure to test non-16 byte aligned data for the different implementations
 * add restriction that context should be used in the mode the keys were set ?
+* msvscpp
+  - add project files for test programs
 
 20130715
 * worked on tests
