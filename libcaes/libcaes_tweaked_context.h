@@ -1,5 +1,5 @@
 /*
- * AES de/encryption context functions
+ * AES tweaked de/encryption context functions
  *
  * Copyright (C) 2011-2013, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,22 +19,11 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBCAES_CONTEXT_H )
-#define _LIBCAES_CONTEXT_H
+#if !defined( _LIBCAES_TWEAKED_CONTEXT_H )
+#define _LIBCAES_TWEAKED_CONTEXT_H
 
 #include <common.h>
 #include <types.h>
-
-#if defined( WINAPI )
-#include <wincrypt.h>
-
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
-#include <openssl/aes.h>
-
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
-#include <openssl/evp.h>
-
-#endif
 
 #include "libcaes_extern.h"
 #include "libcaes_libcerror.h"
@@ -44,69 +33,37 @@
 extern "C" {
 #endif
 
-typedef struct libcaes_internal_context libcaes_internal_context_t;
+typedef struct libcaes_internal_tweaked_context libcaes_internal_tweaked_context_t;
 
-struct libcaes_internal_context
+struct libcaes_internal_tweaked_context
 {
-#if defined( WINAPI ) && ( WINVER >= 0x0600 )
-	/* The crypto provider handle
+	/* The main de/encryption context
 	 */
-	HCRYPTPROV crypt_provider;
+	libcaes_context_t *main_context;
 
-	/* The crypto key handle
+	/* The tweak encryption context
 	 */
-        HCRYPTKEY key;
-
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
-	/* The AES key
-	 */
-        AES_KEY key;
-
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
-	/* The EVP context
-	 */
-	EVP_CIPHER_CTX evp_context;
-
-	/* The key
-	 */
-        uint8_t key[ 32 ];
-
-	/* The key bit size
-	 */
-	size_t key_bit_size;
-
-#else
-	/* The number of round keys
-	 */
-	uint8_t number_of_round_keys;
-
-	/* The round keys
-	 */
-	uint32_t *round_keys;
-
-	/* The round keys data
-	 */
-	uint32_t round_keys_data[ 68 ];
-
-#endif
+	libcaes_context_t *tweak_context;
 };
 
 LIBCAES_EXTERN \
-int libcaes_context_initialize(
-     libcaes_context_t **context,
+int libcaes_tweaked_context_initialize(
+     libcaes_tweaked_context_t **context,
      libcerror_error_t **error );
 
 LIBCAES_EXTERN \
-int libcaes_context_free(
-     libcaes_context_t **context,
+int libcaes_tweaked_context_free(
+     libcaes_tweaked_context_t **context,
      libcerror_error_t **error );
 
 LIBCAES_EXTERN \
-int libcaes_context_set_key(
+int libcaes_context_set_keys(
      libcaes_context_t *context,
      int mode,
      const uint8_t *key,
      size_t key_bit_size,
+     const uint8_t *tweaked_key,
+     size_t tweaked_key_bit_size,
      libcerror_error_t **error );
 
 #ifdef __cplusplus

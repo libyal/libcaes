@@ -91,10 +91,10 @@ int libcaes_error_backtrace_sprint(
      size_t size );
 
 /* -------------------------------------------------------------------------
- * AES functions
+ * Context functions
  * ------------------------------------------------------------------------- */
 
-/* Creates an AES context
+/* Creates a context
  * Make sure the value context is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
@@ -103,7 +103,7 @@ int libcaes_context_initialize(
      libcaes_context_t **context,
      libcaes_error_t **error );
 
-/* Frees an AES context
+/* Frees a context
  * Returns 1 if successful or -1 on error
  */
 LIBCAES_EXTERN \
@@ -111,15 +111,68 @@ int libcaes_context_free(
      libcaes_context_t **context,
      libcaes_error_t **error );
 
-/* Sets the AES key
+/* Sets the key
  * Returns 1 if successful or -1 on error
  */
+LIBCAES_EXTERN \
+int libcaes_context_set_key(
+     libcaes_context_t *context,
+     int mode,
+     const uint8_t *key,
+     size_t key_bit_size,
+     libcaes_error_t **error );
+
+/* -------------------------------------------------------------------------
+ * Tweaked context functions
+ * ------------------------------------------------------------------------- */
+
+/* Creates a tweaked context
+ * Make sure the value tweaked context is referencing, is set to NULL
+ * Returns 1 if successful or -1 on error
+ */
+LIBCAES_EXTERN \
+int libcaes_tweaked_context_initialize(
+     libcaes_tweaked_context_t **context,
+     libcaes_error_t **error );
+
+/* Frees a tweaked context
+ * Returns 1 if successful or -1 on error
+ */
+LIBCAES_EXTERN \
+int libcaes_tweaked_context_free(
+     libcaes_tweaked_context_t **context,
+     libcaes_error_t **error );
+
+/* Sets the keys
+ * Returns 1 if successful or -1 on error
+ */
+LIBCAES_EXTERN \
+int libcaes_tweaked_context_set_keys(
+     libcaes_tweaked_context_t *context,
+     int mode,
+     const uint8_t *key,
+     size_t key_bit_size,
+     const uint8_t *tweak_key,
+     size_t tweak_key_bit_size,
+     libcaes_error_t **error );
+
+/* -------------------------------------------------------------------------
+ * De/Encryption functions
+ * ------------------------------------------------------------------------- */
+
+/* Sets the key
+ *
+ * This function is deprecated use libcaes_context_set_key instead
+ *
+ * Returns 1 if successful or -1 on error
+ */
+LIBCAES_DEPRECATED \
 LIBCAES_EXTERN \
 int libcaes_crypt_set_key(
      libcaes_context_t *context,
      int mode,
      const uint8_t *key,
-     size_t bit_size,
+     size_t key_bit_size,
      libcaes_error_t **error );
 
 /* De- or encrypts a block of data using AES-CBC (Cipher Block Chaining)
@@ -139,6 +192,7 @@ int libcaes_crypt_cbc(
      libcaes_error_t **error );
 
 /* De- or encrypts a block of data using AES-CCM (Counter with CBC-MAC)
+ * The size must be a multitude of the AES block size (16 byte)
  * Returns 1 if successful or -1 on error
  */
 LIBCAES_EXTERN \
@@ -153,13 +207,29 @@ int libcaes_crypt_ccm(
      size_t output_data_size,
      libcaes_error_t **error );
 
-/* De- or encrypts a 16-byte block using AES-ECB (Electronic CodeBook)
+/* De- or encrypts a block of data using AES-ECB (Electronic CodeBook)
+ * The size must be a multitude of the AES block size (16 byte)
  * Returns 1 if successful or -1 on error
  */
 LIBCAES_EXTERN \
 int libcaes_crypt_ecb(
      libcaes_context_t *context,
      int mode,
+     const uint8_t *input_data,
+     size_t input_data_size,
+     uint8_t *output_data,
+     size_t output_data_size,
+     libcaes_error_t **error );
+
+/* De- or encrypts a block of data using AES-XTS (XEX-based tweaked-codebook mode with ciphertext stealing)
+ * Returns 1 if successful or -1 on error
+ */
+LIBCAES_EXTERN \
+int libcaes_crypt_xts(
+     libcaes_tweaked_context_t *context,
+     int mode,
+     const uint8_t *tweak_value,
+     size_t tweak_value_size,
      const uint8_t *input_data,
      size_t input_data_size,
      uint8_t *output_data,

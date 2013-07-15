@@ -17,6 +17,7 @@ libcaes_la_SOURCES = \
 	libcaes_libcerror.h \
 	libcaes_libcstring.h \
 	libcaes_support.c libcaes_support.h \
+	libcaes_tweaked_context.c libcaes_tweaked_context.h \
 	libcaes_types.h \
 	libcaes_unused.h
 

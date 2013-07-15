@@ -1,5 +1,22 @@
 TODO
-* finish libcaes_crypt_cfb
+* CCM add encryption support
+* complete CFB suport
+* add OFB suport ?
+* add tests
+  - CBC
+  - CCM
+  - CFB
+  - OFB ?
+  - XTS
+  - make sure to test non-16 byte aligned data for the different implementations
+* add restriction that context should be used in the mode the keys were set ?
+
+20130715
+* worked on tests
+
+20130714
+* worked on moving XTS support from libfvde
+* worked on tests
 
 20130404
 * textual changes

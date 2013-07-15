@@ -1,5 +1,5 @@
 /*
- * Definitions for libcaes
+ * The unused definition
  *
  * Copyright (c) 2011-2013, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,24 +19,26 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBCAES_DEFINITIONS_H )
-#define _LIBCAES_DEFINITIONS_H
+#if !defined( _CAES_TEST_UNUSED_H )
+#define _CAES_TEST_UNUSED_H
 
-#include <libcaes/types.h>
+#include <common.h>
 
-#define LIBCAES_VERSION				@VERSION@
+#if !defined( CAES_TEST_ATTRIBUTE_UNUSED )
+#if defined( __GNUC__ ) && __GNUC__ >= 3
+#define CAES_TEST_ATTRIBUTE_UNUSED	__attribute__ ((__unused__))
+#else
+#define CAES_TEST_ATTRIBUTE_UNUSED
+#endif
+#endif
 
-/* The version string
- */
-#define LIBCAES_VERSION_STRING			"@VERSION@"
-
-/* The crypt modes
- */
-enum LIBCAES_CRYPT_MODES
-{
-	LIBCAES_CRYPT_MODE_DECRYPT		= 0,
-	LIBCAES_CRYPT_MODE_ENCRYPT		= 1
-};
+#if defined( _MSC_VER )
+#define CAES_TEST_UNREFERENCED_PARAMETER( parameter ) \
+	UNREFERENCED_PARAMETER( parameter );
+#else
+#define CAES_TEST_UNREFERENCED_PARAMETER( parameter ) \
+	/* parameter */
+#endif
 
 #endif
 

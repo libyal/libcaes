@@ -1,5 +1,5 @@
 /*
- * Definitions for libcaes
+ * The internal libcaes header
  *
  * Copyright (c) 2011-2013, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,24 +19,19 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBCAES_DEFINITIONS_H )
-#define _LIBCAES_DEFINITIONS_H
+#if !defined( _CAES_TEST_LIBCAES_H )
+#define _CAES_TEST_LIBCAES_H
 
-#include <libcaes/types.h>
+#include <common.h>
 
-#define LIBCAES_VERSION				@VERSION@
-
-/* The version string
+/* If Cygwin libtool DLL support is enabled set LIBCAES_DLL_IMPORT
+ * before including libcaes.h
  */
-#define LIBCAES_VERSION_STRING			"@VERSION@"
+#if defined( _WIN32 ) && defined( DLL_EXPORT )
+#define LIBCAES_DLL_IMPORT
+#endif
 
-/* The crypt modes
- */
-enum LIBCAES_CRYPT_MODES
-{
-	LIBCAES_CRYPT_MODE_DECRYPT		= 0,
-	LIBCAES_CRYPT_MODE_ENCRYPT		= 1
-};
+#include <libcaes.h>
 
 #endif
 

@@ -1,5 +1,5 @@
 /*
- * Definitions for libcaes
+ * The internal libcerror header
  *
  * Copyright (c) 2011-2013, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,24 +19,32 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBCAES_DEFINITIONS_H )
-#define _LIBCAES_DEFINITIONS_H
+#if !defined( _CAES_TEST_LIBCERROR_H )
+#define _CAES_TEST_LIBCERROR_H
 
-#include <libcaes/types.h>
+#include <common.h>
 
-#define LIBCAES_VERSION				@VERSION@
-
-/* The version string
+/* Define HAVE_LOCAL_LIBCERROR for local use of libcerror
  */
-#define LIBCAES_VERSION_STRING			"@VERSION@"
+#if defined( HAVE_LOCAL_LIBCERROR )
 
-/* The crypt modes
+#include <libcerror_definitions.h>
+#include <libcerror_error.h>
+#include <libcerror_system.h>
+#include <libcerror_types.h>
+
+#else
+
+/* If libtool DLL support is enabled set LIBCERROR_DLL_IMPORT
+ * before including libcerror.h
  */
-enum LIBCAES_CRYPT_MODES
-{
-	LIBCAES_CRYPT_MODE_DECRYPT		= 0,
-	LIBCAES_CRYPT_MODE_ENCRYPT		= 1
-};
+#if defined( _WIN32 ) && defined( DLL_IMPORT )
+#define LIBCERROR_DLL_IMPORT
+#endif
+
+#include <libcerror.h>
+
+#endif
 
 #endif
 

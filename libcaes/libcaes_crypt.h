@@ -25,21 +25,10 @@
 #include <common.h>
 #include <types.h>
 
-#if defined( WINAPI )
-#include <wincrypt.h>
-
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
-#include <openssl/aes.h>
-
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
-#include <openssl/evp.h>
-
-#endif
-
 #include "libcaes_context.h"
-#include "libcaes_definitions.h"
 #include "libcaes_extern.h"
 #include "libcaes_libcerror.h"
+#include "libcaes_tweaked_context.h"
 #include "libcaes_types.h"
 
 #if defined( __cplusplus )
@@ -55,13 +44,13 @@ int libcaes_initialize_tables(
 int libcaes_crypt_set_decryption_key(
      libcaes_internal_context_t *internal_context,
      const uint8_t *key,
-     size_t bit_size,
+     size_t key_bit_size,
      libcerror_error_t **error );
 
 int libcaes_crypt_set_encryption_key(
      libcaes_internal_context_t *internal_context,
      const uint8_t *key,
-     size_t bit_size,
+     size_t key_bit_size,
      libcerror_error_t **error );
 #endif
 
@@ -70,7 +59,7 @@ int libcaes_crypt_set_key(
      libcaes_context_t *context,
      int mode,
      const uint8_t *key,
-     size_t bit_size,
+     size_t key_bit_size,
      libcerror_error_t **error );
 
 LIBCAES_EXTERN \
@@ -115,6 +104,18 @@ LIBCAES_EXTERN \
 int libcaes_crypt_ecb(
      libcaes_context_t *context,
      int mode,
+     const uint8_t *input_data,
+     size_t input_data_size,
+     uint8_t *output_data,
+     size_t output_data_size,
+     libcerror_error_t **error );
+
+LIBCAES_EXTERN \
+int libcaes_crypt_xts(
+     libcaes_tweaked_context_t *context,
+     int mode,
+     const uint8_t *tweak_value,
+     size_t tweak_value_size,
      const uint8_t *input_data,
      size_t input_data_size,
      uint8_t *output_data,

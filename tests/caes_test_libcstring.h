@@ -1,5 +1,5 @@
 /*
- * Definitions for libcaes
+ * The internal libcstring header
  *
  * Copyright (c) 2011-2013, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,24 +19,33 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBCAES_DEFINITIONS_H )
-#define _LIBCAES_DEFINITIONS_H
+#if !defined( _CAES_TEST_LIBCSTRING_H )
+#define _CAES_TEST_LIBCSTRING_H
 
-#include <libcaes/types.h>
+#include <common.h>
 
-#define LIBCAES_VERSION				@VERSION@
-
-/* The version string
+/* Define HAVE_LOCAL_LIBCSTRING for local use of libcstring
  */
-#define LIBCAES_VERSION_STRING			"@VERSION@"
+#if defined( HAVE_LOCAL_LIBCSTRING )
 
-/* The crypt modes
+#include <libcstring_definitions.h>
+#include <libcstring_narrow_string.h>
+#include <libcstring_system_string.h>
+#include <libcstring_types.h>
+#include <libcstring_wide_string.h>
+
+#else
+
+/* If libtool DLL support is enabled set LIBCSTRING_DLL_IMPORT
+ * before including libcstring.h
  */
-enum LIBCAES_CRYPT_MODES
-{
-	LIBCAES_CRYPT_MODE_DECRYPT		= 0,
-	LIBCAES_CRYPT_MODE_ENCRYPT		= 1
-};
+#if defined( _WIN32 ) && defined( DLL_IMPORT )
+#define LIBCSTRING_DLL_IMPORT
+#endif
+
+#include <libcstring.h>
+
+#endif
 
 #endif
 

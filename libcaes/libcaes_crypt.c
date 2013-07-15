@@ -448,7 +448,7 @@ int libcaes_initialize_tables(
 int libcaes_crypt_set_decryption_key(
      libcaes_internal_context_t *internal_context,
      const uint8_t *key,
-     size_t bit_size,
+     size_t key_bit_size,
      libcerror_error_t **error )
 {
 	libcaes_internal_context_t *encryption_context = NULL;
@@ -467,14 +467,14 @@ int libcaes_crypt_set_decryption_key(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid internal context.",
+		 "%s: invalid context.",
 		 function );
 
 		return( -1 );
 	}
-	if( ( bit_size != 128 )
-	 && ( bit_size != 192 )
-	 && ( bit_size != 256 ) )
+	if( ( key_bit_size != 128 )
+	 && ( key_bit_size != 192 )
+	 && ( key_bit_size != 256 ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -485,15 +485,15 @@ int libcaes_crypt_set_decryption_key(
 
 		return( -1 );
 	}
-	if( bit_size == 128 )
+	if( key_bit_size == 128 )
 	{
 		internal_context->number_of_round_keys = 10;
 	}
-	else if( bit_size == 192 )
+	else if( key_bit_size == 192 )
 	{
 		internal_context->number_of_round_keys = 12;
 	}
-	else if( bit_size == 256 )
+	else if( key_bit_size == 256 )
 	{
 		internal_context->number_of_round_keys = 14;
 	}
@@ -519,7 +519,7 @@ int libcaes_crypt_set_decryption_key(
 	if( libcaes_crypt_set_encryption_key(
 	     encryption_context,
 	     key,
-	     bit_size,
+	     key_bit_size,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -651,7 +651,7 @@ on_error:
 int libcaes_crypt_set_encryption_key(
      libcaes_internal_context_t *internal_context,
      const uint8_t *key,
-     size_t bit_size,
+     size_t key_bit_size,
      libcerror_error_t **error )
 {
 	static char *function    = "libcaes_crypt_set_encryption_key";
@@ -666,14 +666,14 @@ int libcaes_crypt_set_encryption_key(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid internal context.",
+		 "%s: invalid context.",
 		 function );
 
 		return( -1 );
 	}
-	if( ( bit_size != 128 )
-	 && ( bit_size != 192 )
-	 && ( bit_size != 256 ) )
+	if( ( key_bit_size != 128 )
+	 && ( key_bit_size != 192 )
+	 && ( key_bit_size != 256 ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -691,7 +691,7 @@ int libcaes_crypt_set_encryption_key(
 	round_keys = internal_context->round_keys;
 
 	for( key_index = 0;
-	     key_index < bit_size / 8;
+	     key_index < key_bit_size / 8;
 	     key_index += 4 )
 	{
 		byte_stream_copy_to_uint32_little_endian(
@@ -700,7 +700,7 @@ int libcaes_crypt_set_encryption_key(
 
 		round_constant_index++;
 	}
-	if( bit_size == 128 )
+	if( key_bit_size == 128 )
 	{
 		internal_context->number_of_round_keys = 10;
 
@@ -722,7 +722,7 @@ int libcaes_crypt_set_encryption_key(
 			round_keys += 4;
 		}
 	}
-	else if( bit_size == 192 )
+	else if( key_bit_size == 192 )
 	{
 		internal_context->number_of_round_keys = 12;
 
@@ -746,7 +746,7 @@ int libcaes_crypt_set_encryption_key(
 			round_keys += 6;
 		}
 	}
-	else if( bit_size == 256 )
+	else if( key_bit_size == 256 )
 	{
 		internal_context->number_of_round_keys = 14;
 
@@ -783,14 +783,14 @@ int libcaes_crypt_set_encryption_key(
 
 #endif /* !defined( LIBCAES_HAVE_AES_SUPPORT ) */
 
-/* Sets the AES key
+/* Sets the key
  * Returns 1 if successful or -1 on error
  */
 int libcaes_crypt_set_key(
      libcaes_context_t *context,
      int mode,
      const uint8_t *key,
-     size_t bit_size,
+     size_t key_bit_size,
      libcerror_error_t **error )
 {
 	libcaes_internal_context_t *internal_context = NULL;
@@ -827,9 +827,9 @@ int libcaes_crypt_set_key(
 
 		return( -1 );
 	}
-	if( ( bit_size != 128 )
-	 && ( bit_size != 192 )
-	 && ( bit_size != 256 ) )
+	if( ( key_bit_size != 128 )
+	 && ( key_bit_size != 192 )
+	 && ( key_bit_size != 256 ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -857,7 +857,7 @@ int libcaes_crypt_set_key(
 	if( libcaes_key_set(
 	     wincrypt_key,
 	     key,
-	     bit_size,
+	     key_bit_size,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -873,7 +873,7 @@ int libcaes_crypt_set_key(
 
 		return( -1 );
 	}
-	wincrypt_key_size = sizeof( libcaes_key_t ) - ( ( 256 - bit_size ) / 8 );
+	wincrypt_key_size = sizeof( libcaes_key_t ) - ( ( 256 - key_bit_size ) / 8 );
 
 	if( CryptImportKey(
 	     internal_context->crypt_provider,
@@ -918,7 +918,7 @@ int libcaes_crypt_set_key(
 	{
 		if( AES_set_encrypt_key(
 		     (unsigned char *) key,
-		     (int) bit_size,
+		     (int) key_bit_size,
 		     &( internal_context->key ) ) != 0 )
 		{
 			libcerror_error_set(
@@ -935,7 +935,7 @@ int libcaes_crypt_set_key(
 	{
 		if( AES_set_decrypt_key(
 		     (unsigned char *) key,
-		     (int) bit_size,
+		     (int) key_bit_size,
 		     &( internal_context->key ) ) != 0 )
 		{
 			libcerror_error_set(
@@ -953,7 +953,7 @@ int libcaes_crypt_set_key(
 	if( memory_copy(
 	     internal_context->key,
 	     key,
-	     bit_size / 8 ) == NULL )
+	     key_bit_size / 8 ) == NULL )
 	{
 		libcerror_error_set(
 		 error,
@@ -964,7 +964,7 @@ int libcaes_crypt_set_key(
 
 		return( -1 );
 	}
-	internal_context->bit_size = bit_size;
+	internal_context->key_bit_size = key_bit_size;
 
 #else
 	if( mode == LIBCAES_CRYPT_MODE_ENCRYPT )
@@ -972,7 +972,7 @@ int libcaes_crypt_set_key(
 		if( libcaes_crypt_set_encryption_key(
 		     internal_context,
 		     key,
-		     bit_size,
+		     key_bit_size,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
@@ -990,7 +990,7 @@ int libcaes_crypt_set_key(
 		if( libcaes_crypt_set_decryption_key(
 		     internal_context,
 		     key,
-		     bit_size,
+		     key_bit_size,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
@@ -1008,7 +1008,7 @@ int libcaes_crypt_set_key(
 }
 
 /* De- or encrypts a block of data using AES-CBC (Cipher Block Chaining)
- * This function expects the input to be a multitude of 16 bytes
+ * The size must be a multitude of the AES block size (16 byte)
  * Returns 1 if successful or -1 on error
  */
 int libcaes_crypt_cbc(
@@ -1022,6 +1022,10 @@ int libcaes_crypt_cbc(
      size_t output_data_size,
      libcerror_error_t **error )
 {
+#if !defined( LIBCAES_HAVE_AES_SUPPORT )
+	uint8_t internal_initialization_vector[ 16 ];
+#endif
+
 #if defined( LIBCAES_HAVE_AES_SUPPORT )
 	libcaes_internal_context_t *internal_context = NULL;
 #endif
@@ -1036,15 +1040,21 @@ int libcaes_crypt_cbc(
 	DWORD parameter_data_size                    = 0;
 	DWORD safe_output_data_size                  = 0;
 
-#elif defined( HAVE_LIBCRYPTO ) && !defined( HAVE_OPENSSL_AES_H ) && defined( HAVE_OPENSSL_EVP_H )
+#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
+	int safe_mode                                = 0;
+
+#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
 	uint8_t block_data[ EVP_MAX_BLOCK_LENGTH ];
 
 	const EVP_CIPHER *cipher                     = NULL;
 	int safe_output_data_size                    = 0;
 
 #elif !defined( LIBCAES_HAVE_AES_SUPPORT )
-	size_t data_index                            = 0;
+	size_t data_offset                           = 0;
+
+#if !defined( LIBCAES_UNFOLLED_LOOPS )
 	uint8_t block_index                          = 0;
+#endif
 #endif
 
 	if( context == NULL )
@@ -1118,6 +1128,19 @@ int libcaes_crypt_cbc(
 
 		return( -1 );
 	}
+	/* Check if the input data size is a multitude of 16-byte
+	 */
+	if( ( input_data_size & (size_t) 0x0f ) != 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid input data size value out of bounds.",
+		 function );
+
+		return( -1 );
+	}
 	if( output_data == NULL )
 	{
 		libcerror_error_set(
@@ -1166,7 +1189,7 @@ int libcaes_crypt_cbc(
 	if( CryptSetKeyParam(
 	     internal_context->key,
 	     KP_MODE,
-	     (BYTE*) &cipher_mode,
+	     (BYTE *) &cipher_mode,
 	     0 ) == 0 )
 	{
 		error_code = GetLastError();
@@ -1184,7 +1207,7 @@ int libcaes_crypt_cbc(
 	if( CryptSetKeyParam(
 	     internal_context->key,
 	     KP_IV,
-	     (BYTE*) initialization_vector,
+	     (BYTE *) initialization_vector,
 	     0 ) == 0 )
 	{
 		error_code = GetLastError();
@@ -1204,8 +1227,8 @@ int libcaes_crypt_cbc(
 	if( CryptGetKeyParam(
 	     internal_context->key,
 	     KP_BLOCKLEN,
-	     (BYTE*) &block_length,
-	     (DWORD*) &parameter_data_size,
+	     (BYTE *) &block_length,
+	     (DWORD *) &parameter_data_size,
 	     0 ) == 0 )
 	{
 		error_code = GetLastError();
@@ -1340,13 +1363,21 @@ int libcaes_crypt_cbc(
 	}
 
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
+	if( mode == LIBCAES_CRYPT_MODE_ENCRYPT )
+	{
+		safe_mode = AES_ENCRYPT;
+	}
+	else
+	{
+		safe_mode = AES_DECRYPT;
+	}
 	AES_cbc_encrypt(
 	 (unsigned char *) input_data,
 	 (unsigned char *) output_data,
 	 input_data_size,
 	 &( internal_context->key ),
 	 (unsigned char *) initialization_vector,
-	 mode );
+	 safe_mode );
 
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
 	if( input_data_size > (size_t) INT_MAX )
@@ -1385,15 +1416,15 @@ int libcaes_crypt_cbc(
 
 		return( -1 );
 	}
-	if( internal_context->bit_size == 128 )
+	if( internal_context->key_bit_size == 128 )
 	{
 		cipher = EVP_aes_128_cbc();
 	}
-	else if( internal_context->bit_size == 192 )
+	else if( internal_context->key_bit_size == 192 )
 	{
 		cipher = EVP_aes_192_cbc();
 	}
-	else if( internal_context->bit_size == 256 )
+	else if( internal_context->key_bit_size == 256 )
 	{
 		cipher = EVP_aes_256_cbc();
 	}
@@ -1438,37 +1469,74 @@ int libcaes_crypt_cbc(
 	 &safe_output_data_size );
 
 #else
-	while( ( data_index + 16 ) <= input_data_size )
+	if( memory_copy(
+	     internal_initialization_vector,
+	     initialization_vector,
+	     16 ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
+		 "%s: unable to copy initialization vector.",
+		 function );
+
+		goto on_error;
+	}
+	if( mode == LIBCAES_CRYPT_MODE_ENCRYPT )
+	{
+		if( memory_copy(
+		     output_data,
+		     input_data,
+		     input_data_size ) == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
+			 "%s: unable to copy input data to output data.",
+			 function );
+
+			goto on_error;
+		}
+	}
+	while( data_offset < input_data_size )
 	{
 		if( mode == LIBCAES_CRYPT_MODE_ENCRYPT )
 		{
-/* TODO test */
-			if( memory_copy(
-			     &( output_data[ data_index ] ),
-			     &( input_data[ data_index ] ),
-			     16 ) == NULL )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_MEMORY,
-				 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
-				 "%s: unable to copy input data to output data.",
-				 function );
-
-				return( -1 );
-			}
+#if defined( LIBCAES_UNFOLLED_LOOPS )
+			output_data[ data_offset++ ] ^= internal_initialization_vector[ 0 ];
+			output_data[ data_offset++ ] ^= internal_initialization_vector[ 1 ];
+			output_data[ data_offset++ ] ^= internal_initialization_vector[ 2 ];
+			output_data[ data_offset++ ] ^= internal_initialization_vector[ 3 ];
+			output_data[ data_offset++ ] ^= internal_initialization_vector[ 4 ];
+			output_data[ data_offset++ ] ^= internal_initialization_vector[ 5 ];
+			output_data[ data_offset++ ] ^= internal_initialization_vector[ 6 ];
+			output_data[ data_offset++ ] ^= internal_initialization_vector[ 7 ];
+			output_data[ data_offset++ ] ^= internal_initialization_vector[ 8 ];
+			output_data[ data_offset++ ] ^= internal_initialization_vector[ 9 ];
+			output_data[ data_offset++ ] ^= internal_initialization_vector[ 10 ];
+			output_data[ data_offset++ ] ^= internal_initialization_vector[ 11 ];
+			output_data[ data_offset++ ] ^= internal_initialization_vector[ 12 ];
+			output_data[ data_offset++ ] ^= internal_initialization_vector[ 13 ];
+			output_data[ data_offset++ ] ^= internal_initialization_vector[ 14 ];
+			output_data[ data_offset++ ] ^= internal_initialization_vector[ 15 ];
+#else
 			for( block_index = 0;
 			     block_index < 16;
 			     block_index++ )
 			{
-				output_data[ data_index + block_index ] ^= initialization_vector[ block_index ];
+				output_data[ data_offset++ ] ^= internal_initialization_vector[ block_index ];
 			}
+#endif
+			data_offset -= 16;
+
 			if( libcaes_crypt_ecb(
 			     context,
 			     mode,
-			     &( output_data[ data_index ] ),
+			     &( output_data[ data_offset ] ),
 			     16,
-			     &( output_data[ data_index ] ),
+			     &( output_data[ data_offset ] ),
 			     16,
 			     error ) != 1 )
 			{
@@ -1479,11 +1547,11 @@ int libcaes_crypt_cbc(
 				 "%s: unable to encrypt output data.",
 				 function );
 
-				return( -1 );
+				goto on_error;
 			}
 			if( memory_copy(
-			     initialization_vector,
-			     &( output_data[ data_index ] ),
+			     internal_initialization_vector,
+			     &( output_data[ data_offset ] ),
 			     16 ) == NULL )
 			{
 				libcerror_error_set(
@@ -1493,7 +1561,7 @@ int libcaes_crypt_cbc(
 				 "%s: unable to copy enrypted output data to initialization vector.",
 				 function );
 
-				return( -1 );
+				goto on_error;
 			}
 		}
 		else
@@ -1501,9 +1569,9 @@ int libcaes_crypt_cbc(
 			if( libcaes_crypt_ecb(
 			     context,
 			     mode,
-			     &( input_data[ data_index ] ),
+			     &( input_data[ data_offset ] ),
 			     16,
-			     &( output_data[ data_index ] ),
+			     &( output_data[ data_offset ] ),
 			     16,
 			     error ) != 1 )
 			{
@@ -1514,17 +1582,38 @@ int libcaes_crypt_cbc(
 				 "%s: unable to decrypt output data.",
 				 function );
 
-				return( -1 );
+				goto on_error;
 			}
+#if defined( LIBCAES_UNFOLLED_LOOPS )
+			output_data[ data_offset++ ] ^= internal_initialization_vector[ 0 ];
+			output_data[ data_offset++ ] ^= internal_initialization_vector[ 1 ];
+			output_data[ data_offset++ ] ^= internal_initialization_vector[ 2 ];
+			output_data[ data_offset++ ] ^= internal_initialization_vector[ 3 ];
+			output_data[ data_offset++ ] ^= internal_initialization_vector[ 4 ];
+			output_data[ data_offset++ ] ^= internal_initialization_vector[ 5 ];
+			output_data[ data_offset++ ] ^= internal_initialization_vector[ 6 ];
+			output_data[ data_offset++ ] ^= internal_initialization_vector[ 7 ];
+			output_data[ data_offset++ ] ^= internal_initialization_vector[ 8 ];
+			output_data[ data_offset++ ] ^= internal_initialization_vector[ 9 ];
+			output_data[ data_offset++ ] ^= internal_initialization_vector[ 10 ];
+			output_data[ data_offset++ ] ^= internal_initialization_vector[ 11 ];
+			output_data[ data_offset++ ] ^= internal_initialization_vector[ 12 ];
+			output_data[ data_offset++ ] ^= internal_initialization_vector[ 13 ];
+			output_data[ data_offset++ ] ^= internal_initialization_vector[ 14 ];
+			output_data[ data_offset++ ] ^= internal_initialization_vector[ 15 ];
+#else
 			for( block_index = 0;
 			     block_index < 16;
 			     block_index++ )
 			{
-				output_data[ data_index + block_index ] ^= initialization_vector[ block_index ];
+				output_data[ data_offset++ ] ^= internal_initialization_vector[ block_index ];
 			}
+#endif
+			data_offset -= 16;
+
 			if( memory_copy(
-			     initialization_vector,
-			     &( input_data[ data_index ] ),
+			     internal_initialization_vector,
+			     &( input_data[ data_offset ] ),
 			     16 ) == NULL )
 			{
 				libcerror_error_set(
@@ -1534,13 +1623,37 @@ int libcaes_crypt_cbc(
 				 "%s: unable to copy enrypted input data to initialization vector.",
 				 function );
 
-				return( -1 );
+				goto on_error;
 			}
 		}
-		data_index += 16;
+		data_offset += 16;
   	}
+	if( memory_set(
+	     internal_initialization_vector,
+	     0,
+	     16 ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+		 "%s: unable to clear initialization vector.",
+		 function );
+
+		goto on_error;
+	}
 #endif
 	return( 1 );
+
+#if !defined( LIBCAES_HAVE_AES_SUPPORT )
+on_error:
+	memory_set(
+	 internal_initialization_vector,
+	 0,
+	 16 );
+
+	return( -1 );
+#endif
 }
 
 /* De- or encrypts a block of data using AES-CCM (Counter with CBC-MAC)
@@ -1557,12 +1670,13 @@ int libcaes_crypt_ccm(
      size_t output_data_size,
      libcerror_error_t **error )
 {
-	uint8_t internal_initialization_vector[ 16 ];
 	uint8_t block_data[ 16 ];
+	uint8_t internal_initialization_vector[ 16 ];
 
-	static char *function    = "libcaes_crypt_ccm";
-	size_t data_index        = 0;
-	uint8_t block_data_index = 0;
+	static char *function      = "libcaes_crypt_ccm";
+	size_t data_offset         = 0;
+	size_t remaining_data_size = 0;
+	uint8_t block_index        = 0;
 
 	if( context == NULL )
 	{
@@ -1653,7 +1767,7 @@ int libcaes_crypt_ccm(
 
 		return( -1 );
 	}
-	/* The internal IV consists of:
+	/* The IV consists of:
 	 * 1 byte size value formatted as: 15 - IV size - 1
 	 * a maximum of 14 bytes containing IV bytes
 	 * 1 byte counter
@@ -1667,10 +1781,10 @@ int libcaes_crypt_ccm(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_MEMORY,
 		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
-		 "%s: unable to clear internal initialization vector.",
+		 "%s: unable to clear initialization vector.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	if( memory_copy(
 	     &( internal_initialization_vector[ 1 ] ),
@@ -1684,11 +1798,25 @@ int libcaes_crypt_ccm(
 		 "%s: unable to copy initialization vector.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	internal_initialization_vector[ 0 ] = 15 - (uint8_t) initialization_vector_size - 1;
 
-	while( data_index < input_data_size )
+	if( memory_copy(
+	     output_data,
+	     input_data,
+	     input_data_size ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
+		 "%s: unable to copy input data to output data.",
+		 function );
+
+		goto on_error;
+	}
+	while( ( data_offset + 16 ) < input_data_size )
 	{
 		if( libcaes_crypt_ecb(
 		     context,
@@ -1706,25 +1834,106 @@ int libcaes_crypt_ccm(
 			 "%s: unable to encrypt initialization vector.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
-		for( block_data_index = 0;
-		     block_data_index < 16;
-		     block_data_index++ )
+#if defined( LIBCAES_UNFOLLED_LOOPS )
+		output_data[ data_offset++ ] ^= block_data[ 0 ];
+		output_data[ data_offset++ ] ^= block_data[ 1 ];
+		output_data[ data_offset++ ] ^= block_data[ 2 ];
+		output_data[ data_offset++ ] ^= block_data[ 3 ];
+		output_data[ data_offset++ ] ^= block_data[ 4 ];
+		output_data[ data_offset++ ] ^= block_data[ 5 ];
+		output_data[ data_offset++ ] ^= block_data[ 6 ];
+		output_data[ data_offset++ ] ^= block_data[ 7 ];
+		output_data[ data_offset++ ] ^= block_data[ 8 ];
+		output_data[ data_offset++ ] ^= block_data[ 9 ];
+		output_data[ data_offset++ ] ^= block_data[ 10 ];
+		output_data[ data_offset++ ] ^= block_data[ 11 ];
+		output_data[ data_offset++ ] ^= block_data[ 12 ];
+		output_data[ data_offset++ ] ^= block_data[ 13 ];
+		output_data[ data_offset++ ] ^= block_data[ 14 ];
+		output_data[ data_offset++ ] ^= block_data[ 15 ];
+#else
+		for( block_index = 0;
+		     block_index < 16;
+		     block_index++ )
 		{
-			output_data[ data_index ] = input_data[ data_index ]
-			                          ^ block_data[ block_data_index ];
-
-			data_index++;
-
-			if( data_index >= input_data_size )
-			{
-				break;
-			}
+			output_data[ data_offset++ ] ^= block_data[ block_index ];
 		}
+#endif
 		internal_initialization_vector[ 15 ] += 1;
 	}
+	if( data_offset < input_data_size )
+	{
+		remaining_data_size = input_data_size - data_offset;
+
+		if( libcaes_crypt_ecb(
+		     context,
+		     LIBCAES_CRYPT_MODE_ENCRYPT,
+		     internal_initialization_vector,
+		     16,
+		     block_data,
+		     16,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_ENCRYPTION,
+			 LIBCERROR_ENCRYPTION_ERROR_ENCRYPT_FAILED,
+			 "%s: unable to encrypt initialization vector.",
+			 function );
+
+			goto on_error;
+		}
+		for( block_index = 0;
+		     block_index < (uint8_t) remaining_data_size;
+		     block_index++ )
+		{
+			output_data[ data_offset++ ] ^= block_data[ block_index ];
+		}
+	}
+	if( memory_set(
+	     block_data,
+	     0,
+	     16 ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+		 "%s: unable to clear block data.",
+		 function );
+
+		goto on_error;
+	}
+	if( memory_set(
+	     internal_initialization_vector,
+	     0,
+	     16 ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+		 "%s: unable to clear initialization vector.",
+		 function );
+
+		goto on_error;
+	}
 	return( 1 );
+
+on_error:
+	memory_set(
+	 block_data,
+	 0,
+	 16 );
+
+	memory_set(
+	 internal_initialization_vector,
+	 0,
+	 16 );
+
+	return( -1 );
 }
 
 #ifdef TODO
@@ -1744,7 +1953,7 @@ int libcaes_crypt_cfb(
      libcerror_error_t **error )
 {
 	static char *function = "libcaes_crypt_cfb";
-	size_t data_index     = 0;
+	size_t data_offset    = 0;
 
 	if( ( mode != LIBCAES_CRYPT_MODE_DECRYPT )
 	 && ( mode != LIBCAES_CRYPT_MODE_ENCRYPT ) )
@@ -1824,6 +2033,19 @@ int libcaes_crypt_cfb(
 
 		return( -1 );
 	}
+	/* Check if the input data size is a multitude of 16-byte
+	 */
+	if( ( input_data_size & (size_t) 0x0f ) != 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid input data size value out of bounds.",
+		 function );
+
+		return( -1 );
+	}
 	if( output_data == NULL )
 	{
 		libcerror_error_set(
@@ -1857,9 +2079,9 @@ int libcaes_crypt_cfb(
 
 		return( -1 );
 	}
-	for( data_index = 0;
-	     data_index < input_data_size;
-	     data_index++ )
+	for( data_offset = 0;
+	     data_offset < input_data_size;
+	     data_offset++ )
 	{
 		if( *initialization_vector_index == 0 )
 		{
@@ -1882,16 +2104,16 @@ int libcaes_crypt_cfb(
 				return( -1 );
 			}
 		}
-		output_data[ data_index ] = input_data[ data_index ]
-		                          ^ initialization_vector[ *initialization_vector_index ];
+		output_data[ data_offset ] = input_data[ data_offset ]
+		                           ^ initialization_vector[ *initialization_vector_index ];
 
 		if( mode == LIBCAES_CRYPT_MODE_ENCRYPT )
 		{
-			initialization_vector[ *initialization_vector_index ] = output_data[ data_index ];
+			initialization_vector[ *initialization_vector_index ] = output_data[ data_offset ];
 		}
 		else
 		{
-			initialization_vector[ *initialization_vector_index ] = input_data[ data_index ];
+			initialization_vector[ *initialization_vector_index ] = input_data[ data_offset ];
 		}
 		*initialization_vector_index = ( *initialization_vector_index + 1 ) & 0x0f;
 	}
@@ -1899,7 +2121,8 @@ int libcaes_crypt_cfb(
 }
 #endif /* defined( TODO ) */
 
-/* De- or encrypts a 16-byte block using AES-ECB (Electronic CodeBook)
+/* De- or encrypts a block of data using AES-ECB (Electronic CodeBook)
+ * The size must be a multitude of the AES block size (16 byte)
  * Returns 1 if successful or -1 on error
  */
 int libcaes_crypt_ecb(
@@ -1924,7 +2147,10 @@ int libcaes_crypt_ecb(
 	DWORD parameter_data_size                    = 0;
 	DWORD safe_output_data_size                  = 0;
 
-#elif defined( HAVE_LIBCRYPTO ) && !defined( HAVE_OPENSSL_AES_H ) && defined( HAVE_OPENSSL_EVP_H )
+#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
+	int safe_mode                                = 0;
+
+#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
 	uint8_t block_data[ EVP_MAX_BLOCK_LENGTH ];
 
 	const EVP_CIPHER *cipher                     = NULL;
@@ -1935,6 +2161,7 @@ int libcaes_crypt_ecb(
 	uint32_t values_32bit[ 4 ];
 
 	uint32_t *round_keys                         = NULL;
+	size_t data_offset                           = 0;
 	uint32_t substitution_value                  = 0;
 	uint32_t table_value                         = 0;
 	int round_key_iterator                       = 0;
@@ -1965,6 +2192,17 @@ int libcaes_crypt_ecb(
 
 		return( -1 );
 	}
+	if( input_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid input data.",
+		 function );
+
+		return( -1 );
+	}
 	if( input_data_size < 16 )
 	{
 		libcerror_error_set(
@@ -1972,6 +2210,28 @@ int libcaes_crypt_ecb(
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
 		 "%s: invalid input data size value too small.",
+		 function );
+
+		return( -1 );
+	}
+	if( input_data_size > (size_t) SSIZE_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid input data size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
+	if( output_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid output data.",
 		 function );
 
 		return( -1 );
@@ -1987,11 +2247,33 @@ int libcaes_crypt_ecb(
 
 		return( -1 );
 	}
+	if( output_data_size > (size_t) SSIZE_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid output data size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
 #if defined( WINAPI ) && ( WINVER >= 0x0600 )
+	if( input_data_size > (size_t) UINT32_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid input data size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
 	if( CryptSetKeyParam(
 	     internal_context->key,
 	     KP_MODE,
-	     (BYTE*) &cipher_mode,
+	     (BYTE *) &cipher_mode,
 	     0 ) == 0 )
 	{
 		error_code = GetLastError();
@@ -2011,8 +2293,8 @@ int libcaes_crypt_ecb(
 	if( CryptGetKeyParam(
 	     internal_context->key,
 	     KP_BLOCKLEN,
-	     (BYTE*) &block_length,
-	     (DWORD*) &parameter_data_size,
+	     (BYTE *) &block_length,
+	     (DWORD *) &parameter_data_size,
 	     0 ) == 0 )
 	{
 		error_code = GetLastError();
@@ -2147,11 +2429,19 @@ int libcaes_crypt_ecb(
 	}
 
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
+	if( mode == LIBCAES_CRYPT_MODE_ENCRYPT )
+	{
+		safe_mode = AES_ENCRYPT;
+	}
+	else
+	{
+		safe_mode = AES_DECRYPT;
+	}
 	AES_ecb_encrypt(
 	 (unsigned char *) input_data,
 	 (unsigned char *) output_data,
 	 &( internal_context->key ),
-	 mode );
+	 safe_mode );
 
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
 	if( input_data_size > (size_t) INT_MAX )
@@ -2190,15 +2480,15 @@ int libcaes_crypt_ecb(
 
 		return( -1 );
 	}
-	if( internal_context->bit_size == 128 )
+	if( internal_context->key_bit_size == 128 )
 	{
 		cipher = EVP_aes_128_ecb();
 	}
-	else if( internal_context->bit_size == 192 )
+	else if( internal_context->key_bit_size == 192 )
 	{
 		cipher = EVP_aes_192_ecb();
 	}
-	else if( internal_context->bit_size == 256 )
+	else if( internal_context->key_bit_size == 256 )
 	{
 		cipher = EVP_aes_256_ecb();
 	}
@@ -2243,37 +2533,55 @@ int libcaes_crypt_ecb(
 	 &safe_output_data_size );
 
 #else
-	byte_stream_copy_to_uint32_little_endian(
-	 &( input_data[ 0 ] ),
-	 values_32bit[ 0 ] );
-
-	byte_stream_copy_to_uint32_little_endian(
-	 &( input_data[ 4 ] ),
-	 values_32bit[ 1 ] );
-
-	byte_stream_copy_to_uint32_little_endian(
-	 &( input_data[ 8 ] ),
-	 values_32bit[ 2 ] );
-
-	byte_stream_copy_to_uint32_little_endian(
-	 &( input_data[ 12 ] ),
-	 values_32bit[ 3 ] );
-
-	round_keys = internal_context->round_keys;
-
-	values_32bit[ 0 ] ^= round_keys[ 0 ];
-	values_32bit[ 1 ] ^= round_keys[ 1 ];
-	values_32bit[ 2 ] ^= round_keys[ 2 ];
-	values_32bit[ 3 ] ^= round_keys[ 3 ];
-
-	round_keys += 4;
-
-	if( mode == LIBCAES_CRYPT_MODE_ENCRYPT )
+	while( data_offset < input_data_size )
 	{
-		for( round_key_iterator = ( internal_context->number_of_round_keys / 2 );
-		     round_key_iterator > 1;
-		     round_key_iterator-- )
+		byte_stream_copy_to_uint32_little_endian(
+		 &( input_data[ data_offset ] ),
+		 values_32bit[ 0 ] );
+
+		byte_stream_copy_to_uint32_little_endian(
+		 &( input_data[ data_offset + 4 ] ),
+		 values_32bit[ 1 ] );
+
+		byte_stream_copy_to_uint32_little_endian(
+		 &( input_data[ data_offset + 8 ] ),
+		 values_32bit[ 2 ] );
+
+		byte_stream_copy_to_uint32_little_endian(
+		 &( input_data[ data_offset + 12 ] ),
+		 values_32bit[ 3 ] );
+
+		round_keys = internal_context->round_keys;
+
+		values_32bit[ 0 ] ^= round_keys[ 0 ];
+		values_32bit[ 1 ] ^= round_keys[ 1 ];
+		values_32bit[ 2 ] ^= round_keys[ 2 ];
+		values_32bit[ 3 ] ^= round_keys[ 3 ];
+
+		round_keys += 4;
+
+		if( mode == LIBCAES_CRYPT_MODE_ENCRYPT )
 		{
+			for( round_key_iterator = ( internal_context->number_of_round_keys / 2 );
+			     round_key_iterator > 1;
+			     round_key_iterator-- )
+			{
+				libcaes_calculate_forward_table_round(
+				 round_keys,
+				 cipher_values_32bit,
+				 values_32bit,
+				 table_value );
+
+				round_keys += 4;
+
+				libcaes_calculate_forward_table_round(
+				 round_keys,
+				 values_32bit,
+				 cipher_values_32bit,
+				 table_value );
+
+				round_keys += 4;
+			}
 			libcaes_calculate_forward_table_round(
 			 round_keys,
 			 cipher_values_32bit,
@@ -2282,35 +2590,34 @@ int libcaes_crypt_ecb(
 
 			round_keys += 4;
 
-			libcaes_calculate_forward_table_round(
+			libcaes_calculate_forward_substitution_round(
 			 round_keys,
 			 values_32bit,
 			 cipher_values_32bit,
-			 table_value );
-
-			round_keys += 4;
+			 substitution_value );
 		}
-		libcaes_calculate_forward_table_round(
-		 round_keys,
-		 cipher_values_32bit,
-		 values_32bit,
-		 table_value );
-
-		round_keys += 4;
-
-		libcaes_calculate_forward_substitution_round(
-		 round_keys,
-		 values_32bit,
-		 cipher_values_32bit,
-		 substitution_value );
-	}
-	else
-	{
-/* TODO test */
-		for( round_key_iterator = ( internal_context->number_of_round_keys / 2 );
-		     round_key_iterator > 1;
-		     round_key_iterator-- )
+		else
 		{
+			for( round_key_iterator = ( internal_context->number_of_round_keys / 2 );
+			     round_key_iterator > 1;
+			     round_key_iterator-- )
+			{
+				libcaes_calculate_reverse_table_round(
+				 round_keys,
+				 cipher_values_32bit,
+				 values_32bit,
+				 table_value );
+
+				round_keys += 4;
+
+				libcaes_calculate_reverse_table_round(
+				 round_keys,
+				 values_32bit,
+				 cipher_values_32bit,
+				 table_value );
+
+				round_keys += 4;
+			}
 			libcaes_calculate_reverse_table_round(
 			 round_keys,
 			 cipher_values_32bit,
@@ -2319,73 +2626,531 @@ int libcaes_crypt_ecb(
 
 			round_keys += 4;
 
-			libcaes_calculate_reverse_table_round(
+			libcaes_calculate_reverse_substitution_round(
 			 round_keys,
 			 values_32bit,
 			 cipher_values_32bit,
 			 table_value );
-
-			round_keys += 4;
 		}
-		libcaes_calculate_reverse_table_round(
-		 round_keys,
-		 cipher_values_32bit,
-		 values_32bit,
-		 table_value );
+		byte_stream_copy_from_uint32_little_endian(
+		 &( output_data[ data_offset ] ),
+		 values_32bit[ 0 ] );
 
-		round_keys += 4;
+		byte_stream_copy_from_uint32_little_endian(
+		 &( output_data[ data_offset + 4 ] ),
+		 values_32bit[ 1 ] );
 
-		libcaes_calculate_reverse_substitution_round(
-		 round_keys,
-		 values_32bit,
-		 cipher_values_32bit,
-		 table_value );
-	}
-	byte_stream_copy_from_uint32_little_endian(
-	 &( output_data[ 0 ] ),
-	 values_32bit[ 0 ] );
+		byte_stream_copy_from_uint32_little_endian(
+		 &( output_data[ data_offset + 8 ] ),
+		 values_32bit[ 2 ] );
 
-	byte_stream_copy_from_uint32_little_endian(
-	 &( output_data[ 4 ] ),
-	 values_32bit[ 1 ] );
+		byte_stream_copy_from_uint32_little_endian(
+		 &( output_data[ data_offset + 12 ] ),
+		 values_32bit[ 3 ] );
 
-	byte_stream_copy_from_uint32_little_endian(
-	 &( output_data[ 8 ] ),
-	 values_32bit[ 2 ] );
+		if( memory_set(
+		     values_32bit,
+		     0,
+		     sizeof( uint32_t ) * 4 ) == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+			 "%s: unable to clear values 32-bit.",
+			 function );
 
-	byte_stream_copy_from_uint32_little_endian(
-	 &( output_data[ 12 ] ),
-	 values_32bit[ 3 ] );
+			result = -1;
+		}
+		if( memory_set(
+		     cipher_values_32bit,
+		     0,
+		     sizeof( uint32_t ) * 4 ) == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+			 "%s: unable to clear cipher values 32-bit.",
+			 function );
 
-	if( memory_set(
-	     values_32bit,
-	     0,
-	     sizeof( uint32_t ) * 4 ) == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_MEMORY,
-		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
-		 "%s: unable to clear values 32-bit.",
-		 function );
-
-		result = -1;
-	}
-	if( memory_set(
-	     cipher_values_32bit,
-	     0,
-	     sizeof( uint32_t ) * 4 ) == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_MEMORY,
-		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
-		 "%s: unable to clear cipher values 32-bit.",
-		 function );
-
-		result = -1;
+			result = -1;
+		}
+		data_offset += 16;
 	}
 #endif
 	return( result );
+}
+
+/* De- or encrypts a block of data using AES-XTS (XEX-based tweaked-codebook mode with ciphertext stealing)
+ * Returns 1 if successful or -1 on error
+ */
+int libcaes_crypt_xts(
+     libcaes_tweaked_context_t *context,
+     int mode,
+     const uint8_t *tweak_value,
+     size_t tweak_value_size,
+     const uint8_t *input_data,
+     size_t input_data_size,
+     uint8_t *output_data,
+     size_t output_data_size,
+     libcerror_error_t **error )
+{
+	uint8_t encrypted_tweak_value[ 16 ];
+	uint8_t encrypted_tweak_value_copy[ 16 ];
+
+	libcaes_internal_tweaked_context_t *internal_context = NULL;
+	static char *function                                = "libcaes_crypt_xts";
+	size_t data_offset                                   = 0;
+	size_t remaining_data_size                           = 0;
+	uint8_t block_index                                  = 0;
+	uint8_t byte_value                                   = 0;
+	uint8_t carry_bit                                    = 0;
+
+	if( context == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid context.",
+		 function );
+
+		return( -1 );
+	}
+	internal_context = (libcaes_internal_tweaked_context_t *) context;
+
+	if( ( mode != LIBCAES_CRYPT_MODE_DECRYPT )
+	 && ( mode != LIBCAES_CRYPT_MODE_ENCRYPT ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported mode.",
+		 function );
+
+		return( -1 );
+	}
+	if( tweak_value == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid tweak value.",
+		 function );
+
+		return( -1 );
+	}
+	if( tweak_value_size != 16 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid tweak value size value out of bounds.",
+		 function );
+
+		return( -1 );
+	}
+	if( input_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid input data.",
+		 function );
+
+		return( -1 );
+	}
+	if( input_data_size < 16 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+		 "%s: invalid input data size value too small.",
+		 function );
+
+		return( -1 );
+	}
+	if( input_data_size > (size_t) SSIZE_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid input data size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
+	if( output_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid output data.",
+		 function );
+
+		return( -1 );
+	}
+	if( output_data_size > (size_t) SSIZE_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid output data size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
+	if( output_data_size < input_data_size )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid ouput data size smaller than input data size.",
+		 function );
+
+		return( -1 );
+	}
+	if( libcaes_crypt_ecb(
+	     internal_context->tweak_context,
+	     LIBCAES_CRYPT_MODE_ENCRYPT,
+	     tweak_value,
+	     16,
+	     encrypted_tweak_value,
+	     16,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ENCRYPTION,
+		 LIBCERROR_ENCRYPTION_ERROR_GENERIC,
+		 "%s: unable to encrypt tweak value.",
+		 function );
+
+		goto on_error;
+	}
+	if( memory_copy(
+	     output_data,
+	     input_data,
+	     input_data_size ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
+		 "%s: unable to copy input data to output data.",
+		 function );
+
+		return( -1 );
+	}
+	remaining_data_size = input_data_size;
+
+	while( ( data_offset + 16 ) <= input_data_size )
+	{
+		if( ( remaining_data_size < 32 )
+		 && ( remaining_data_size != 16 ) )
+		{
+			/* If the input data size is not a multitude of 16 the remaining data needs to be handled differently
+			 */
+			if( mode == LIBCAES_CRYPT_MODE_DECRYPT )
+			{
+				if( memory_copy(
+				     encrypted_tweak_value_copy,
+				     encrypted_tweak_value,
+				     16 ) == NULL )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_MEMORY,
+					 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
+					 "%s: unable to copy encrypted tweak value.",
+					 function );
+				
+					goto on_error;
+				}
+				/* Update the encrypted tweak value for the next 16-byte block
+				 */
+				carry_bit = 0;
+
+				for( block_index = 0;
+				     block_index < 16;
+				     block_index++ )
+				{
+					byte_value = ( encrypted_tweak_value[ block_index ] << 1 ) | carry_bit;
+					carry_bit  = encrypted_tweak_value[ block_index ] >> 7;
+
+					encrypted_tweak_value[ block_index ] = byte_value;
+				}
+				if( carry_bit > 0 )
+				{
+					encrypted_tweak_value[ 0 ] ^= 0x87;
+				}
+			}
+		}
+#if defined( LIBCAES_UNFOLLED_LOOPS )
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 0 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 1 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 2 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 3 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 4 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 5 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 6 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 7 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 8 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 9 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 10 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 11 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 12 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 13 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 14 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 15 ];
+#else
+		for( block_index = 0;
+		     block_index < 16;
+		     block_index++ )
+		{
+			output_data[ data_offset++ ] ^= encrypted_tweak_value[ block_index ];
+		}
+#endif
+		data_offset -= 16;
+
+		if( libcaes_crypt_ecb(
+		     internal_context->main_context,
+		     mode,
+		     &( output_data[ data_offset ] ),
+		     16,
+		     &( output_data[ data_offset ] ),
+		     16,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_ENCRYPTION,
+			 LIBCERROR_ENCRYPTION_ERROR_GENERIC,
+			 "%s: unable to de/encrypt data.",
+			 function );
+
+			goto on_error;
+		}
+#if defined( LIBCAES_UNFOLLED_LOOPS )
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 0 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 1 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 2 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 3 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 4 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 5 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 6 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 7 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 8 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 9 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 10 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 11 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 12 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 13 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 14 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 15 ];
+#else
+		for( block_index = 0;
+		     block_index < 16;
+		     block_index++ )
+		{
+			output_data[ data_offset++ ] ^= encrypted_tweak_value[ block_index ];
+		}
+#endif
+		remaining_data_size -= 16;
+
+		/* Update the encrypted tweak value for the next 16-byte block
+		 */
+		carry_bit = 0;
+
+		for( block_index = 0;
+		     block_index < 16;
+		     block_index++ )
+		{
+			byte_value = ( encrypted_tweak_value[ block_index ] << 1 ) | carry_bit;
+			carry_bit  = encrypted_tweak_value[ block_index ] >> 7;
+
+			encrypted_tweak_value[ block_index ] = byte_value;
+		}
+		if( carry_bit > 0 )
+		{
+			encrypted_tweak_value[ 0 ] ^= 0x87;
+		}
+	}
+	/* Any remaining data needs to be handled differently
+	 */
+	if( remaining_data_size > 0 )
+	{
+		if( mode == LIBCAES_CRYPT_MODE_DECRYPT )
+		{
+			if( memory_copy(
+			     encrypted_tweak_value,
+			     encrypted_tweak_value_copy,
+			     16 ) == NULL )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_MEMORY,
+				 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
+				 "%s: unable to copy encrypted tweak value.",
+				 function );
+			
+				goto on_error;
+			}
+			if( memory_set(
+			     encrypted_tweak_value_copy,
+			     0,
+			     16 ) == NULL )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_MEMORY,
+				 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+				 "%s: unable to clear encrypted tweak value copy.",
+				 function );
+
+				goto on_error;
+			}
+		}
+		/* Swap the data of the last 16-byte block with the remaining data
+		 */
+		data_offset -= 16;
+
+		if( memory_copy(
+		     &( output_data[ data_offset + 16 ] ),
+		     &( output_data[ data_offset ] ),
+		     remaining_data_size ) == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
+			 "%s: unable to copy remaining output data.",
+			 function );
+
+			goto on_error;
+		}
+		if( memory_copy(
+		     &( output_data[ data_offset ] ),
+		     &( input_data[ data_offset + 16 ] ),
+		     remaining_data_size ) == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
+			 "%s: unable to copy input data to block data.",
+			 function );
+
+			goto on_error;
+		}
+#if defined( LIBCAES_UNFOLLED_LOOPS )
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 0 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 1 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 2 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 3 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 4 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 5 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 6 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 7 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 8 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 9 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 10 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 11 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 12 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 13 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 14 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 15 ];
+#else
+		for( block_index = 0;
+		     block_index < 16;
+		     block_index++ )
+		{
+			output_data[ data_offset++ ] ^= encrypted_tweak_value[ block_index ];
+		}
+#endif
+		data_offset -= 16;
+
+		if( libcaes_crypt_ecb(
+		     internal_context->main_context,
+		     mode,
+		     &( output_data[ data_offset ] ),
+		     16,
+		     &( output_data[ data_offset ] ),
+		     16,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_ENCRYPTION,
+			 LIBCERROR_ENCRYPTION_ERROR_GENERIC,
+			 "%s: unable to de/encrypt data.",
+			 function );
+
+			goto on_error;
+		}
+#if defined( LIBCAES_UNFOLLED_LOOPS )
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 0 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 1 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 2 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 3 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 4 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 5 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 6 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 7 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 8 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 9 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 10 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 11 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 12 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 13 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 14 ];
+		output_data[ data_offset++ ] ^= encrypted_tweak_value[ 15 ];
+#else
+		for( block_index = 0;
+		     block_index < 16;
+		     block_index++ )
+		{
+			output_data[ data_offset++ ] ^= encrypted_tweak_value[ block_index ];
+		}
+#endif
+	}
+	if( memory_set(
+	     encrypted_tweak_value,
+	     0,
+	     16 ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+		 "%s: unable to clear encrypted tweak value.",
+		 function );
+
+		goto on_error;
+	}
+	return( 1 );
+
+on_error:
+	memory_set(
+	 encrypted_tweak_value_copy,
+	 0,
+	 16 );
+
+	memory_set(
+	 encrypted_tweak_value,
+	 0,
+	 16 );
+
+	return( -1 );
 }
 
