@@ -14,6 +14,11 @@ TODO
 * msvscpp
   - add project files for test programs
 
+Windows:
+- WinXP no AES support ?
+- WINAPI initialize provider only once - where to stick the init functions ?
+- wincrypt and EVP - make sure to pass block sized blocks ?
+
 20130716
 * worked on tests
 

@@ -57,8 +57,8 @@ int libcaes_tweaked_context_free(
      libcerror_error_t **error );
 
 LIBCAES_EXTERN \
-int libcaes_context_set_keys(
-     libcaes_context_t *context,
+int libcaes_tweaked_context_set_keys(
+     libcaes_tweaked_context_t *context,
      int mode,
      const uint8_t *key,
      size_t key_bit_size,
