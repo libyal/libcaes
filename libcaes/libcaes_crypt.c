@@ -1657,13 +1657,14 @@ on_error:
 }
 
 /* De- or encrypts a block of data using AES-CCM (Counter with CBC-MAC)
+ * Note that the key must be set in encryption mode (LIBCAES_CRYPT_MODE_ENCRYPT) for both de- and encryption.
  * Returns 1 if successful or -1 on error
  */
 int libcaes_crypt_ccm(
      libcaes_context_t *context,
      int mode,
-     const uint8_t *initialization_vector,
-     size_t initialization_vector_size,
+     const uint8_t *nonce,
+     size_t nonce_size,
      const uint8_t *input_data,
      size_t input_data_size,
      uint8_t *output_data,
@@ -1689,8 +1690,8 @@ int libcaes_crypt_ccm(
 
 		return( -1 );
 	}
-/* TODO encryption currently not supported */
-	if( mode != LIBCAES_CRYPT_MODE_DECRYPT )
+	if( ( mode != LIBCAES_CRYPT_MODE_DECRYPT )
+	 && ( mode != LIBCAES_CRYPT_MODE_ENCRYPT ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -1701,24 +1702,24 @@ int libcaes_crypt_ccm(
 
 		return( -1 );
 	}
-	if( initialization_vector == NULL )
+	if( nonce == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid initialization vector.",
+		 "%s: invalid nonce.",
 		 function );
 
 		return( -1 );
 	}
-	if( initialization_vector_size >= (size_t) 15 )
+	if( nonce_size >= (size_t) 15 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid initialization vector size value out of bounds.",
+		 "%s: invalid nonce size value out of bounds.",
 		 function );
 
 		return( -1 );
@@ -1768,8 +1769,8 @@ int libcaes_crypt_ccm(
 		return( -1 );
 	}
 	/* The IV consists of:
-	 * 1 byte size value formatted as: 15 - IV size - 1
-	 * a maximum of 14 bytes containing IV bytes
+	 * 1 byte size value formatted as: 15 - nonce size - 1
+	 * a maximum of 14 bytes containing nonce bytes
 	 * 1 byte counter
 	 */
 	if( memory_set(
@@ -1788,19 +1789,19 @@ int libcaes_crypt_ccm(
 	}
 	if( memory_copy(
 	     &( internal_initialization_vector[ 1 ] ),
-	     initialization_vector,
-	     initialization_vector_size ) == NULL )
+	     nonce,
+	     nonce_size ) == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_MEMORY,
 		 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
-		 "%s: unable to copy initialization vector.",
+		 "%s: unable to copy nonce to initialization vector.",
 		 function );
 
 		goto on_error;
 	}
-	internal_initialization_vector[ 0 ] = 15 - (uint8_t) initialization_vector_size - 1;
+	internal_initialization_vector[ 0 ] = 15 - (uint8_t) nonce_size - 1;
 
 	if( memory_copy(
 	     output_data,

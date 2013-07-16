@@ -78,8 +78,8 @@ LIBCAES_EXTERN \
 int libcaes_crypt_ccm(
      libcaes_context_t *context,
      int mode,
-     const uint8_t *initialization_vector,
-     size_t initialization_vector_size,
+     const uint8_t *nonce,
+     size_t nonce_size,
      const uint8_t *input_data,
      size_t input_data_size,
      uint8_t *output_data,

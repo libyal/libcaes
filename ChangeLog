@@ -1,4 +1,6 @@
 TODO
+* CCM add separate function for authentication data support
+* Look into slow processing when using wincrypt
 * CCM add encryption support
 * complete CFB suport
 * add OFB suport ?
@@ -11,6 +13,9 @@ TODO
 * add restriction that context should be used in the mode the keys were set ?
 * msvscpp
   - add project files for test programs
+
+20130716
+* worked on tests
 
 20130715
 * worked on tests

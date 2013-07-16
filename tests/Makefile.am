@@ -7,6 +7,7 @@ AM_CPPFLAGS = \
 TESTS = \
 	test_crypt_ecb.sh \
 	test_crypt_cbc.sh \
+	test_crypt_ccm.sh \
 	test_crypt_xts.sh
 
 check_SCRIPTS = \

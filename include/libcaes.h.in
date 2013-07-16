@@ -176,7 +176,7 @@ int libcaes_crypt_set_key(
      libcaes_error_t **error );
 
 /* De- or encrypts a block of data using AES-CBC (Cipher Block Chaining)
- * This function expects the input to be a multitude of 16 bytes
+ * The size must be a multitude of the AES block size (16 byte)
  * Returns 1 if successful or -1 on error
  */
 LIBCAES_EXTERN \
@@ -192,15 +192,15 @@ int libcaes_crypt_cbc(
      libcaes_error_t **error );
 
 /* De- or encrypts a block of data using AES-CCM (Counter with CBC-MAC)
- * The size must be a multitude of the AES block size (16 byte)
+ * Note that the key must be set in encryption mode (LIBCAES_CRYPT_MODE_ENCRYPT) for both de- and encryption.
  * Returns 1 if successful or -1 on error
  */
 LIBCAES_EXTERN \
 int libcaes_crypt_ccm(
      libcaes_context_t *context,
      int mode,
-     const uint8_t *initialization_vector,
-     size_t initialization_vector_size,
+     const uint8_t *nonce,
+     size_t nonce_size,
      const uint8_t *input_data,
      size_t input_data_size,
      uint8_t *output_data,

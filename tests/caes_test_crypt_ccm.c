@@ -39,19 +39,19 @@ int caes_test_crypt_ccm(
      int mode,
      const uint8_t *key,
      size_t key_bit_size,
-     const uint8_t *initialization_vector,
-     size_t initialization_vector_size,
+     const uint8_t *nonce,
+     size_t nonce_size,
      const uint8_t *input_data,
      size_t input_data_size,
      const uint8_t *expected_output_data,
      size_t expected_output_data_size )
 {
-	uint8_t output_data[ 32 ];
+	uint8_t output_data[ 256 ];
 
 	libcaes_context_t *context = NULL;
 	libcerror_error_t *error   = NULL;
 	static char *function      = "caes_test_crypt_ccm";
-	size_t output_data_size    = 32;
+	size_t output_data_size    = 256;
 	int result                 = 0;
 
 	if( input_data_size > output_data_size )
@@ -80,7 +80,7 @@ int caes_test_crypt_ccm(
 	}
 	if( libcaes_context_set_key(
 	     context,
-	     mode,
+	     LIBCAES_CRYPT_MODE_ENCRYPT,
 	     key,
 	     key_bit_size,
 	     &error ) != 1 )
@@ -97,8 +97,8 @@ int caes_test_crypt_ccm(
 	if( libcaes_crypt_ccm(
 	     context,
 	     mode,
-	     initialization_vector,
-	     initialization_vector_size,
+	     nonce,
+	     nonce_size,
 	     input_data,
 	     input_data_size,
 	     output_data,
@@ -165,50 +165,26 @@ int wmain( int argc, wchar_t * const argv[] CAES_TEST_ATTRIBUTE_UNUSED )
 int main( int argc, char * const argv[] CAES_TEST_ATTRIBUTE_UNUSED )
 #endif
 {
-	/* Values from NIST KAT-AES CCMVarKey128.rsp, CCMVarKey192.rsp and CCMVarKey256.rsp */
-	uint8_t keys[ 256 ][ 32 ] = {
-	};
-
-	/* Values from NIST KAT-AES CCMVarTxt128.rsp */
-	uint8_t cipher_texts1_128bit[ 128 ][ 16 ] = {
-	};
-
-	/* Values from NIST KAT-AES CCMVarKey128.rsp */
-	uint8_t cipher_texts2_128bit[ 128 ][ 16 ] = {
-	};
-
-	/* Values from NIST KAT-AES CCMVarTxt192.rsp */
-	uint8_t cipher_texts1_192bit[ 128 ][ 16 ] = {
-	};
-
-	/* Values from NIST KAT-AES CCMVarKey192.rsp */
-	uint8_t cipher_texts2_192bit[ 192 ][ 16 ] = {
-	};
-
-	/* Values from NIST KAT-AES CCMVarTxt256.rsp */
-	uint8_t cipher_texts1_256bit[ 128 ][ 16 ] = {
-	};
-
-	/* Values from NIST KAT-AES CCMVarKey256.rsp */
-	uint8_t cipher_texts2_256bit[ 256 ][ 16 ] = {
-	};
-
-	/* Values from NIST KAT-AES CCMVarTxt128.rsp, CCMVarTxt192.rsp and CCMVarTxt256.rsp */
-	uint8_t plain_texts1[ 128 ][ 16 ] = {
-	};
-
 	uint8_t key[ 32 ] = {
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+		0x8a, 0x29, 0x41, 0xff, 0x7b, 0x3a, 0x5e, 0xe9, 0x0b, 0xca, 0x70, 0xfb, 0xb2, 0x65, 0xaf, 0xab,
+		0xed, 0x68, 0xb1, 0x55, 0x07, 0x65, 0x25, 0x55, 0x40, 0xc8, 0x86, 0x1e, 0x13, 0x7e, 0xd0, 0x94 };
 
-	uint8_t initialization_vector[ 16 ] = {
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	uint8_t nonce[ 12 ] = {
+		0x60, 0xd5, 0x17, 0x86, 0x5b, 0x53, 0xcc, 0x01, 0x03, 0x00, 0x00, 0x00 };
 
-	uint8_t plain_text[ 16 ] = {
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	uint8_t cipher_text[ 60 ] = {
+		0xa8, 0xdf, 0x3d, 0x7c, 0x99, 0x74, 0x2c, 0x49, 0x68, 0x85, 0x70, 0x84, 0x6a, 0xd5, 0xf8, 0x0c,
+		0x6b, 0x66, 0xc6, 0x8a, 0x3e, 0x30, 0xb7, 0x5b, 0xed, 0x61, 0x52, 0x9c, 0x73, 0xce, 0x36, 0x5c,
+		0xa1, 0x96, 0x0e, 0x91, 0xa1, 0x48, 0x83, 0x67, 0x8d, 0x09, 0x41, 0xde, 0x51, 0x0b, 0x04, 0x49,
+		0xa4, 0x19, 0xb5, 0x1e, 0x49, 0xd2, 0xac, 0xfd, 0x6a, 0x0a, 0x78, 0x8c };
 
-	int result     = 0;
-	int test_index = 0;
+	uint8_t plain_text[ 60 ] = {
+		0x18, 0x27, 0x1c, 0x74, 0xeb, 0x49, 0x16, 0xbf, 0x6b, 0x46, 0x31, 0x74, 0x15, 0x41, 0xf1, 0x99,
+		0x2c, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x03, 0x20, 0x00, 0x00, 0x68, 0x8a, 0x51, 0x70,
+		0x06, 0x14, 0xdb, 0xd1, 0xc1, 0x00, 0xf5, 0x68, 0xc4, 0xbd, 0x29, 0xa6, 0x3c, 0x46, 0x36, 0x72,
+		0xbe, 0x6b, 0xde, 0xf5, 0x4b, 0x91, 0x8b, 0xb9, 0xa3, 0xa4, 0x3c, 0xbc };
+
+	int result = 0;
 
 	CAES_TEST_UNREFERENCED_PARAMETER( argv )
 
@@ -224,295 +200,26 @@ int main( int argc, char * const argv[] CAES_TEST_ATTRIBUTE_UNUSED )
 	 */
 	fprintf(
 	 stdout,
-	 "Testing AES-CCM 128-bit decryption\t" );
-
-	for( test_index = 0;
-	     test_index < 128;
-	     test_index++ )
-	{
-		result = caes_test_crypt_ccm(
-		          LIBCAES_CRYPT_MODE_DECRYPT,
-		          key,
-		          128,
-		          initialization_vector,
-		          16,
-		          cipher_texts1_128bit[ test_index ],
-		          16,
-		          plain_texts1[ test_index ],
-		          16 );
-
-		if( result == -1 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to test AES-CCM 128-bit decryption.\n" );
-
-			return( EXIT_FAILURE );
-		}
-		else if( result != 1 )
-		{
-			break;
-		}
-	}
-	if( result != 1 )
-	{
-		fprintf(
-		 stdout,
-		 "(FAIL)" );
-	}
-	else
-	{
-		fprintf(
-		 stdout,
-		 "(PASS)" );
-	}
-	fprintf(
-	 stdout,
-	 "\n" );
-
-	if( result != 1 )
-	{
-		return( EXIT_FAILURE );
-	}
-	fprintf(
-	 stdout,
-	 "Testing AES-CCM 128-bit decryption\t" );
-
-	for( test_index = 0;
-	     test_index < 128;
-	     test_index++ )
-	{
-		result = caes_test_crypt_ccm(
-		          LIBCAES_CRYPT_MODE_DECRYPT,
-		          keys[ test_index ],
-		          128,
-		          initialization_vector,
-		          16,
-		          cipher_texts2_128bit[ test_index ],
-		          16,
-		          plain_text,
-		          16 );
-
-		if( result == -1 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to test AES-CCM 128-bit decryption.\n" );
-
-			return( EXIT_FAILURE );
-		}
-		else if( result != 1 )
-		{
-			break;
-		}
-	}
-	if( result != 1 )
-	{
-		fprintf(
-		 stdout,
-		 "(FAIL)" );
-	}
-	else
-	{
-		fprintf(
-		 stdout,
-		 "(PASS)" );
-	}
-	fprintf(
-	 stdout,
-	 "\n" );
-
-	if( result != 1 )
-	{
-		return( EXIT_FAILURE );
-	}
-	fprintf(
-	 stdout,
-	 "Testing AES-CCM 192-bit decryption\t" );
-
-	for( test_index = 0;
-	     test_index < 128;
-	     test_index++ )
-	{
-		result = caes_test_crypt_ccm(
-		          LIBCAES_CRYPT_MODE_DECRYPT,
-		          key,
-		          192,
-		          initialization_vector,
-		          16,
-		          cipher_texts1_192bit[ test_index ],
-		          16,
-		          plain_texts1[ test_index ],
-		          16 );
-
-		if( result == -1 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to test AES-CCM 192-bit decryption.\n" );
-
-			return( EXIT_FAILURE );
-		}
-		else if( result != 1 )
-		{
-			break;
-		}
-	}
-	if( result != 1 )
-	{
-		fprintf(
-		 stdout,
-		 "(FAIL)" );
-	}
-	else
-	{
-		fprintf(
-		 stdout,
-		 "(PASS)" );
-	}
-	fprintf(
-	 stdout,
-	 "\n" );
-
-	if( result != 1 )
-	{
-		return( EXIT_FAILURE );
-	}
-	fprintf(
-	 stdout,
-	 "Testing AES-CCM 192-bit decryption\t" );
-
-	for( test_index = 0;
-	     test_index < 192;
-	     test_index++ )
-	{
-		result = caes_test_crypt_ccm(
-		          LIBCAES_CRYPT_MODE_DECRYPT,
-		          keys[ test_index ],
-		          192,
-		          initialization_vector,
-		          16,
-		          cipher_texts2_192bit[ test_index ],
-		          16,
-		          plain_text,
-		          16 );
-
-		if( result == -1 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to test AES-CCM 192-bit decryption.\n" );
-
-			return( EXIT_FAILURE );
-		}
-		else if( result != 1 )
-		{
-			break;
-		}
-	}
-	if( result != 1 )
-	{
-		fprintf(
-		 stdout,
-		 "(FAIL)" );
-	}
-	else
-	{
-		fprintf(
-		 stdout,
-		 "(PASS)" );
-	}
-	fprintf(
-	 stdout,
-	 "\n" );
-
-	if( result != 1 )
-	{
-		return( EXIT_FAILURE );
-	}
-	fprintf(
-	 stdout,
 	 "Testing AES-CCM 256-bit decryption\t" );
 
-	for( test_index = 0;
-	     test_index < 128;
-	     test_index++ )
-	{
-		result = caes_test_crypt_ccm(
-		          LIBCAES_CRYPT_MODE_DECRYPT,
-		          key,
-		          256,
-		          initialization_vector,
-		          16,
-		          cipher_texts1_256bit[ test_index ],
-		          16,
-		          plain_texts1[ test_index ],
-		          16 );
+	result = caes_test_crypt_ccm(
+		  LIBCAES_CRYPT_MODE_DECRYPT,
+		  key,
+		  256,
+		  nonce,
+		  12,
+		  cipher_text,
+		  60,
+		  plain_text,
+		  60 );
 
-		if( result == -1 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to test AES-CCM 256-bit decryption.\n" );
-
-			return( EXIT_FAILURE );
-		}
-		else if( result != 1 )
-		{
-			break;
-		}
-	}
-	if( result != 1 )
+	if( result == -1 )
 	{
 		fprintf(
-		 stdout,
-		 "(FAIL)" );
-	}
-	else
-	{
-		fprintf(
-		 stdout,
-		 "(PASS)" );
-	}
-	fprintf(
-	 stdout,
-	 "\n" );
+		 stderr,
+		 "Unable to test AES-CCM 256-bit decryption.\n" );
 
-	if( result != 1 )
-	{
 		return( EXIT_FAILURE );
-	}
-	fprintf(
-	 stdout,
-	 "Testing AES-CCM 256-bit decryption\t" );
-
-	for( test_index = 0;
-	     test_index < 256;
-	     test_index++ )
-	{
-		result = caes_test_crypt_ccm(
-		          LIBCAES_CRYPT_MODE_DECRYPT,
-		          keys[ test_index ],
-		          256,
-		          initialization_vector,
-		          16,
-		          cipher_texts2_256bit[ test_index ],
-		          16,
-		          plain_text,
-		          16 );
-
-		if( result == -1 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to test AES-CCM 256-bit decryption.\n" );
-
-			return( EXIT_FAILURE );
-		}
-		else if( result != 1 )
-		{
-			break;
-		}
 	}
 	if( result != 1 )
 	{
@@ -538,295 +245,26 @@ int main( int argc, char * const argv[] CAES_TEST_ATTRIBUTE_UNUSED )
 	 */
 	fprintf(
 	 stdout,
-	 "Testing AES-CCM 128-bit encryption\t" );
-
-	for( test_index = 0;
-	     test_index < 128;
-	     test_index++ )
-	{
-		result = caes_test_crypt_ccm(
-		          LIBCAES_CRYPT_MODE_ENCRYPT,
-		          key,
-		          128,
-		          initialization_vector,
-		          16,
-		          plain_texts1[ test_index ],
-		          16,
-		          cipher_texts1_128bit[ test_index ],
-		          16 );
-
-		if( result == -1 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to test AES-CCM 128-bit encryption.\n" );
-
-			return( EXIT_FAILURE );
-		}
-		else if( result != 1 )
-		{
-			break;
-		}
-	}
-	if( result != 1 )
-	{
-		fprintf(
-		 stdout,
-		 "(FAIL)" );
-	}
-	else
-	{
-		fprintf(
-		 stdout,
-		 "(PASS)" );
-	}
-	fprintf(
-	 stdout,
-	 "\n" );
-
-	if( result != 1 )
-	{
-		return( EXIT_FAILURE );
-	}
-	fprintf(
-	 stdout,
-	 "Testing AES-CCM 128-bit encryption\t" );
-
-	for( test_index = 0;
-	     test_index < 128;
-	     test_index++ )
-	{
-		result = caes_test_crypt_ccm(
-		          LIBCAES_CRYPT_MODE_ENCRYPT,
-		          keys[ test_index ],
-		          128,
-		          initialization_vector,
-		          16,
-		          plain_text,
-		          16,
-		          cipher_texts2_128bit[ test_index ],
-		          16 );
-
-		if( result == -1 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to test AES-CCM 128-bit encryption.\n" );
-
-			return( EXIT_FAILURE );
-		}
-		else if( result != 1 )
-		{
-			break;
-		}
-	}
-	if( result != 1 )
-	{
-		fprintf(
-		 stdout,
-		 "(FAIL)" );
-	}
-	else
-	{
-		fprintf(
-		 stdout,
-		 "(PASS)" );
-	}
-	fprintf(
-	 stdout,
-	 "\n" );
-
-	if( result != 1 )
-	{
-		return( EXIT_FAILURE );
-	}
-	fprintf(
-	 stdout,
-	 "Testing AES-CCM 192-bit encryption\t" );
-
-	for( test_index = 0;
-	     test_index < 128;
-	     test_index++ )
-	{
-		result = caes_test_crypt_ccm(
-		          LIBCAES_CRYPT_MODE_ENCRYPT,
-		          key,
-		          192,
-		          initialization_vector,
-		          16,
-		          plain_texts1[ test_index ],
-		          16,
-		          cipher_texts1_192bit[ test_index ],
-		          16 );
-
-		if( result == -1 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to test AES-CCM 192-bit encryption.\n" );
-
-			return( EXIT_FAILURE );
-		}
-		else if( result != 1 )
-		{
-			break;
-		}
-	}
-	if( result != 1 )
-	{
-		fprintf(
-		 stdout,
-		 "(FAIL)" );
-	}
-	else
-	{
-		fprintf(
-		 stdout,
-		 "(PASS)" );
-	}
-	fprintf(
-	 stdout,
-	 "\n" );
-
-	if( result != 1 )
-	{
-		return( EXIT_FAILURE );
-	}
-	fprintf(
-	 stdout,
-	 "Testing AES-CCM 192-bit encryption\t" );
-
-	for( test_index = 0;
-	     test_index < 192;
-	     test_index++ )
-	{
-		result = caes_test_crypt_ccm(
-		          LIBCAES_CRYPT_MODE_ENCRYPT,
-		          keys[ test_index ],
-		          192,
-		          initialization_vector,
-		          16,
-		          plain_text,
-		          16,
-		          cipher_texts2_192bit[ test_index ],
-		          16 );
-
-		if( result == -1 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to test AES-CCM 192-bit encryption.\n" );
-
-			return( EXIT_FAILURE );
-		}
-		else if( result != 1 )
-		{
-			break;
-		}
-	}
-	if( result != 1 )
-	{
-		fprintf(
-		 stdout,
-		 "(FAIL)" );
-	}
-	else
-	{
-		fprintf(
-		 stdout,
-		 "(PASS)" );
-	}
-	fprintf(
-	 stdout,
-	 "\n" );
-
-	if( result != 1 )
-	{
-		return( EXIT_FAILURE );
-	}
-	fprintf(
-	 stdout,
 	 "Testing AES-CCM 256-bit encryption\t" );
 
-	for( test_index = 0;
-	     test_index < 128;
-	     test_index++ )
-	{
-		result = caes_test_crypt_ccm(
-		          LIBCAES_CRYPT_MODE_ENCRYPT,
-		          key,
-		          256,
-		          initialization_vector,
-		          16,
-		          plain_texts1[ test_index ],
-		          16,
-		          cipher_texts1_256bit[ test_index ],
-		          16 );
+	result = caes_test_crypt_ccm(
+		  LIBCAES_CRYPT_MODE_ENCRYPT,
+		  key,
+		  256,
+		  nonce,
+		  12,
+		  plain_text,
+		  60,
+		  cipher_text,
+		  60 );
 
-		if( result == -1 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to test AES-CCM 256-bit encryption.\n" );
-
-			return( EXIT_FAILURE );
-		}
-		else if( result != 1 )
-		{
-			break;
-		}
-	}
-	if( result != 1 )
+	if( result == -1 )
 	{
 		fprintf(
-		 stdout,
-		 "(FAIL)" );
-	}
-	else
-	{
-		fprintf(
-		 stdout,
-		 "(PASS)" );
-	}
-	fprintf(
-	 stdout,
-	 "\n" );
+		 stderr,
+		 "Unable to test AES-CCM 256-bit encryption.\n" );
 
-	if( result != 1 )
-	{
 		return( EXIT_FAILURE );
-	}
-	fprintf(
-	 stdout,
-	 "Testing AES-CCM 256-bit encryption\t" );
-
-	for( test_index = 0;
-	     test_index < 256;
-	     test_index++ )
-	{
-		result = caes_test_crypt_ccm(
-		          LIBCAES_CRYPT_MODE_ENCRYPT,
-		          keys[ test_index ],
-		          256,
-		          initialization_vector,
-		          16,
-		          plain_text,
-		          16,
-		          cipher_texts2_256bit[ test_index ],
-		          16 );
-
-		if( result == -1 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to test AES-CCM 256-bit encryption.\n" );
-
-			return( EXIT_FAILURE );
-		}
-		else if( result != 1 )
-		{
-			break;
-		}
 	}
 	if( result != 1 )
 	{
