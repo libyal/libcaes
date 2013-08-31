@@ -20,7 +20,7 @@ Windows:
 - wincrypt and EVP - make sure to pass block sized blocks ?
 
 20130813
-* fixed issue not freeing memory allocated by EVP on error path
+* fixed issue not freeing error state memory allocated by EVP
 * fixed missing libcrypto in .pc and .spec
 
 20130716

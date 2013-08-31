@@ -31,6 +31,7 @@
 #include <openssl/sha.h>
 
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
+#include <openssl/err.h>
 #include <openssl/evp.h>
 
 #endif
@@ -241,6 +242,11 @@ int libcaes_context_free(
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
 		EVP_CIPHER_CTX_cleanup(
 		 &( internal_context->evp_context ) );
+
+		/* Make sure the error state is removed otherwise openssl will leak memory
+		 */
+		ERR_remove_thread_state(
+		 NULL );
 
 #else
 		/* No additional clean up necessary */
