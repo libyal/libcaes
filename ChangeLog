@@ -19,6 +19,10 @@ Windows:
 - WINAPI initialize provider only once - where to stick the init functions ?
 - wincrypt and EVP - make sure to pass block sized blocks ?
 
+20130813
+* fixed issue not freeing memory allocated by EVP on error path
+* fixed missing libcrypto in .pc and .spec
+
 20130716
 * worked on tests
 

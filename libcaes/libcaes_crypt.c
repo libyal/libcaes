@@ -1459,6 +1459,11 @@ int libcaes_crypt_cbc(
 		 "%s: unable to update cipher.",
 		 function );
 
+		EVP_CipherFinal_ex(
+		 &( internal_context->evp_context ),
+		 (unsigned char *) block_data,
+		 &safe_output_data_size );
+
 		return( -1 );
 	}
 	/* Just ignore the output of this function
@@ -2523,6 +2528,11 @@ int libcaes_crypt_ecb(
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to update cipher.",
 		 function );
+
+		EVP_CipherFinal_ex(
+		 &( internal_context->evp_context ),
+		 (unsigned char *) block_data,
+		 &safe_output_data_size );
 
 		return( -1 );
 	}

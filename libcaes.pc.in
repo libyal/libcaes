@@ -7,6 +7,6 @@ Name: libcaes
 Description: Library to support cross-platform AES encryption
 Version: @VERSION@
 Libs: -L${libdir} -lcaes
-Libs.private: @ax_libcerror_pc_libs_private@ @ax_libcstring_pc_libs_private@
+Libs.private: @ax_libcerror_pc_libs_private@ @ax_libcrypto_pc_libs_private@ @ax_libcstring_pc_libs_private@
 Cflags: -I${includedir}
 
