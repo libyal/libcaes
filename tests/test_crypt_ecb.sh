@@ -26,11 +26,16 @@ EXIT_IGNORE=77;
 
 test_crypt_ecb()
 { 
+	rm -rf tmp;
+	mkdir tmp;
+
 	echo "Testing AES-ECB de/encryption";
 
-	./${CAES_TEST_ARRAY};
+	${TEST_RUNNER} ./${CAES_TEST_ARRAY};
 
 	RESULT=$?;
+
+	rm -rf tmp;
 
 	echo "";
 
@@ -47,6 +52,20 @@ fi
 if ! test -x ${CAES_TEST_ARRAY};
 then
 	echo "Missing executable: ${CAES_TEST_ARRAY}";
+
+	exit ${EXIT_FAILURE};
+fi
+
+TEST_RUNNER="tests/test_runner.sh";
+
+if ! test -x ${TEST_RUNNER};
+then
+	TEST_RUNNER="./test_runner.sh";
+fi
+
+if ! test -x ${TEST_RUNNER};
+then
+	echo "Missing test runner: ${TEST_RUNNER}";
 
 	exit ${EXIT_FAILURE};
 fi
