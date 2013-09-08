@@ -455,6 +455,7 @@ int libcaes_crypt_set_decryption_key(
 	static char *function                          = "libcaes_crypt_set_decryption_key";
 	uint32_t *encryption_round_keys                = NULL;
 	uint32_t *round_keys                           = NULL;
+	size_t round_keys_byte_offset                  = 0;
 	uint8_t byte_value0                            = 0;
 	uint8_t byte_value1                            = 0;
 	uint8_t byte_value2                            = 0;
@@ -533,12 +534,9 @@ int libcaes_crypt_set_decryption_key(
 	}
 	/* Point to the end of the round keys
 	 */
-	encryption_round_keys = encryption_context->round_keys
-	                      + ( encryption_context->number_of_round_keys * sizeof( uint32_t ) );
+	round_keys_byte_offset = encryption_context->number_of_round_keys * sizeof( uint32_t );
 
-/* TODO why doesn't this work
-	encryption_round_keys = &( encryption_context->round_keys[ encryption_context->number_of_round_keys ] );
-*/
+	encryption_round_keys = &( encryption_context->round_keys[ round_keys_byte_offset ] );
 
 	round_keys[ 0 ] = encryption_round_keys[ 0 ];
 	round_keys[ 1 ] = encryption_round_keys[ 1 ];
