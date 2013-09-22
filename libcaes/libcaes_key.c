@@ -200,7 +200,7 @@ int libcaes_key_set(
 	{
 		key->header.aiKeyAlg = CALG_AES_256;
 	}
-	key->data_size = bit_size / 8;
+	key->data_size = (DWORD)( bit_size / 8 );
 
 	if( memory_copy(
 	     key->data,

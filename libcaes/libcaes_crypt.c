@@ -871,7 +871,7 @@ int libcaes_crypt_set_key(
 
 		return( -1 );
 	}
-	wincrypt_key_size = sizeof( libcaes_key_t ) - ( ( 256 - key_bit_size ) / 8 );
+	wincrypt_key_size = (DWORD) ( sizeof( libcaes_key_t ) - ( ( 256 - key_bit_size ) / 8 ) );
 
 	if( CryptImportKey(
 	     internal_context->crypt_provider,
@@ -1346,7 +1346,7 @@ int libcaes_crypt_cbc(
 		}
 		if( safe_output_data_size < input_data_size )
 		{
-			safe_output_data_size = input_data_size - safe_output_data_size;
+			safe_output_data_size = (DWORD) ( input_data_size - safe_output_data_size );
 
 			/* Just ignore the output of this function
 			 */
@@ -2347,7 +2347,7 @@ int libcaes_crypt_ecb(
 
 		return( -1 );
 	}
-	safe_output_data_size = input_data_size;
+	safe_output_data_size = (DWORD) input_data_size;
 
 	if( mode == LIBCAES_CRYPT_MODE_ENCRYPT )
 	{
@@ -2413,7 +2413,7 @@ int libcaes_crypt_ecb(
 		}
 		if( safe_output_data_size < input_data_size )
 		{
-			safe_output_data_size = input_data_size - safe_output_data_size;
+			safe_output_data_size = (DWORD) ( input_data_size - safe_output_data_size );
 
 			/* Just ignore the output of this function
 			 */

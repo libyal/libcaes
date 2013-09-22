@@ -347,7 +347,7 @@ int libcaes_context_set_key(
 
 		return( -1 );
 	}
-	wincrypt_key_size = sizeof( libcaes_key_t ) - ( ( 256 - key_bit_size ) / 8 );
+	wincrypt_key_size = (DWORD) ( sizeof( libcaes_key_t ) - ( ( 256 - key_bit_size ) / 8 ) );
 
 	if( CryptImportKey(
 	     internal_context->crypt_provider,
