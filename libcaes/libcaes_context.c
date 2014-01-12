@@ -73,119 +73,128 @@ int libcaes_context_initialize(
 
 		return( -1 );
 	}
-	if( *context == NULL )
+	if( *context != NULL )
 	{
-		internal_context = memory_allocate_structure(
-		                    libcaes_internal_context_t );
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid context value already set.",
+		 function );
 
-		if( internal_context == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_MEMORY,
-			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-			 "%s: unable to create context.",
-			 function );
+		return( -1 );
+	}
+	internal_context = memory_allocate_structure(
+	                    libcaes_internal_context_t );
 
-			goto on_error;
-		}
-		if( memory_set(
-		     internal_context,
-		     0,
-		     sizeof( libcaes_internal_context_t ) ) == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_MEMORY,
-			 LIBCERROR_MEMORY_ERROR_SET_FAILED,
-			 "%s: unable to clear context.",
-			 function );
+	if( internal_context == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create context.",
+		 function );
 
-			goto on_error;
-		}
+		goto on_error;
+	}
+	if( memory_set(
+	     internal_context,
+	     0,
+	     sizeof( libcaes_internal_context_t ) ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+		 "%s: unable to clear context.",
+		 function );
+
+		goto on_error;
+	}
 #if defined( WINAPI ) && ( WINVER >= 0x0600 )
-		/* Request the AES crypt provider, fail back to the RSA crypt provider
-		*/
+	/* Request the AES crypt provider, fail back to the RSA crypt provider
+	*/
+	if( CryptAcquireContext(
+	     &( internal_context->crypt_provider ),
+	     NULL,
+	     MS_ENH_RSA_AES_PROV,
+	     PROV_RSA_AES,
+	     0 ) == 0 )
+	{
+/* TODO fallback for XP
 		if( CryptAcquireContext(
 		     &( internal_context->crypt_provider ),
 		     NULL,
-		     MS_ENH_RSA_AES_PROV,
+		     MS_ENH_RSA_AES_PROV_XP,
 		     PROV_RSA_AES,
-		     0 ) == 0 )
-		{
-/* TODO fallback for XP
-			if( CryptAcquireContext(
-			     &( internal_context->crypt_provider ),
-			     NULL,
-			     MS_ENH_RSA_AES_PROV_XP,
-			     PROV_RSA_AES,
-			     CRYPT_NEWKEYSET ) == 0 )
+		     CRYPT_NEWKEYSET ) == 0 )
 */
-			error_code = GetLastError();
+		error_code = GetLastError();
 
-			libcerror_system_set_error(
+		libcerror_system_set_error(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 error_code,
+		 "%s: unable to create AES crypt provider.",
+		 function );
+
+		return( -1 );
+	}
+	if( internal_context->crypt_provider == 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: unable to create AES crypt provider.",
+		 function );
+
+		return( -1 );
+	}
+
+#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
+	/* No additional initialization necessary */
+
+#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
+	EVP_CIPHER_CTX_init(
+	 &( internal_context->evp_context ) );
+
+	if( EVP_CIPHER_CTX_set_padding(
+	     &( internal_context->evp_context ),
+	     1 ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set padding in context.",
+		 function );
+
+		goto on_error;
+	}
+
+#else
+	if( libcaes_tables_initialized == 0 )
+	{
+		if( libcaes_initialize_tables(
+		     error ) != 1 )
+		{
+			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 error_code,
-			 "%s: unable to create AES crypt provider.",
-			 function );
-
-			return( -1 );
-		}
-		if( internal_context->crypt_provider == 0 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: unable to create AES crypt provider.",
-			 function );
-
-			return( -1 );
-		}
-
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
-		/* No additional initialization necessary */
-
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
-		EVP_CIPHER_CTX_init(
-		 &( internal_context->evp_context ) );
-
-		if( EVP_CIPHER_CTX_set_padding(
-		     &( internal_context->evp_context ),
-		     1 ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to set padding in context.",
+			 "%s: unable to initialize tables.",
 			 function );
 
 			goto on_error;
 		}
-
-#else
-		if( libcaes_tables_initialized == 0 )
-		{
-			if( libcaes_initialize_tables(
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-				 "%s: unable to initialize tables.",
-				 function );
-
-				goto on_error;
-			}
-			libcaes_tables_initialized = 1;
-		}
-#endif
-		*context = (libcaes_context_t *) internal_context;
+		libcaes_tables_initialized = 1;
 	}
+#endif
+	*context = (libcaes_context_t *) internal_context;
+
 	return( 1 );
 
 on_error:

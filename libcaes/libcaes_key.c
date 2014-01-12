@@ -51,39 +51,48 @@ int libcaes_key_initialize(
 
 		return( -1 );
 	}
+	if( *key != NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid key value already set.",
+		 function );
+
+		return( -1 );
+	}
+	*key = memory_allocate_structure(
+	        libcaes_key_t );
+
 	if( *key == NULL )
 	{
-		*key = memory_allocate_structure(
-		        libcaes_key_t );
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create key.",
+		 function );
 
-		if( *key == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_MEMORY,
-			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-			 "%s: unable to create key.",
-			 function );
-
-			goto on_error;
-		}
-		if( memory_set(
-		     *key,
-		     0,
-		     sizeof( libcaes_key_t ) ) == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_MEMORY,
-			 LIBCERROR_MEMORY_ERROR_SET_FAILED,
-			 "%s: unable to clear key.",
-			 function );
-
-			goto on_error;
-		}
-		( *key )->header.bType    = PLAINTEXTKEYBLOB;
-		( *key )->header.bVersion = CUR_BLOB_VERSION;
+		goto on_error;
 	}
+	if( memory_set(
+	     *key,
+	     0,
+	     sizeof( libcaes_key_t ) ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+		 "%s: unable to clear key.",
+		 function );
+
+		goto on_error;
+	}
+	( *key )->header.bType    = PLAINTEXTKEYBLOB;
+	( *key )->header.bVersion = CUR_BLOB_VERSION;
+
 	return( 1 );
 
 on_error:
