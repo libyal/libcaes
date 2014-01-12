@@ -35,9 +35,9 @@ caes_test_crypt_cbc_SOURCES = \
 	caes_test_unused.h
 
 caes_test_crypt_cbc_LDADD = \
-	@LIBCSTRING_LIBADD@ \
+	../libcaes/libcaes.la \
 	@LIBCERROR_LIBADD@ \
-	../libcaes/libcaes.la
+	@LIBCSTRING_LIBADD@
 
 caes_test_crypt_ccm_SOURCES = \
 	caes_test_crypt_ccm.c \
@@ -47,9 +47,9 @@ caes_test_crypt_ccm_SOURCES = \
 	caes_test_unused.h
 
 caes_test_crypt_ccm_LDADD = \
-	@LIBCSTRING_LIBADD@ \
+	../libcaes/libcaes.la \
 	@LIBCERROR_LIBADD@ \
-	../libcaes/libcaes.la
+	@LIBCSTRING_LIBADD@
 
 caes_test_crypt_cfb_SOURCES = \
 	caes_test_crypt_cfb.c \
@@ -59,9 +59,9 @@ caes_test_crypt_cfb_SOURCES = \
 	caes_test_unused.h
 
 caes_test_crypt_cfb_LDADD = \
-	@LIBCSTRING_LIBADD@ \
+	../libcaes/libcaes.la \
 	@LIBCERROR_LIBADD@ \
-	../libcaes/libcaes.la
+	@LIBCSTRING_LIBADD@
 
 caes_test_crypt_ecb_SOURCES = \
 	caes_test_crypt_ecb.c \
@@ -71,9 +71,9 @@ caes_test_crypt_ecb_SOURCES = \
 	caes_test_unused.h
 
 caes_test_crypt_ecb_LDADD = \
-	@LIBCSTRING_LIBADD@ \
+	../libcaes/libcaes.la \
 	@LIBCERROR_LIBADD@ \
-	../libcaes/libcaes.la
+	@LIBCSTRING_LIBADD@
 
 caes_test_crypt_xts_SOURCES = \
 	caes_test_crypt_xts.c \
@@ -83,9 +83,9 @@ caes_test_crypt_xts_SOURCES = \
 	caes_test_unused.h
 
 caes_test_crypt_xts_LDADD = \
-	@LIBCSTRING_LIBADD@ \
+	../libcaes/libcaes.la \
 	@LIBCERROR_LIBADD@ \
-	../libcaes/libcaes.la
+	@LIBCSTRING_LIBADD@
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

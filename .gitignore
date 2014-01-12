@@ -1,6 +1,6 @@
 # Files to ignore by git
 #
-# Version: 20130831
+# Version: 20130922
 
 # Generic auto-generated build files
 *~
@@ -106,6 +106,7 @@ stamp-h1
 /tests/caes_test_crypt_cfb
 /tests/caes_test_crypt_ecb
 /tests/caes_test_crypt_xts
+/tests/tmp
 
 # Local library dependencies specific files
 /libcerror
