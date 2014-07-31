@@ -1,7 +1,12 @@
 MSVSCPP_FILES = \
+	caes_test_crypt_cbc/caes_test_crypt_cbc.vcproj \
+	caes_test_crypt_ccm/caes_test_crypt_ccm.vcproj \
+	caes_test_crypt_cfb/caes_test_crypt_cfb.vcproj \
+	caes_test_crypt_ecb/caes_test_crypt_ecb.vcproj \
+	caes_test_crypt_xts/caes_test_crypt_xts.vcproj \
+	libcaes/libcaes.vcproj \
 	libcerror/libcerror.vcproj \
 	libcstring/libcstring.vcproj \
-	libcaes_dll/libcaes_dll.vcproj \
 	libcaes.sln
 
 SCRIPT_FILES = \

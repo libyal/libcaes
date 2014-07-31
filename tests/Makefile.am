@@ -15,7 +15,8 @@ check_SCRIPTS = \
 	test_crypt_ccm.sh \
 	test_crypt_cfb.sh \
 	test_crypt_ecb.sh \
-	test_crypt_xts.sh
+	test_crypt_xts.sh \
+	test_runner.sh
 
 EXTRA_DIST = \
 	$(check_SCRIPTS)

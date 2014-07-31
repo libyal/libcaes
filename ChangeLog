@@ -1,4 +1,5 @@
 TODO
+* integrate test runner into tests
 * CCM add separate function for authentication data support
 * Look into slow processing when using wincrypt
 * CCM add encryption support
@@ -11,13 +12,15 @@ TODO
   - XTS (add more test vectors?)
   - make sure to test non-16 byte aligned data for the different implementations
 * add restriction that context should be used in the mode the keys were set ?
-* msvscpp
-  - add project files for test programs
 
 Windows:
 - WinXP no AES support ?
 - WINAPI initialize provider only once - where to stick the init functions ?
 - wincrypt and EVP - make sure to pass block sized blocks ?
+
+20140731
+* Added HAVE_DLLMAIN support
+* updated msvscpp files
 
 20140112
 * 2014 update

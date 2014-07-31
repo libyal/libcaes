@@ -2,9 +2,10 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="libcaes_dll"
-	ProjectGUID="{B5225323-AC67-411D-8FBA-199E9467FAB5}"
-	RootNamespace="libcaes"
+	Name="caes_test_crypt_ecb"
+	ProjectGUID="{D28A540A-33D3-4BB3-9581-65CA3EF06F7A}"
+	RootNamespace="caes_test_crypt_ecb"
+	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
@@ -19,8 +20,9 @@
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="2"
+			ConfigurationType="1"
 			CharacterSet="1"
+			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -40,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\..\include;..\..\common;..\..\libcstring;..\..\libcerror"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;HAVE_LOCAL_LIBCSTRING;HAVE_LOCAL_LIBCERROR;LIBCAES_DLL_EXPORT"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;HAVE_LOCAL_LIBCSTRING;HAVE_LOCAL_LIBCERROR;LIBCAES_DLL_IMPORT"
 				RuntimeLibrary="2"
 				WarningLevel="4"
 				CompileAs="1"
@@ -56,12 +58,14 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="advapi32.lib"
-				OutputFile="$(OutDir)\libcaes.dll"
+				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(OutDir)&quot;"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)\libcaes.lib"
+				SubSystem="1"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				RandomizedBaseAddress="2"
+				DataExecutionPrevention="2"
+				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -89,7 +93,7 @@
 			Name="VSDebug|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="2"
+			ConfigurationType="1"
 			CharacterSet="1"
 			>
 			<Tool
@@ -111,7 +115,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\include;..\..\common;..\..\libcstring;..\..\libcerror"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;HAVE_LOCAL_LIBCSTRING;HAVE_LOCAL_LIBCERROR;LIBCAES_DLL_EXPORT"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;HAVE_LOCAL_LIBCSTRING;HAVE_LOCAL_LIBCERROR;LIBCAES_DLL_IMPORT"
 				BasicRuntimeChecks="3"
 				SmallerTypeCheck="true"
 				RuntimeLibrary="3"
@@ -130,13 +134,15 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="advapi32.lib"
-				OutputFile="$(OutDir)\libcaes.dll"
+				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(OutDir)&quot;"
 				GenerateDebugInformation="true"
+				SubSystem="1"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
 				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)\libcaes.lib"
+				DataExecutionPrevention="1"
+				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -170,31 +176,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\libcaes\libcaes.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libcaes\libcaes_context.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libcaes\libcaes_crypt.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libcaes\libcaes_error.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libcaes\libcaes_key.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libcaes\libcaes_support.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libcaes\libcaes_tweaked_context.c"
+				RelativePath="..\..\tests\caes_test_crypt_ecb.c"
 				>
 			</File>
 		</Filter>
@@ -204,51 +186,19 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\libcaes\libcaes_context.h"
+				RelativePath="..\..\tests\caes_test_libcaes.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libcaes\libcaes_crypt.h"
+				RelativePath="..\..\tests\caes_test_libcerror.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libcaes\libcaes_definitions.h"
+				RelativePath="..\..\tests\caes_test_libcstring.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libcaes\libcaes_error.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libcaes\libcaes_extern.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libcaes\libcaes_key.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libcaes\libcaes_libcerror.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libcaes\libcaes_libcstring.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libcaes\libcaes_support.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libcaes\libcaes_tweaked_context.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libcaes\libcaes_types.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libcaes\libcaes_unused.h"
+				RelativePath="..\..\tests\caes_test_unused.h"
 				>
 			</File>
 		</Filter>
@@ -257,10 +207,6 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
-			<File
-				RelativePath="..\..\libcaes\libcaes.rc"
-				>
-			</File>
 		</Filter>
 	</Files>
 	<Globals>

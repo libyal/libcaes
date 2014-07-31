@@ -2834,16 +2834,13 @@ int main( int argc, char * const argv[] CAES_TEST_ATTRIBUTE_UNUSED )
 	};
 
 	/* Values from NIST XTSTest "format tweak value input - 128 hex str/XTSGenAES256.rsp" */
-	uint8_t keys_256bit[ 500 ][ 32 ] = {
-	};
+	uint8_t keys_256bit[ 500 ][ 32 ];
 
 	/* Values from NIST XTSTest "format tweak value input - 128 hex str/XTSGenAES256.rsp" */
-	uint8_t cipher_texts1_256bit[ 100 ][ 16 ] = {
-	};
+	uint8_t cipher_texts1_256bit[ 100 ][ 16 ];
 
 	/* Values from NIST XTSTest "format tweak value input - 128 hex str/XTSGenAES256.rsp" */
-	uint8_t plain_texts1_256bit[ 100 ][ 16 ] = {
-	};
+	uint8_t plain_texts1_256bit[ 100 ][ 16 ];
 
 	int result     = 0;
 	int test_index = 0;

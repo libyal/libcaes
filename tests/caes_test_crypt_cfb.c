@@ -168,36 +168,28 @@ int main( int argc, char * const argv[] CAES_TEST_ATTRIBUTE_UNUSED )
 #endif
 {
 	/* Values from NIST KAT-AES CFBVarKey128.rsp, CFBVarKey192.rsp and CFBVarKey256.rsp */
-	uint8_t keys[ 256 ][ 32 ] = {
-	};
+	uint8_t keys[ 256 ][ 32 ];
 
 	/* Values from NIST KAT-AES CFBVarTxt128.rsp */
-	uint8_t cipher_texts1_128bit[ 128 ][ 16 ] = {
-	};
+	uint8_t cipher_texts1_128bit[ 128 ][ 16 ];
 
 	/* Values from NIST KAT-AES CFBVarKey128.rsp */
-	uint8_t cipher_texts2_128bit[ 128 ][ 16 ] = {
-	};
+	uint8_t cipher_texts2_128bit[ 128 ][ 16 ];
 
 	/* Values from NIST KAT-AES CFBVarTxt192.rsp */
-	uint8_t cipher_texts1_192bit[ 128 ][ 16 ] = {
-	};
+	uint8_t cipher_texts1_192bit[ 128 ][ 16 ];
 
 	/* Values from NIST KAT-AES CFBVarKey192.rsp */
-	uint8_t cipher_texts2_192bit[ 192 ][ 16 ] = {
-	};
+	uint8_t cipher_texts2_192bit[ 192 ][ 16 ];
 
 	/* Values from NIST KAT-AES CFBVarTxt256.rsp */
-	uint8_t cipher_texts1_256bit[ 128 ][ 16 ] = {
-	};
+	uint8_t cipher_texts1_256bit[ 128 ][ 16 ];
 
 	/* Values from NIST KAT-AES CFBVarKey256.rsp */
-	uint8_t cipher_texts2_256bit[ 256 ][ 16 ] = {
-	};
+	uint8_t cipher_texts2_256bit[ 256 ][ 16 ];
 
 	/* Values from NIST KAT-AES CFBVarTxt128.rsp, CFBVarTxt192.rsp and CFBVarTxt256.rsp */
-	uint8_t plain_texts1[ 128 ][ 16 ] = {
-	};
+	uint8_t plain_texts1[ 128 ][ 16 ];
 
 	uint8_t key[ 32 ] = {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,

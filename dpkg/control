@@ -10,8 +10,16 @@ Package: libcaes
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Suggests: libcaes-dbg
 Description: Library to support cross-platform AES encryption
  libcaes is a library to support cross-platform AES encryption.
+
+Package: libcaes-dbg
+Architecture: any
+Section: debug
+Depends: libcaes (= ${Source-Version}), ${misc:Depends}
+Description: Debugging symbols for libcaes
+ Debugging symbols for libcaes.
 
 Package: libcaes-dev
 Section: libdevel
