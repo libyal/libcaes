@@ -18,6 +18,9 @@ Windows:
 - WINAPI initialize provider only once - where to stick the init functions ?
 - wincrypt and EVP - make sure to pass block sized blocks ?
 
+20140920
+* changes for project site move
+
 20140731
 * Added HAVE_DLLMAIN support
 * updated msvscpp files

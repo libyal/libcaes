@@ -1,4 +1,6 @@
-See:
-* http://code.google.com/p/libcaes/wiki/Building
-* README.macosx
+libcaes is a library to support cross-platform AES encryption.
+
+For more information see:
+* Project documentation: https://github.com/libyal/libcaes/wiki/Home
+* How to build from source: https://github.com/libyal/libcaes/wiki/Building
 
