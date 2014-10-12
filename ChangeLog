@@ -14,9 +14,12 @@ TODO
 * add restriction that context should be used in the mode the keys were set ?
 
 Windows:
-- WinXP no AES support ?
-- WINAPI initialize provider only once - where to stick the init functions ?
-- wincrypt and EVP - make sure to pass block sized blocks ?
+* WinXP no AES support ?
+* WINAPI initialize provider only once - where to stick the init functions ?
+* wincrypt and EVP - make sure to pass block sized blocks ?
+
+20141012
+* worked on utility scripts
 
 20140920
 * changes for project site move
