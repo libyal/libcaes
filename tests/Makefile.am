@@ -2,7 +2,8 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
 	@LIBCSTRING_CPPFLAGS@ \
-	@LIBCERROR_CPPFLAGS@
+	@LIBCERROR_CPPFLAGS@ \
+	@LIBCAES_DLL_IMPORT@
 
 TESTS = \
 	test_crypt_ecb.sh \

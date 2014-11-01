@@ -86,6 +86,11 @@ AS_IF(
   AC_SUBST(
    [HAVE_DLLMAIN],
    [1])
+
+  dnl Used in tests
+  AC_SUBST(
+   [LIBCAES_DLL_IMPORT],
+   ["-DLIBCAES_DLL_IMPORT"])
   ])
  ])
 
