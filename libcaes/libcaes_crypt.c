@@ -1039,6 +1039,8 @@ int libcaes_crypt_cbc(
 	DWORD safe_output_data_size                  = 0;
 
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
+	uint8_t safe_initialization_vector[ 16 ];
+
 	int safe_mode                                = 0;
 
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
@@ -1369,13 +1371,44 @@ int libcaes_crypt_cbc(
 	{
 		safe_mode = AES_DECRYPT;
 	}
+	/* AES_cbc_encrypt overwrites the data in the initialization vector
+	 */
+	if( memory_copy(
+	     safe_initialization_vector,
+	     initialization_vector,
+	     16 ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
+		 "%s: unable to copy initialization vector.",
+		 function );
+
+		return( -1 );
+	}
 	AES_cbc_encrypt(
 	 (unsigned char *) input_data,
 	 (unsigned char *) output_data,
 	 input_data_size,
 	 &( internal_context->key ),
-	 (unsigned char *) initialization_vector,
+	 (unsigned char *) safe_initialization_vector,
 	 safe_mode );
+
+	if( memory_set(
+	     safe_initialization_vector,
+	     0,
+	     16 ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+		 "%s: unable to clear initialization vector.",
+		 function );
+
+		return( -1 );
+	}
 
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
 	if( input_data_size > (size_t) INT_MAX )

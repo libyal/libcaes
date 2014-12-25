@@ -1,4 +1,5 @@
 TODO
+* configure add option to turn off evp support for testing
 * integrate test runner into tests
 * CCM add separate function for authentication data support
 * Look into slow processing when using wincrypt
@@ -17,6 +18,9 @@ Windows:
 * WinXP no AES support ?
 * WINAPI initialize provider only once - where to stick the init functions ?
 * wincrypt and EVP - make sure to pass block sized blocks ?
+
+20141225
+* fix for AES_cbc_encrypt side behavior
 
 20141018
 * changes for deployment
