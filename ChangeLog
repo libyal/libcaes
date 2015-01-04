@@ -22,6 +22,9 @@ Windows:
 20141225
 * fix for AES_cbc_encrypt side behavior
 
+20150104
+* 2015 update
+
 20141018
 * changes for deployment
 

@@ -1,13 +1,12 @@
 Source: libcaes
-Section: unknown
+Section: libs
 Priority: extra
 Maintainer: Joachim Metz <joachim.metz@gmail.com>
 Build-Depends: debhelper (>= 7), autotools-dev, libssl-dev
-Standards-Version: 3.8.3
+Standards-Version: 3.9.5
 Homepage: https://github.com/libyal/libcaes/
 
 Package: libcaes
-Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Suggests: libcaes-dbg
@@ -17,14 +16,14 @@ Description: Library to support cross-platform AES encryption
 Package: libcaes-dbg
 Architecture: any
 Section: debug
-Depends: libcaes (= ${Source-Version}), ${misc:Depends}
+Depends: libcaes (= ${binary:Version}), ${misc:Depends}
 Description: Debugging symbols for libcaes
  Debugging symbols for libcaes.
 
 Package: libcaes-dev
 Section: libdevel
 Architecture: any
-Depends: libcaes (= ${Source-Version})
+Depends: libcaes (= ${binary:Version}), ${misc:Depends}
 Description: Header files and libraries for developing applications for libcaes
  Header files and libraries for developing applications for libcaes.
 
