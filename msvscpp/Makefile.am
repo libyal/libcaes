@@ -7,6 +7,7 @@ MSVSCPP_FILES = \
 	libcaes/libcaes.vcproj \
 	libcerror/libcerror.vcproj \
 	libcstring/libcstring.vcproj \
+	pycaes/pycaes.vcproj \
 	libcaes.sln
 
 SCRIPT_FILES = \

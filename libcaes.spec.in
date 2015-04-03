@@ -21,11 +21,20 @@ Requires: libcaes = %{version}-%{release}
 %description devel
 Header files and libraries for developing applications for libcaes.
 
+%package python
+Summary: Python bindings for libcaes
+Group: System Environment/Libraries
+Requires: libcaes = %{version}-%{release} python
+BuildRequires: python-devel
+
+%description python
+Python bindings for libcaes
+
 %prep
 %setup -q
 
 %build
-%configure --prefix=/usr --libdir=%{_libdir} --mandir=%{_mandir}
+%configure --prefix=/usr --libdir=%{_libdir} --mandir=%{_mandir} --enable-python
 make %{?_smp_mflags}
 
 %install
@@ -53,6 +62,13 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_libdir}/pkgconfig/libcaes.pc
 %{_includedir}/*
 %{_mandir}/man3/*
+
+%files python
+%defattr(644,root,root,755)
+%doc AUTHORS COPYING NEWS README
+%{_libdir}/python*/site-packages/*.a
+%{_libdir}/python*/site-packages/*.la
+%{_libdir}/python*/site-packages/*.so
 
 %changelog
 * @SPEC_DATE@ Joachim Metz <joachim.metz@gmail.com> @VERSION@-1

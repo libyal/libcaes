@@ -5,13 +5,20 @@ AM_CPPFLAGS = \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCAES_DLL_IMPORT@
 
+if HAVE_PYTHON
+TESTS_PYCAES  = \
+	test_pycaes_crypt_cbc.sh
+endif
+
 TESTS = \
 	test_crypt_ecb.sh \
 	test_crypt_cbc.sh \
 	test_crypt_ccm.sh \
-	test_crypt_xts.sh
+	test_crypt_xts.sh \
+	$(TESTS_PYCAES)
 
 check_SCRIPTS = \
+	pycaes_test_crypt_cbc.py \
 	test_crypt_cbc.sh \
 	test_crypt_ccm.sh \
 	test_crypt_cfb.sh \
