@@ -1969,6 +1969,7 @@ on_error:
 }
 
 #ifdef TODO
+
 /* De- or encrypts a block of data using AES-CFB (Cipher Feedback Mode)
  * Returns 1 if successful or -1 on error
  */
@@ -2151,7 +2152,8 @@ int libcaes_crypt_cfb(
 	}
 	return( 1 );
 }
-#endif /* defined( TODO ) */
+
+#endif /* TODO */
 
 /* De- or encrypts a block of data using AES-ECB (Electronic CodeBook)
  * The size must be a multitude of the AES block size (16 byte)

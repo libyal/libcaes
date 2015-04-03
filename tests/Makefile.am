@@ -7,7 +7,9 @@ AM_CPPFLAGS = \
 
 if HAVE_PYTHON
 TESTS_PYCAES  = \
-	test_pycaes_crypt_cbc.sh
+	test_pycaes_crypt_cbc.sh \
+	test_pycaes_crypt_ccm.sh \
+	test_pycaes_crypt_ecb.sh
 endif
 
 TESTS = \
@@ -19,6 +21,8 @@ TESTS = \
 
 check_SCRIPTS = \
 	pycaes_test_crypt_cbc.py \
+	pycaes_test_crypt_ccm.py \
+	pycaes_test_crypt_ecb.py \
 	test_crypt_cbc.sh \
 	test_crypt_ccm.sh \
 	test_crypt_cfb.sh \

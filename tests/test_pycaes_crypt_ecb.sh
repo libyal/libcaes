@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Python-bindings AES-CBC de/encryption testing program
+# Python-bindings AES-ECB
 #
 # Copyright (C) 2011-2015, Joachim Metz <joachim.metz@gmail.com>
 #
@@ -33,7 +33,7 @@ then
 	exit ${EXIT_FAILURE};
 fi
 
-SCRIPT="pycaes_test_crypt_cbc.py";
+SCRIPT="pycaes_test_crypt_ecb.py";
 
 if ! test -f ${SCRIPT};
 then

@@ -49,9 +49,39 @@ PyMethodDef pycaes_module_methods[] = {
 	{ "crypt_cbc",
 	  (PyCFunction) pycaes_crypt_cbc,
 	  METH_VARARGS | METH_KEYWORDS,
-	  "crypt_cbc(mode, initialization_vector, data) -> String\n"
+	  "crypt_cbc(context, mode, initialization_vector, data) -> String\n"
 	  "\n"
 	  "De- or encrypts a block of data using AES-CBC (Cipher Block Chaining)." },
+
+	{ "crypt_ccm",
+	  (PyCFunction) pycaes_crypt_ccm,
+	  METH_VARARGS | METH_KEYWORDS,
+	  "crypt_ccm(context, mode, nonce, data) -> String\n"
+	  "\n"
+	  "De- or encrypts a block of data using AES-CCM (Counter with CBC-MAC)." },
+
+#ifdef TODO
+	{ "crypt_cfb",
+	  (PyCFunction) pycaes_crypt_cfb,
+	  METH_VARARGS | METH_KEYWORDS,
+	  "crypt_cfb(context, mode, initialization_vector, data) -> String\n"
+	  "\n"
+	  "De- or encrypts a block of data using AES-CFB (Cipher Feedback Mode)." },
+#endif
+
+	{ "crypt_ecb",
+	  (PyCFunction) pycaes_crypt_ecb,
+	  METH_VARARGS | METH_KEYWORDS,
+	  "crypt_ecb(context, mode, data) -> String\n"
+	  "\n"
+	  "De- or encrypts a block of data using AES-ECB (Electronic CodeBook)." },
+
+	{ "crypt_xts",
+	  (PyCFunction) pycaes_crypt_xts,
+	  METH_VARARGS | METH_KEYWORDS,
+	  "crypt_xts(context, mode, tweak_value, data) -> String\n"
+	  "\n"
+	  "De- or encrypts a block of data using AES-XTS (XEX-based tweaked-codebook mode with ciphertext stealing)." },
 
 	/* Sentinel */
 	{ NULL, NULL, 0, NULL }
