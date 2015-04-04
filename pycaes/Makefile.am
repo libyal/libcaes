@@ -17,6 +17,7 @@ pycaes_la_SOURCES = \
 	pycaes_libcerror.h \
 	pycaes_libcstring.h \
 	pycaes_python.h \
+	pycaes_tweaked_context.c pycaes_tweaked_context.h \
 	pycaes_unused.h
 
 pycaes_la_LIBADD = \

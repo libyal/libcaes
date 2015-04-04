@@ -9,7 +9,8 @@ if HAVE_PYTHON
 TESTS_PYCAES  = \
 	test_pycaes_crypt_cbc.sh \
 	test_pycaes_crypt_ccm.sh \
-	test_pycaes_crypt_ecb.sh
+	test_pycaes_crypt_ecb.sh \
+	test_pycaes_crypt_xts.sh
 endif
 
 TESTS = \
@@ -23,11 +24,17 @@ check_SCRIPTS = \
 	pycaes_test_crypt_cbc.py \
 	pycaes_test_crypt_ccm.py \
 	pycaes_test_crypt_ecb.py \
+	pycaes_test_crypt_xts.py \
 	test_crypt_cbc.sh \
 	test_crypt_ccm.sh \
 	test_crypt_cfb.sh \
 	test_crypt_ecb.sh \
 	test_crypt_xts.sh \
+	test_pycaes_crypt_cbc.sh \
+	test_pycaes_crypt_ccm.sh \
+	test_pycaes_crypt_cfb.sh \
+	test_pycaes_crypt_ecb.sh \
+	test_pycaes_crypt_xts.sh \
 	test_runner.sh
 
 EXTRA_DIST = \

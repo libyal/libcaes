@@ -31,6 +31,7 @@
 #include "pycaes_error.h"
 #include "pycaes_libcaes.h"
 #include "pycaes_python.h"
+#include "pycaes_tweaked_context.h"
 #include "pycaes_unused.h"
 
 /* De- or encrypts a block of data using AES-CBC (Cipher Block Chaining)
@@ -43,7 +44,7 @@ PyObject *pycaes_crypt_cbc(
            PyObject *keywords )
 {
 	libcerror_error_t *error                      = NULL;
-	pycaes_context_t *pycaes_context              = NULL;
+	pycaes_tweaked_context_t *pycaes_context      = NULL;
 	PyObject *context_object                      = NULL;
 	PyObject *initialization_vector_string_object = NULL;
 	PyObject *input_data_string_object            = NULL;
@@ -658,7 +659,7 @@ PyObject *pycaes_crypt_xts(
 	}
 	result = PyObject_IsInstance(
 	          context_object,
-	          (PyObject *) &pycaes_context_type_object );
+	          (PyObject *) &pycaes_tweaked_context_type_object );
 
 	if( result == -1 )
 	{
@@ -673,7 +674,7 @@ PyObject *pycaes_crypt_xts(
 
 		return( NULL );
 	}
-	pycaes_context = (pycaes_context_t *) context_object;
+	pycaes_context = (pycaes_tweaked_context_t *) context_object;
 
 #if PY_MAJOR_VERSION >= 3
 	tweak_value_data = PyBytes_AsString(

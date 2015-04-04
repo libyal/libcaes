@@ -189,6 +189,10 @@
 				RelativePath="..\..\pycaes\pycaes_error.c"
 				>
 			</File>
+			<File
+				RelativePath="..\..\pycaes\pycaes_tweaked_context.c"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -229,6 +233,10 @@
 			</File>
 			<File
 				RelativePath="..\..\pycaes\pycaes_python.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pycaes\pycaes_tweaked_context.h"
 				>
 			</File>
 			<File

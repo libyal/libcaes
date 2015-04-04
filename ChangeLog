@@ -1,23 +1,30 @@
 TODO
-* configure add option to turn off evp support for testing
-* integrate test runner into tests
-* CCM add separate function for authentication data support
 * Look into slow processing when using wincrypt
-* CCM add encryption support
+* CCM add separate function for authentication data support
 * complete CFB suport
 * add OFB suport ?
+* add restriction that context should be used in the mode the keys were set ?
+  does not work for CCM
+
+Tests:
+* integrate test runner into tests
+* add pycaes ECB and XTS encryption tests
 * add tests
-  - CCM
   - CFB
   - OFB ?
-  - XTS (add more test vectors?)
+  - XTS (add more test vectors?) 256-bit
   - make sure to test non-16 byte aligned data for the different implementations
-* add restriction that context should be used in the mode the keys were set ?
 
 Windows:
 * WinXP no AES support ?
 * WINAPI initialize provider only once - where to stick the init functions ?
 * wincrypt and EVP - make sure to pass block sized blocks ?
+
+20150404
+* worked on Python bindings
+
+20150403
+* worked on Python bindings
 
 20141225
 * fix for AES_cbc_encrypt side behavior

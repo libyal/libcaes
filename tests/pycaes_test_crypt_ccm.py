@@ -27,7 +27,9 @@ import pycaes
 
 def pycaes_test_crypt_ccm(mode, key, nonce, input_data, expected_output_data):
   caes_context = pycaes.context()
-  caes_context.set_key(mode, key)
+  # The key must be set in encryption mode (LIBCAES_CRYPT_MODE_ENCRYPT)
+  # for both de- and encryption.
+  caes_context.set_key(pycaes.crypt_modes.ENCRYPT, key)
 
   output_data = pycaes.crypt_ccm(caes_context, mode, nonce, input_data)
 

@@ -34,6 +34,7 @@
 #include "pycaes_libcerror.h"
 #include "pycaes_libcstring.h"
 #include "pycaes_python.h"
+#include "pycaes_tweaked_context.h"
 #include "pycaes_unused.h"
 
 /* The pycaes module methods
@@ -79,7 +80,7 @@ PyMethodDef pycaes_module_methods[] = {
 	{ "crypt_xts",
 	  (PyCFunction) pycaes_crypt_xts,
 	  METH_VARARGS | METH_KEYWORDS,
-	  "crypt_xts(context, mode, tweak_value, data) -> String\n"
+	  "crypt_xts(tweaked_context, mode, tweak_value, data) -> String\n"
 	  "\n"
 	  "De- or encrypts a block of data using AES-XTS (XEX-based tweaked-codebook mode with ciphertext stealing)." },
 
@@ -157,10 +158,11 @@ PyMODINIT_FUNC initpycaes(
                 void )
 #endif
 {
-	PyObject *module                      = NULL;
-	PyTypeObject *context_type_object     = NULL;
-	PyTypeObject *crypt_modes_type_object = NULL;
-	PyGILState_STATE gil_state            = 0;
+	PyObject *module                          = NULL;
+	PyTypeObject *context_type_object         = NULL;
+	PyTypeObject *crypt_modes_type_object     = NULL;
+	PyTypeObject *tweaked_context_type_object = NULL;
+	PyGILState_STATE gil_state                = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	libcaes_notify_set_stream(
@@ -213,6 +215,25 @@ PyMODINIT_FUNC initpycaes(
 	 module,
 	 "context",
 	 (PyObject *) context_type_object );
+
+	/* Setup the tweaked context type object
+	 */
+	pycaes_tweaked_context_type_object.tp_new = PyType_GenericNew;
+
+	if( PyType_Ready(
+	     &pycaes_tweaked_context_type_object ) < 0 )
+	{
+		goto on_error;
+	}
+	Py_IncRef(
+	 (PyObject *) &pycaes_tweaked_context_type_object );
+
+	tweaked_context_type_object = &pycaes_tweaked_context_type_object;
+
+	PyModule_AddObject(
+	 module,
+	 "tweaked_context",
+	 (PyObject *) tweaked_context_type_object );
 
 	/* Setup the crypt modes type object
 	 */
