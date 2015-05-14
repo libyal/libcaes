@@ -47,7 +47,6 @@ for directory_name in DIRECTORY_NAMES:
 LIBRARY_NAMES = [
 	"libcstring",
 	"libcerror",
-	"libcdata",
 	"%s" % (LIBRARY_NAME),
 ]
 
