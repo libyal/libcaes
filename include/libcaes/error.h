@@ -39,7 +39,7 @@ enum LIBCAES_ERROR_DOMAINS
 	LIBCAES_ERROR_DOMAIN_INPUT			= (int) 'i',
 	LIBCAES_ERROR_DOMAIN_MEMORY			= (int) 'm',
 	LIBCAES_ERROR_DOMAIN_OUTPUT			= (int) 'o',
-	LIBCAES_ERROR_DOMAIN_RUNTIME			= (int) 'r',
+	LIBCAES_ERROR_DOMAIN_RUNTIME			= (int) 'r'
 };
 
 /* The argument error codes

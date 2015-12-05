@@ -28,7 +28,7 @@
 #include "pycaes_libcerror.h"
 #include "pycaes_python.h"
 
-#define PYCAES_ERROR_STRING_SIZE		768
+#define PYCAES_ERROR_STRING_SIZE		2048
 
 #if defined( __cplusplus )
 extern "C" {

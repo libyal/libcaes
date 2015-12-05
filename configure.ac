@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libcaes],
- [20150514],
+ [20151205],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -150,7 +150,6 @@ AC_CONFIG_FILES([common/types.h])
 AC_CONFIG_FILES([dpkg/changelog])
 AC_CONFIG_FILES([dpkg/copyright])
 AC_CONFIG_FILES([libcaes/libcaes.rc])
-AC_CONFIG_FILES([pycaes/setup.py])
 AC_CONFIG_FILES([libcaes.pc])
 AC_CONFIG_FILES([libcaes.spec])
 dnl Have configure write its configuration

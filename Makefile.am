@@ -31,6 +31,9 @@ GETTEXT_FILES = \
 PKGCONFIG_FILES = \
 	libcaes.pc.in
 
+SETUP_PY_FILES = \
+	setup.py
+
 SPEC_FILES = \
 	libcaes.spec \
 	libcaes.spec.in
@@ -39,6 +42,7 @@ EXTRA_DIST = \
 	$(DPKG_FILES) \
 	$(GETTEXT_FILES) \
 	$(PKGCONFIG_FILES) \
+	$(SETUP_PY_FILES) \
 	$(SPEC_FILES)
 
 MAINTAINERCLEANFILES = \

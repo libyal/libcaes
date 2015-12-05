@@ -20,6 +20,9 @@ Windows:
 * WINAPI initialize provider only once - where to stick the init functions ?
 * wincrypt and EVP - make sure to pass block sized blocks ?
 
+20151205
+* worked on Python bindings
+
 20150514
 * worked on Python bindings
 
