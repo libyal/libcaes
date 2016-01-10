@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libcaes],
- [20160107],
+ [20160110],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -64,7 +64,10 @@ dnl Check for library function support
 AX_LIBCAES_CHECK_LOCAL
 
 dnl Check if libcaes python bindings (pycaes) should be build
+AX_PYTHON_CHECK_PYPREFIX
 AX_PYTHON_CHECK_ENABLE
+AX_PYTHON2_CHECK_ENABLE
+AX_PYTHON3_CHECK_ENABLE
 
 dnl Headers included in various places
 AC_CHECK_HEADERS([stdarg.h varargs.h])
@@ -134,6 +137,8 @@ AC_CONFIG_FILES([libcstring/Makefile])
 AC_CONFIG_FILES([libcerror/Makefile])
 AC_CONFIG_FILES([libcaes/Makefile])
 AC_CONFIG_FILES([pycaes/Makefile])
+AC_CONFIG_FILES([pycaes2/Makefile])
+AC_CONFIG_FILES([pycaes3/Makefile])
 AC_CONFIG_FILES([po/Makefile.in])
 AC_CONFIG_FILES([po/Makevars])
 AC_CONFIG_FILES([manuals/Makefile])
@@ -160,12 +165,14 @@ AC_OUTPUT
 dnl Print a summary
 AC_MSG_NOTICE([
 Building:
-   libcstring support:          $ac_cv_libcstring
-   libcerror support:           $ac_cv_libcerror
-   AES support:                 $ac_cv_libcaes_aes
+   libcstring support:                $ac_cv_libcstring
+   libcerror support:                 $ac_cv_libcerror
+   AES support:                       $ac_cv_libcaes_aes
 
 Features:
-   Wide character type support: $ac_cv_enable_wide_character_type
-   Python (pycaes) support:     $ac_cv_enable_python
+   Wide character type support:       $ac_cv_enable_wide_character_type
+   Python (pycaes) support:           $ac_cv_enable_python
+   Python version 2 (pycaes) support: $ac_cv_enable_python2
+   Python version 3 (pycaes) support: $ac_cv_enable_python3
 ]);
 

@@ -7,6 +7,8 @@ SUBDIRS = \
 	libcerror \
 	libcaes \
 	pycaes \
+	pycaes2 \
+	pycaes3 \
 	po \
 	manuals \
 	tests \
@@ -20,8 +22,10 @@ DPKG_FILES = \
 	dpkg/copyright \
 	dpkg/copyright.in \
 	dpkg/rules \
-	dpkg/libcaes-dev.docs \
 	dpkg/libcaes.docs \
+	dpkg/libcaes-dev.docs \
+	dpkg/libcaes-python.docs \
+	dpkg/libcaes-python3.docs \
 	dpkg/source/format
 
 GETTEXT_FILES = \
