@@ -6,7 +6,7 @@ AM_CPPFLAGS = \
 	@LIBCAES_DLL_IMPORT@
 
 if HAVE_PYTHON
-TESTS_PYCAES  = \
+TESTS_PYCAES = \
 	test_pycaes_crypt_cbc.sh \
 	test_pycaes_crypt_ccm.sh \
 	test_pycaes_crypt_ecb.sh \
