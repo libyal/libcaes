@@ -41,9 +41,9 @@ typedef struct libcaes_tweaked_context {}	libcaes_tweaked_context_t;
 typedef intptr_t libcaes_context_t;
 typedef intptr_t libcaes_tweaked_context_t;
 
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) && !defined( WINAPI ) */
 
-#endif
+#endif /* defined( HAVE_LOCAL_LIBCAES ) */
 
-#endif
+#endif /* !defined( _LIBCAES_INTERNAL_TYPES_H ) */
 
