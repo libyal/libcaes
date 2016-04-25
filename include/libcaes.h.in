@@ -160,21 +160,6 @@ int libcaes_tweaked_context_set_keys(
  * De/Encryption functions
  * ------------------------------------------------------------------------- */
 
-/* Sets the key
- *
- * This function is deprecated use libcaes_context_set_key instead
- *
- * Returns 1 if successful or -1 on error
- */
-LIBCAES_DEPRECATED \
-LIBCAES_EXTERN \
-int libcaes_crypt_set_key(
-     libcaes_context_t *context,
-     int mode,
-     const uint8_t *key,
-     size_t key_bit_size,
-     libcaes_error_t **error );
-
 /* De- or encrypts a block of data using AES-CBC (Cipher Block Chaining)
  * The size must be a multitude of the AES block size (16 byte)
  * Returns 1 if successful or -1 on error

@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libcaes],
- [20160217],
+ [20160425],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(

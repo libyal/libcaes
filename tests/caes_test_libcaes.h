@@ -24,14 +24,14 @@
 
 #include <common.h>
 
-/* If Cygwin libtool DLL support is enabled set LIBCAES_DLL_IMPORT
- * before including libcaes.h
+/* If Cygwin libtool DLL support is enabled and do not want to create static
+ * executables set LIBCAES_DLL_IMPORT before including libcaes.h
  */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
+#if defined( _WIN32 ) && defined( DLL_EXPORT ) && !defined( HAVE_STATIC_EXECUTABLES )
 #define LIBCAES_DLL_IMPORT
 #endif
 
 #include <libcaes.h>
 
-#endif
+#endif /* !defined( _CAES_TEST_LIBCAES_H ) */
 

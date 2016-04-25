@@ -7,17 +7,11 @@ AM_CPPFLAGS = \
 
 if HAVE_PYTHON
 TESTS_PYCAES = \
-	test_pycaes_crypt_cbc.sh \
-	test_pycaes_crypt_ccm.sh \
-	test_pycaes_crypt_ecb.sh \
-	test_pycaes_crypt_xts.sh
+	test_python_functions.sh
 endif
 
 TESTS = \
-	test_crypt_ecb.sh \
-	test_crypt_cbc.sh \
-	test_crypt_ccm.sh \
-	test_crypt_xts.sh \
+	test_api_functions.sh \
 	$(TESTS_PYCAES)
 
 check_SCRIPTS = \
@@ -25,16 +19,9 @@ check_SCRIPTS = \
 	pycaes_test_crypt_ccm.py \
 	pycaes_test_crypt_ecb.py \
 	pycaes_test_crypt_xts.py \
-	test_crypt_cbc.sh \
-	test_crypt_ccm.sh \
-	test_crypt_cfb.sh \
-	test_crypt_ecb.sh \
-	test_crypt_xts.sh \
-	test_pycaes_crypt_cbc.sh \
-	test_pycaes_crypt_ccm.sh \
-	test_pycaes_crypt_cfb.sh \
-	test_pycaes_crypt_ecb.sh \
-	test_pycaes_crypt_xts.sh \
+	pycaes_test_get_version.py \
+	test_api_functions.sh \
+	test_python_functions.sh \
 	test_runner.sh
 
 EXTRA_DIST = \
@@ -45,7 +32,8 @@ check_PROGRAMS = \
 	caes_test_crypt_ccm \
 	caes_test_crypt_cfb \
 	caes_test_crypt_ecb \
-	caes_test_crypt_xts
+	caes_test_crypt_xts \
+	caes_test_get_version
 
 caes_test_crypt_cbc_SOURCES = \
 	caes_test_crypt_cbc.c \
@@ -105,6 +93,16 @@ caes_test_crypt_xts_SOURCES = \
 caes_test_crypt_xts_LDADD = \
 	../libcaes/libcaes.la \
 	@LIBCERROR_LIBADD@ \
+	@LIBCSTRING_LIBADD@
+
+caes_test_get_version_SOURCES = \
+	caes_test_get_version.c \
+	caes_test_libcaes.h \
+	caes_test_libcstring.h \
+	caes_test_unused.h
+
+caes_test_get_version_LDADD = \
+	../libcaes/libcaes.la \
 	@LIBCSTRING_LIBADD@
 
 MAINTAINERCLEANFILES = \

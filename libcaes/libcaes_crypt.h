@@ -36,11 +36,14 @@ extern "C" {
 #endif
 
 #if !defined( LIBCAES_HAVE_AES_SUPPORT )
+
 int libcaes_initialize_tables(
      libcerror_error_t **error );
-#endif
+
+#endif /* !defined( LIBCAES_HAVE_AES_SUPPORT ) */
 
 #if !defined( LIBCAES_HAVE_AES_SUPPORT )
+
 int libcaes_crypt_set_decryption_key(
      libcaes_internal_context_t *internal_context,
      const uint8_t *key,
@@ -52,15 +55,8 @@ int libcaes_crypt_set_encryption_key(
      const uint8_t *key,
      size_t key_bit_size,
      libcerror_error_t **error );
-#endif
 
-LIBCAES_EXTERN \
-int libcaes_crypt_set_key(
-     libcaes_context_t *context,
-     int mode,
-     const uint8_t *key,
-     size_t key_bit_size,
-     libcerror_error_t **error );
+#endif /* !defined( LIBCAES_HAVE_AES_SUPPORT ) */
 
 LIBCAES_EXTERN \
 int libcaes_crypt_cbc(
@@ -126,5 +122,5 @@ int libcaes_crypt_xts(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBCAES_CRYPT_H ) */
 

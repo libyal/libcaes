@@ -44,7 +44,7 @@ PyObject *pycaes_crypt_cbc(
            PyObject *keywords )
 {
 	libcerror_error_t *error                      = NULL;
-	pycaes_tweaked_context_t *pycaes_context      = NULL;
+	pycaes_context_t *pycaes_context              = NULL;
 	PyObject *context_object                      = NULL;
 	PyObject *initialization_vector_string_object = NULL;
 	PyObject *input_data_string_object            = NULL;
@@ -627,21 +627,21 @@ PyObject *pycaes_crypt_xts(
            PyObject *arguments,
            PyObject *keywords )
 {
-	libcerror_error_t *error            = NULL;
-	pycaes_context_t *pycaes_context    = NULL;
-	PyObject *context_object            = NULL;
-	PyObject *tweak_value_string_object = NULL;
-	PyObject *input_data_string_object  = NULL;
-	PyObject *output_data_string_object = NULL;
-	static char *function               = "pycaes_crypt_xts";
-	static char *keyword_list[]         = { "context", "mode", "tweak_value", "data", NULL };
-	char *tweak_value_data              = NULL;
-	char *input_data                    = NULL;
-	char *output_data                   = NULL;
-        Py_ssize_t tweak_value_data_size    = 0;
-        Py_ssize_t input_data_size          = 0;
-	int mode                            = 0;
-	int result                          = 0;
+	libcerror_error_t *error                 = NULL;
+	pycaes_tweaked_context_t *pycaes_context = NULL;
+	PyObject *context_object                 = NULL;
+	PyObject *tweak_value_string_object      = NULL;
+	PyObject *input_data_string_object       = NULL;
+	PyObject *output_data_string_object      = NULL;
+	static char *function                    = "pycaes_crypt_xts";
+	static char *keyword_list[]              = { "context", "mode", "tweak_value", "data", NULL };
+	char *tweak_value_data                   = NULL;
+	char *input_data                         = NULL;
+	char *output_data                        = NULL;
+        Py_ssize_t tweak_value_data_size         = 0;
+        Py_ssize_t input_data_size               = 0;
+	int mode                                 = 0;
+	int result                               = 0;
 
 	PYCAES_UNREFERENCED_PARAMETER( self )
 
