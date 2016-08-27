@@ -20,7 +20,6 @@
  */
 
 #include <common.h>
-#include <file_stream.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( WINAPI )
 #include <stdlib.h>
@@ -28,6 +27,7 @@
 
 #include "caes_test_libcaes.h"
 #include "caes_test_libcstring.h"
+#include "caes_test_macros.h"
 #include "caes_test_unused.h"
 
 /* Tests retrieving the library version
@@ -46,11 +46,15 @@ int caes_test_get_version(
 	          LIBCAES_VERSION_STRING,
 	          9 );
 
-	if( result != 0 )
-	{
-		return( 0 );
-	}
+	CAES_TEST_ASSERT_EQUAL(
+	 "result",
+	 result,
+	 0 );
+
 	return( 1 );
+
+on_error:
+	return( 0 );
 }
 
 /* The main program
@@ -68,10 +72,13 @@ int main(
 	CAES_TEST_UNREFERENCED_PARAMETER( argc )
 	CAES_TEST_UNREFERENCED_PARAMETER( argv )
 
-	if( caes_test_get_version() != 1 )
-	{
-		return( EXIT_FAILURE );
-	}
+	CAES_TEST_RUN(
+	 "libcaes_get_version",
+	 caes_test_get_version() )
+
 	return( EXIT_SUCCESS );
+
+on_error:
+	return( EXIT_FAILURE );
 }
 

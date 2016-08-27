@@ -33,6 +33,7 @@ check_PROGRAMS = \
 	caes_test_crypt_cfb \
 	caes_test_crypt_ecb \
 	caes_test_crypt_xts \
+	caes_test_error \
 	caes_test_get_version
 
 caes_test_crypt_cbc_SOURCES = \
@@ -95,10 +96,22 @@ caes_test_crypt_xts_LDADD = \
 	@LIBCERROR_LIBADD@ \
 	@LIBCSTRING_LIBADD@
 
+caes_test_error_SOURCES = \
+	caes_test_error.c \
+	caes_test_libcaes.h \
+	caes_test_libcstring.h \
+	caes_test_macros.h \
+	caes_test_unused.h
+
+caes_test_error_LDADD = \
+	../libcaes/libcaes.la \
+	@LIBCSTRING_LIBADD@
+
 caes_test_get_version_SOURCES = \
 	caes_test_get_version.c \
 	caes_test_libcaes.h \
 	caes_test_libcstring.h \
+	caes_test_macros.h \
 	caes_test_unused.h
 
 caes_test_get_version_LDADD = \

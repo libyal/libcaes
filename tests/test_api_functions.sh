@@ -12,7 +12,7 @@ TEST_PREFIX=`basename ${TEST_PREFIX} | sed 's/^lib\([^-]*\).*$/\1/'`;
 
 TEST_PROFILE="lib${TEST_PREFIX}";
 # TODO: add crypt_cfb
-TEST_FUNCTIONS="get_version crypt_cbc crypt_ccm crypt_ecb crypt_xts";
+TEST_FUNCTIONS="get_version error crypt_cbc crypt_ccm crypt_ecb crypt_xts";
 TEST_FUNCTIONS_WITH_INPUT="";
 OPTION_SETS="";
 

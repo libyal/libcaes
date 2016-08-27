@@ -125,6 +125,7 @@ stamp-h[1-9]
 /tests/caes_test_crypt_cfb
 /tests/caes_test_crypt_ecb
 /tests/caes_test_crypt_xts
+/tests/caes_test_error
 /tests/caes_test_get_version
 /tests/tmp*
 

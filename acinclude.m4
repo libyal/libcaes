@@ -1,17 +1,16 @@
 dnl Functions for libcaes
 dnl
-dnl Version: 20120509
+dnl Version: 20160827
 
 dnl Function to detect if libcaes dependencies are available
 AC_DEFUN([AX_LIBCAES_CHECK_LOCAL],
- [ac_cv_libcaes_aes=no
+ [dnl Check for Windows crypto API support
+ AX_WINCRYPT_CHECK_LIB
 
- dnl Check for Windows crypto API support
  AS_IF(
-  [test "x$ac_cv_enable_winapi" = xyes],
-  [AX_WINCRYPT_CHECK_LIB
-
-  ac_cv_libcaes_aes=libadvapi32])
+  [test "x$ac_cv_wincrypt" != xno],
+  [ac_cv_libcaes_aes=$ac_cv_wincrypt],
+  [ac_cv_libcaes_aes=no])
  
  dnl Check for libcrypto (openssl) support
  AS_IF(
