@@ -46,7 +46,7 @@ int caes_test_get_version(
 	          LIBCAES_VERSION_STRING,
 	          9 );
 
-	CAES_TEST_ASSERT_EQUAL(
+	CAES_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
 	 0 );
