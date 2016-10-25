@@ -26,7 +26,6 @@
 #include "libcaes_definitions.h"
 #include "libcaes_key.h"
 #include "libcaes_libcerror.h"
-#include "libcaes_libcstring.h"
 
 #if defined( WINAPI ) && ( WINVER >= 0x0600 )
 

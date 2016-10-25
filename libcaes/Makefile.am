@@ -9,7 +9,6 @@ lib_LTLIBRARIES = libcaes.la
 libcaes_la_SOURCES = \
 	libcaes.c \
 	libcaes_context.c libcaes_context.h \
-	libcaes_crypt.c libcaes_crypt.h \
 	libcaes_definitions.h \
 	libcaes_extern.h \
 	libcaes_error.c libcaes_error.h \

@@ -180,10 +180,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libcaes\libcaes_crypt.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libcaes\libcaes_error.c"
 				>
 			</File>
@@ -207,10 +203,6 @@
 			>
 			<File
 				RelativePath="..\..\libcaes\libcaes_context.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libcaes\libcaes_crypt.h"
 				>
 			</File>
 			<File

@@ -1,7 +1,7 @@
 TODO
 * Look into slow processing when using wincrypt
 * CCM add separate function for authentication data support
-* complete CFB suport
+* implement libcaes_crypt_cfb; complete CFB suport
 * add OFB suport ?
 * add restriction that context should be used in the mode the keys were set ?
   does not work for CCM
@@ -19,6 +19,10 @@ Windows:
 * WinXP no AES support ?
 * WINAPI initialize provider only once - where to stick the init functions ?
 * wincrypt and EVP - make sure to pass block sized blocks ?
+
+20161025
+* worked on tests
+* code clean up
 
 20160827
 * worked on tests
