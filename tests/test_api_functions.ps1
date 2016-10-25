@@ -10,7 +10,7 @@ $TestPrefix = Split-Path -path ${Pwd}.Path -parent
 $TestPrefix = Split-Path -path ${TestPrefix} -leaf
 $TestPrefix = ${TestPrefix}.Substring(3)
 
-$TestFunctions = "get_version error crypt_cbc crypt_ccm crypt_ecb crypt_xts" -split " "
+$TestFunctions = "error support crypt_cbc crypt_ccm crypt_ecb crypt_xts" -split " "
 
 $TestToolDirectory = "..\vs2010\Release"
 
