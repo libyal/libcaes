@@ -29,7 +29,7 @@ Try
 			{
 				${Line} = ${Line}.Substring(0, ${Line}.Length - 2)
 			}
-			If (-Not ${Line}.EndsWith(".sh"))
+			If (-Not (${Line}.EndsWith(".sh")))
 			{
 				Continue
 			}

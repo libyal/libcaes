@@ -194,6 +194,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\tests\caes_test_libcerror.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\tests\caes_test_libcstring.h"
 				>
 			</File>

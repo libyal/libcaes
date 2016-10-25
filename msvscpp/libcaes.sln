@@ -4,6 +4,7 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "caes_test_context", "caes_test_context\caes_test_context.vcproj", "{607FD0AF-D86C-4A9C-A44F-C768A9A1C3A7}"
 	ProjectSection(ProjectDependencies) = postProject
 		{42F15139-E2EE-45FC-BE59-E800D341D7FB} = {42F15139-E2EE-45FC-BE59-E800D341D7FB}
+		{BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C} = {BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C}
 		{20FFC4C9-F44C-45F6-A827-4819B4DF3C9F} = {20FFC4C9-F44C-45F6-A827-4819B4DF3C9F}
 	EndProjectSection
 EndProject
@@ -57,6 +58,7 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "caes_test_tweaked_context", "caes_test_tweaked_context\caes_test_tweaked_context.vcproj", "{F1D67F8B-982B-4AFE-B36A-0C53B9525F82}"
 	ProjectSection(ProjectDependencies) = postProject
 		{42F15139-E2EE-45FC-BE59-E800D341D7FB} = {42F15139-E2EE-45FC-BE59-E800D341D7FB}
+		{BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C} = {BD3A95FA-A3DE-4B79-A889-A7E5ECA4B69C}
 		{20FFC4C9-F44C-45F6-A827-4819B4DF3C9F} = {20FFC4C9-F44C-45F6-A827-4819B4DF3C9F}
 	EndProjectSection
 EndProject

@@ -42,6 +42,7 @@ check_PROGRAMS = \
 caes_test_context_SOURCES = \
 	caes_test_context.c \
 	caes_test_libcaes.h \
+	caes_test_libcerror.h \
 	caes_test_libcstring.h \
 	caes_test_macros.h \
 	caes_test_memory.c caes_test_memory.h \
@@ -49,6 +50,7 @@ caes_test_context_SOURCES = \
 
 caes_test_context_LDADD = \
 	../libcaes/libcaes.la \
+	@LIBCERROR_LIBADD@ \
 	@LIBCSTRING_LIBADD@
 
 caes_test_crypt_cbc_SOURCES = \
@@ -135,6 +137,7 @@ caes_test_support_LDADD = \
 
 caes_test_tweaked_context_SOURCES = \
 	caes_test_libcaes.h \
+	caes_test_libcerror.h \
 	caes_test_libcstring.h \
 	caes_test_macros.h \
 	caes_test_memory.c caes_test_memory.h \
@@ -143,6 +146,7 @@ caes_test_tweaked_context_SOURCES = \
 
 caes_test_tweaked_context_LDADD = \
 	../libcaes/libcaes.la \
+	@LIBCERROR_LIBADD@ \
 	@LIBCSTRING_LIBADD@
 
 MAINTAINERCLEANFILES = \
