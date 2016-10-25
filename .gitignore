@@ -120,6 +120,7 @@ stamp-h[1-9]
 /libcaes/libcaes.rc
 /libcaes/libcaes_definitions.h
 /pycaes-python[23]/*.[ch]
+/tests/caes_test_context
 /tests/caes_test_crypt_cbc
 /tests/caes_test_crypt_ccm
 /tests/caes_test_crypt_cfb
@@ -127,6 +128,7 @@ stamp-h[1-9]
 /tests/caes_test_crypt_xts
 /tests/caes_test_error
 /tests/caes_test_support
+/tests/caes_test_tweaked_context
 /tests/tmp*
 
 # Local library dependencies specific files

@@ -1,6 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual C++ Express 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "caes_test_context", "caes_test_context\caes_test_context.vcproj", "{607FD0AF-D86C-4A9C-A44F-C768A9A1C3A7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{42F15139-E2EE-45FC-BE59-E800D341D7FB} = {42F15139-E2EE-45FC-BE59-E800D341D7FB}
+		{20FFC4C9-F44C-45F6-A827-4819B4DF3C9F} = {20FFC4C9-F44C-45F6-A827-4819B4DF3C9F}
+	EndProjectSection
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "caes_test_crypt_cbc", "caes_test_crypt_cbc\caes_test_crypt_cbc.vcproj", "{1B484756-9F82-4402-B706-0088874A7C30}"
 	ProjectSection(ProjectDependencies) = postProject
 		{42F15139-E2EE-45FC-BE59-E800D341D7FB} = {42F15139-E2EE-45FC-BE59-E800D341D7FB}
@@ -48,6 +54,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "caes_test_support", "caes_t
 		{20FFC4C9-F44C-45F6-A827-4819B4DF3C9F} = {20FFC4C9-F44C-45F6-A827-4819B4DF3C9F}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "caes_test_tweaked_context", "caes_test_tweaked_context\caes_test_tweaked_context.vcproj", "{F1D67F8B-982B-4AFE-B36A-0C53B9525F82}"
+	ProjectSection(ProjectDependencies) = postProject
+		{42F15139-E2EE-45FC-BE59-E800D341D7FB} = {42F15139-E2EE-45FC-BE59-E800D341D7FB}
+		{20FFC4C9-F44C-45F6-A827-4819B4DF3C9F} = {20FFC4C9-F44C-45F6-A827-4819B4DF3C9F}
+	EndProjectSection
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcaes", "libcaes\libcaes.vcproj", "{42F15139-E2EE-45FC-BE59-E800D341D7FB}"
 	ProjectSection(ProjectDependencies) = postProject
 		{20FFC4C9-F44C-45F6-A827-4819B4DF3C9F} = {20FFC4C9-F44C-45F6-A827-4819B4DF3C9F}
@@ -74,6 +86,10 @@ Global
 		VSDebug|Win32 = VSDebug|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{607FD0AF-D86C-4A9C-A44F-C768A9A1C3A7}.Release|Win32.ActiveCfg = Release|Win32
+		{607FD0AF-D86C-4A9C-A44F-C768A9A1C3A7}.Release|Win32.Build.0 = Release|Win32
+		{607FD0AF-D86C-4A9C-A44F-C768A9A1C3A7}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
+		{607FD0AF-D86C-4A9C-A44F-C768A9A1C3A7}.VSDebug|Win32.Build.0 = VSDebug|Win32
 		{1B484756-9F82-4402-B706-0088874A7C30}.Release|Win32.ActiveCfg = Release|Win32
 		{1B484756-9F82-4402-B706-0088874A7C30}.Release|Win32.Build.0 = Release|Win32
 		{1B484756-9F82-4402-B706-0088874A7C30}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
@@ -102,6 +118,10 @@ Global
 		{AB9A5723-EEAE-439A-B324-58BBC3F58F92}.Release|Win32.Build.0 = Release|Win32
 		{AB9A5723-EEAE-439A-B324-58BBC3F58F92}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
 		{AB9A5723-EEAE-439A-B324-58BBC3F58F92}.VSDebug|Win32.Build.0 = VSDebug|Win32
+		{F1D67F8B-982B-4AFE-B36A-0C53B9525F82}.Release|Win32.ActiveCfg = Release|Win32
+		{F1D67F8B-982B-4AFE-B36A-0C53B9525F82}.Release|Win32.Build.0 = Release|Win32
+		{F1D67F8B-982B-4AFE-B36A-0C53B9525F82}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
+		{F1D67F8B-982B-4AFE-B36A-0C53B9525F82}.VSDebug|Win32.Build.0 = VSDebug|Win32
 		{42F15139-E2EE-45FC-BE59-E800D341D7FB}.Release|Win32.ActiveCfg = Release|Win32
 		{42F15139-E2EE-45FC-BE59-E800D341D7FB}.Release|Win32.Build.0 = Release|Win32
 		{42F15139-E2EE-45FC-BE59-E800D341D7FB}.VSDebug|Win32.ActiveCfg = VSDebug|Win32

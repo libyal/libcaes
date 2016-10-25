@@ -123,23 +123,23 @@ int main(
 
 	CAES_TEST_RUN(
 	 "libcaes_error_free",
-	 caes_test_error_free() )
+	 caes_test_error_free );
 
 	CAES_TEST_RUN(
 	 "libcaes_error_fprint",
-	 caes_test_error_fprint() )
+	 caes_test_error_fprint );
 
 	CAES_TEST_RUN(
 	 "libcaes_error_sprint",
-	 caes_test_error_sprint() )
+	 caes_test_error_sprint );
 
 	CAES_TEST_RUN(
 	 "libcaes_error_backtrace_fprint",
-	 caes_test_error_backtrace_fprint() )
+	 caes_test_error_backtrace_fprint );
 
 	CAES_TEST_RUN(
 	 "libcaes_error_backtrace_sprint",
-	 caes_test_error_backtrace_sprint() )
+	 caes_test_error_backtrace_sprint );
 
 	return( EXIT_SUCCESS );
 

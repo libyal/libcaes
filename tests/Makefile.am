@@ -12,6 +12,7 @@ endif
 
 TESTS = \
 	test_api_functions.sh \
+	test_api_types.sh \
 	$(TESTS_PYCAES)
 
 check_SCRIPTS = \
@@ -28,13 +29,27 @@ EXTRA_DIST = \
 	$(check_SCRIPTS)
 
 check_PROGRAMS = \
+	caes_test_context \
 	caes_test_crypt_cbc \
 	caes_test_crypt_ccm \
 	caes_test_crypt_cfb \
 	caes_test_crypt_ecb \
 	caes_test_crypt_xts \
 	caes_test_error \
-	caes_test_support
+	caes_test_support \
+	caes_test_tweaked_context
+
+caes_test_context_SOURCES = \
+	caes_test_context.c \
+	caes_test_libcaes.h \
+	caes_test_libcstring.h \
+	caes_test_macros.h \
+	caes_test_memory.c caes_test_memory.h \
+	caes_test_unused.h
+
+caes_test_context_LDADD = \
+	../libcaes/libcaes.la \
+	@LIBCSTRING_LIBADD@
 
 caes_test_crypt_cbc_SOURCES = \
 	caes_test_crypt_cbc.c \
@@ -115,6 +130,18 @@ caes_test_support_SOURCES = \
 	caes_test_unused.h
 
 caes_test_support_LDADD = \
+	../libcaes/libcaes.la \
+	@LIBCSTRING_LIBADD@
+
+caes_test_tweaked_context_SOURCES = \
+	caes_test_libcaes.h \
+	caes_test_libcstring.h \
+	caes_test_macros.h \
+	caes_test_memory.c caes_test_memory.h \
+	caes_test_tweaked_context.c \
+	caes_test_unused.h
+
+caes_test_tweaked_context_LDADD = \
 	../libcaes/libcaes.la \
 	@LIBCSTRING_LIBADD@
 

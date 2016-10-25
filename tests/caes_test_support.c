@@ -1,5 +1,5 @@
 /*
- * Library get version test program
+ * Library support functions test program
  *
  * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -30,7 +30,7 @@
 #include "caes_test_macros.h"
 #include "caes_test_unused.h"
 
-/* Tests retrieving the library version
+/* Tests the libcaes_get_version function
  * Returns 1 if successful or 0 if not
  */
 int caes_test_get_version(
@@ -74,7 +74,7 @@ int main(
 
 	CAES_TEST_RUN(
 	 "libcaes_get_version",
-	 caes_test_get_version() )
+	 caes_test_get_version );
 
 	return( EXIT_SUCCESS );
 

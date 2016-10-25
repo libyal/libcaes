@@ -1,4 +1,4 @@
-.Dd April 25, 2016
+.Dd October 25, 2016
 .Dt libcaes 3
 .Os libcaes
 .Sh NAME
@@ -32,6 +32,12 @@ Context functions
 .Fn libcaes_context_free "libcaes_context_t **context, libcaes_error_t **error"
 .Ft int
 .Fn libcaes_context_set_key "libcaes_context_t *context, int mode, const uint8_t *key, size_t key_bit_size, libcaes_error_t **error"
+.Ft int
+.Fn libcaes_crypt_cbc "libcaes_context_t *context, int mode, const uint8_t *initialization_vector, size_t initialization_vector_size, const uint8_t *input_data, size_t input_data_size, uint8_t *output_data, size_t output_data_size, libcaes_error_t **error"
+.Ft int
+.Fn libcaes_crypt_ccm "libcaes_context_t *context, int mode, const uint8_t *nonce, size_t nonce_size, const uint8_t *input_data, size_t input_data_size, uint8_t *output_data, size_t output_data_size, libcaes_error_t **error"
+.Ft int
+.Fn libcaes_crypt_ecb "libcaes_context_t *context, int mode, const uint8_t *input_data, size_t input_data_size, uint8_t *output_data, size_t output_data_size, libcaes_error_t **error"
 .Pp
 Tweaked context functions
 .Ft int
@@ -40,14 +46,6 @@ Tweaked context functions
 .Fn libcaes_tweaked_context_free "libcaes_tweaked_context_t **context, libcaes_error_t **error"
 .Ft int
 .Fn libcaes_tweaked_context_set_keys "libcaes_tweaked_context_t *context, int mode, const uint8_t *key, size_t key_bit_size, const uint8_t *tweak_key, size_t tweak_key_bit_size, libcaes_error_t **error"
-.Pp
-De/Encryption functions
-.Ft int
-.Fn libcaes_crypt_cbc "libcaes_context_t *context, int mode, const uint8_t *initialization_vector, size_t initialization_vector_size, const uint8_t *input_data, size_t input_data_size, uint8_t *output_data, size_t output_data_size, libcaes_error_t **error"
-.Ft int
-.Fn libcaes_crypt_ccm "libcaes_context_t *context, int mode, const uint8_t *nonce, size_t nonce_size, const uint8_t *input_data, size_t input_data_size, uint8_t *output_data, size_t output_data_size, libcaes_error_t **error"
-.Ft int
-.Fn libcaes_crypt_ecb "libcaes_context_t *context, int mode, const uint8_t *input_data, size_t input_data_size, uint8_t *output_data, size_t output_data_size, libcaes_error_t **error"
 .Ft int
 .Fn libcaes_crypt_xts "libcaes_tweaked_context_t *context, int mode, const uint8_t *tweak_value, size_t tweak_value_size, const uint8_t *input_data, size_t input_data_size, uint8_t *output_data, size_t output_data_size, libcaes_error_t **error"
 .Sh DESCRIPTION
