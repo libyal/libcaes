@@ -34,5 +34,5 @@
 #endif
 #endif
 
-#endif
+#endif /* !defined( _LIBCAES_FEATURES_H ) */
 

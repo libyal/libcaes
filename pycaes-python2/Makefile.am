@@ -8,7 +8,6 @@ if HAVE_PYTHON2
 AM_CFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@
 
 am_pycaes_la_rpath = -rpath $(pyexecdir2)
@@ -21,7 +20,6 @@ BUILT_SOURCES = \
 	pycaes_error.c pycaes_error.h \
 	pycaes_libcaes.h \
 	pycaes_libcerror.h \
-	pycaes_libcstring.h \
 	pycaes_python.h \
 	pycaes_tweaked_context.c pycaes_tweaked_context.h \
 	pycaes_unused.h
@@ -31,7 +29,6 @@ pyexec_LTLIBRARIES = pycaes.la
 nodist_pycaes_la_SOURCES = $(BUILT_SOURCES)
 
 pycaes_la_LIBADD = \
-	@LIBCSTRING_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	../libcaes/libcaes.la
 

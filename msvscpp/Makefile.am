@@ -10,7 +10,6 @@ MSVSCPP_FILES = \
 	caes_test_tweaked_context/caes_test_tweaked_context.vcproj \
 	libcaes/libcaes.vcproj \
 	libcerror/libcerror.vcproj \
-	libcstring/libcstring.vcproj \
 	pycaes/pycaes.vcproj \
 	libcaes.sln
 

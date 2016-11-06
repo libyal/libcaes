@@ -1,7 +1,6 @@
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@
 
 lib_LTLIBRARIES = libcaes.la
@@ -14,14 +13,12 @@ libcaes_la_SOURCES = \
 	libcaes_error.c libcaes_error.h \
 	libcaes_key.c libcaes_key.h \
 	libcaes_libcerror.h \
-	libcaes_libcstring.h \
 	libcaes_support.c libcaes_support.h \
 	libcaes_tweaked_context.c libcaes_tweaked_context.h \
 	libcaes_types.h \
 	libcaes_unused.h
 
 libcaes_la_LIBADD = \
-	@LIBCSTRING_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	@LIBCRYPTO_LIBADD@ \
 	@LIBDL_LIBADD@

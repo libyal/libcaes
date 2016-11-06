@@ -20,6 +20,7 @@
  */
 
 #include <common.h>
+#include <narrow_string.h>
 #include <types.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( HAVE_WINAPI )
@@ -32,7 +33,6 @@
 #include "pycaes_crypt_modes.h"
 #include "pycaes_libcaes.h"
 #include "pycaes_libcerror.h"
-#include "pycaes_libcstring.h"
 #include "pycaes_python.h"
 #include "pycaes_tweaked_context.h"
 #include "pycaes_unused.h"
@@ -108,7 +108,7 @@ PyObject *pycaes_get_version(
 
 	Py_END_ALLOW_THREADS
 
-	version_string_length = libcstring_narrow_string_length(
+	version_string_length = narrow_string_length(
 	                         version_string );
 
 	/* Pass the string length to PyUnicode_DecodeUTF8

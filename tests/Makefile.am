@@ -1,7 +1,6 @@
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCAES_DLL_IMPORT@
 
@@ -43,102 +42,85 @@ caes_test_context_SOURCES = \
 	caes_test_context.c \
 	caes_test_libcaes.h \
 	caes_test_libcerror.h \
-	caes_test_libcstring.h \
 	caes_test_macros.h \
 	caes_test_memory.c caes_test_memory.h \
 	caes_test_unused.h
 
 caes_test_context_LDADD = \
 	../libcaes/libcaes.la \
-	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@
+	@LIBCERROR_LIBADD@
 
 caes_test_crypt_cbc_SOURCES = \
 	caes_test_crypt_cbc.c \
 	caes_test_libcaes.h \
 	caes_test_libcerror.h \
-	caes_test_libcstring.h \
 	caes_test_unused.h
 
 caes_test_crypt_cbc_LDADD = \
 	../libcaes/libcaes.la \
-	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@
+	@LIBCERROR_LIBADD@
 
 caes_test_crypt_ccm_SOURCES = \
 	caes_test_crypt_ccm.c \
 	caes_test_libcaes.h \
 	caes_test_libcerror.h \
-	caes_test_libcstring.h \
 	caes_test_unused.h
 
 caes_test_crypt_ccm_LDADD = \
 	../libcaes/libcaes.la \
-	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@
+	@LIBCERROR_LIBADD@
 
 caes_test_crypt_cfb_SOURCES = \
 	caes_test_crypt_cfb.c \
 	caes_test_libcaes.h \
 	caes_test_libcerror.h \
-	caes_test_libcstring.h \
 	caes_test_unused.h
 
 caes_test_crypt_cfb_LDADD = \
 	../libcaes/libcaes.la \
-	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@
+	@LIBCERROR_LIBADD@
 
 caes_test_crypt_ecb_SOURCES = \
 	caes_test_crypt_ecb.c \
 	caes_test_libcaes.h \
 	caes_test_libcerror.h \
-	caes_test_libcstring.h \
 	caes_test_unused.h
 
 caes_test_crypt_ecb_LDADD = \
 	../libcaes/libcaes.la \
-	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@
+	@LIBCERROR_LIBADD@
 
 caes_test_crypt_xts_SOURCES = \
 	caes_test_crypt_xts.c \
 	caes_test_libcaes.h \
 	caes_test_libcerror.h \
-	caes_test_libcstring.h \
 	caes_test_unused.h
 
 caes_test_crypt_xts_LDADD = \
 	../libcaes/libcaes.la \
-	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@
+	@LIBCERROR_LIBADD@
 
 caes_test_error_SOURCES = \
 	caes_test_error.c \
 	caes_test_libcaes.h \
-	caes_test_libcstring.h \
 	caes_test_macros.h \
 	caes_test_unused.h
 
 caes_test_error_LDADD = \
-	../libcaes/libcaes.la \
-	@LIBCSTRING_LIBADD@
+	../libcaes/libcaes.la
 
 caes_test_support_SOURCES = \
 	caes_test_libcaes.h \
-	caes_test_libcstring.h \
 	caes_test_macros.h \
 	caes_test_support.c \
 	caes_test_unused.h
 
 caes_test_support_LDADD = \
-	../libcaes/libcaes.la \
-	@LIBCSTRING_LIBADD@
+	../libcaes/libcaes.la
 
 caes_test_tweaked_context_SOURCES = \
 	caes_test_libcaes.h \
 	caes_test_libcerror.h \
-	caes_test_libcstring.h \
 	caes_test_macros.h \
 	caes_test_memory.c caes_test_memory.h \
 	caes_test_tweaked_context.c \
@@ -146,8 +128,7 @@ caes_test_tweaked_context_SOURCES = \
 
 caes_test_tweaked_context_LDADD = \
 	../libcaes/libcaes.la \
-	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@
+	@LIBCERROR_LIBADD@
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

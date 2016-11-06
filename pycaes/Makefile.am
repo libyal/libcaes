@@ -2,7 +2,6 @@ if HAVE_PYTHON
 AM_CFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@
 
 pyexec_LTLIBRARIES = pycaes.la
@@ -15,13 +14,11 @@ pycaes_la_SOURCES = \
 	pycaes_error.c pycaes_error.h \
 	pycaes_libcaes.h \
 	pycaes_libcerror.h \
-	pycaes_libcstring.h \
 	pycaes_python.h \
 	pycaes_tweaked_context.c pycaes_tweaked_context.h \
 	pycaes_unused.h
 
 pycaes_la_LIBADD = \
-	@LIBCSTRING_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	../libcaes/libcaes.la
 

@@ -38,5 +38,5 @@ enum LIBCAES_CRYPT_MODES
 	LIBCAES_CRYPT_MODE_ENCRYPT		= 1
 };
 
-#endif
+#endif /* !defined( _LIBCAES_DEFINITIONS_H ) */
 
