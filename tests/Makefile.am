@@ -35,6 +35,7 @@ check_PROGRAMS = \
 	caes_test_crypt_ecb \
 	caes_test_crypt_xts \
 	caes_test_error \
+	caes_test_key \
 	caes_test_support \
 	caes_test_tweaked_context
 
@@ -108,6 +109,18 @@ caes_test_error_SOURCES = \
 
 caes_test_error_LDADD = \
 	../libcaes/libcaes.la
+
+caes_test_key_SOURCES = \
+	caes_test_key.c \
+	caes_test_libcaes.h \
+	caes_test_libcerror.h \
+	caes_test_macros.h \
+	caes_test_memory.c caes_test_memory.h \
+	caes_test_unused.h
+
+caes_test_key_LDADD = \
+	../libcaes/libcaes.la \
+	@LIBCERROR_LIBADD@
 
 caes_test_support_SOURCES = \
 	caes_test_libcaes.h \

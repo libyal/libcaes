@@ -43,5 +43,5 @@ const char *libcaes_get_version(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBCAES_SUPPORT_H ) */
 

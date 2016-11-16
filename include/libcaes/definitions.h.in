@@ -24,18 +24,18 @@
 
 #include <libcaes/types.h>
 
-#define LIBCAES_VERSION				@VERSION@
+#define LIBCAES_VERSION			@VERSION@
 
 /* The version string
  */
-#define LIBCAES_VERSION_STRING			"@VERSION@"
+#define LIBCAES_VERSION_STRING		"@VERSION@"
 
 /* The crypt modes
  */
 enum LIBCAES_CRYPT_MODES
 {
-	LIBCAES_CRYPT_MODE_DECRYPT		= 0,
-	LIBCAES_CRYPT_MODE_ENCRYPT		= 1
+	LIBCAES_CRYPT_MODE_DECRYPT	= 0,
+	LIBCAES_CRYPT_MODE_ENCRYPT	= 1
 };
 
 #endif /* !defined( _LIBCAES_DEFINITIONS_H ) */

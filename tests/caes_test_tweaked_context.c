@@ -39,11 +39,17 @@
 int caes_test_tweaked_context_initialize(
      void )
 {
-	libcerror_error_t *error                   = NULL;
 	libcaes_tweaked_context_t *tweaked_context = NULL;
+	libcerror_error_t *error                   = NULL;
 	int result                                 = 0;
 
-	/* Test libcaes_tweaked_context_initialize
+#if defined( HAVE_CAES_TEST_MEMORY )
+	int number_of_malloc_fail_tests            = 1;
+	int number_of_memset_fail_tests            = 1;
+	int test_number                            = 0;
+#endif
+
+	/* Test regular cases
 	 */
 	result = libcaes_tweaked_context_initialize(
 	          &tweaked_context,
@@ -119,79 +125,89 @@ int caes_test_tweaked_context_initialize(
 
 #if defined( HAVE_CAES_TEST_MEMORY )
 
-	/* Test libcaes_tweaked_context_initialize with malloc failing
-	 */
-	caes_test_malloc_attempts_before_fail = 0;
-
-	result = libcaes_tweaked_context_initialize(
-	          &tweaked_context,
-	          &error );
-
-	if( caes_test_malloc_attempts_before_fail != -1 )
+	for( test_number = 0;
+	     test_number < number_of_malloc_fail_tests;
+	     test_number++ )
 	{
-		caes_test_malloc_attempts_before_fail = -1;
+		/* Test libcaes_tweaked_context_initialize with malloc failing
+		 */
+		caes_test_malloc_attempts_before_fail = test_number;
 
-		if( tweaked_context != NULL )
+		result = libcaes_tweaked_context_initialize(
+		          &tweaked_context,
+		          &error );
+
+		if( caes_test_malloc_attempts_before_fail != -1 )
 		{
-			libcaes_tweaked_context_free(
-			 &tweaked_context,
-			 NULL );
+			caes_test_malloc_attempts_before_fail = -1;
+
+			if( tweaked_context != NULL )
+			{
+				libcaes_tweaked_context_free(
+				 &tweaked_context,
+				 NULL );
+			}
+		}
+		else
+		{
+			CAES_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 -1 );
+
+			CAES_TEST_ASSERT_IS_NULL(
+			 "tweaked_context",
+			 tweaked_context );
+
+			CAES_TEST_ASSERT_IS_NOT_NULL(
+			 "error",
+			 error );
+
+			libcerror_error_free(
+			 &error );
 		}
 	}
-	else
+	for( test_number = 0;
+	     test_number < number_of_memset_fail_tests;
+	     test_number++ )
 	{
-		CAES_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
+		/* Test libcaes_tweaked_context_initialize with memset failing
+		 */
+		caes_test_memset_attempts_before_fail = test_number;
 
-		CAES_TEST_ASSERT_IS_NULL(
-		 "tweaked_context",
-		 tweaked_context );
+		result = libcaes_tweaked_context_initialize(
+		          &tweaked_context,
+		          &error );
 
-		CAES_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
-
-		libcerror_error_free(
-		 &error );
-	}
-	/* Test libcaes_tweaked_context_initialize with memset failing
-	 */
-	caes_test_memset_attempts_before_fail = 0;
-
-	result = libcaes_tweaked_context_initialize(
-	          &tweaked_context,
-	          &error );
-
-	if( caes_test_memset_attempts_before_fail != -1 )
-	{
-		caes_test_memset_attempts_before_fail = -1;
-
-		if( tweaked_context != NULL )
+		if( caes_test_memset_attempts_before_fail != -1 )
 		{
-			libcaes_tweaked_context_free(
-			 &tweaked_context,
-			 NULL );
+			caes_test_memset_attempts_before_fail = -1;
+
+			if( tweaked_context != NULL )
+			{
+				libcaes_tweaked_context_free(
+				 &tweaked_context,
+				 NULL );
+			}
 		}
-	}
-	else
-	{
-		CAES_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
+		else
+		{
+			CAES_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 -1 );
 
-		CAES_TEST_ASSERT_IS_NULL(
-		 "tweaked_context",
-		 tweaked_context );
+			CAES_TEST_ASSERT_IS_NULL(
+			 "tweaked_context",
+			 tweaked_context );
 
-		CAES_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
+			CAES_TEST_ASSERT_IS_NOT_NULL(
+			 "error",
+			 error );
 
-		libcerror_error_free(
-		 &error );
+			libcerror_error_free(
+			 &error );
+		}
 	}
 #endif /* defined( HAVE_CAES_TEST_MEMORY ) */
 
@@ -272,6 +288,8 @@ int main(
 	CAES_TEST_RUN(
 	 "libcaes_tweaked_context_free",
 	 caes_test_tweaked_context_free );
+
+	/* TODO: add tests for libcaes_tweaked_context_set_keys */
 
 	return( EXIT_SUCCESS );
 

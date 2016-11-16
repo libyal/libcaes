@@ -70,5 +70,5 @@ int libcaes_key_set(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBCAES_KEY_H ) */
 

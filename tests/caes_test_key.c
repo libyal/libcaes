@@ -1,5 +1,5 @@
 /*
- * Library context type testing program
+ * Library key type testing program
  *
  * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -33,13 +33,17 @@
 #include "caes_test_memory.h"
 #include "caes_test_unused.h"
 
-/* Tests the libcaes_context_initialize function
+#include "../libcaes/libcaes_key.h"
+
+#if defined( WINAPI ) && ( WINVER >= 0x0600 ) && defined( TODO )
+
+/* Tests the libcaes_key_initialize function
  * Returns 1 if successful or 0 if not
  */
-int caes_test_context_initialize(
+int caes_test_key_initialize(
      void )
 {
-	libcaes_context_t *context      = NULL;
+	libcaes_key_t *key              = NULL;
 	libcerror_error_t *error        = NULL;
 	int result                      = 0;
 
@@ -51,8 +55,8 @@ int caes_test_context_initialize(
 
 	/* Test regular cases
 	 */
-	result = libcaes_context_initialize(
-	          &context,
+	result = libcaes_key_initialize(
+	          &key,
 	          &error );
 
 	CAES_TEST_ASSERT_EQUAL_INT(
@@ -61,15 +65,15 @@ int caes_test_context_initialize(
 	 1 );
 
         CAES_TEST_ASSERT_IS_NOT_NULL(
-         "context",
-         context );
+         "key",
+         key );
 
         CAES_TEST_ASSERT_IS_NULL(
          "error",
          error );
 
-	result = libcaes_context_free(
-	          &context,
+	result = libcaes_key_free(
+	          &key,
 	          &error );
 
 	CAES_TEST_ASSERT_EQUAL_INT(
@@ -78,8 +82,8 @@ int caes_test_context_initialize(
 	 1 );
 
         CAES_TEST_ASSERT_IS_NULL(
-         "context",
-         context );
+         "key",
+         key );
 
         CAES_TEST_ASSERT_IS_NULL(
          "error",
@@ -87,7 +91,7 @@ int caes_test_context_initialize(
 
 	/* Test error cases
 	 */
-	result = libcaes_context_initialize(
+	result = libcaes_key_initialize(
 	          NULL,
 	          &error );
 
@@ -103,10 +107,10 @@ int caes_test_context_initialize(
 	libcerror_error_free(
 	 &error );
 
-	context = (libcaes_context_t *) 0x12345678UL;
+	key = (libcaes_key_t *) 0x12345678UL;
 
-	result = libcaes_context_initialize(
-	          &context,
+	result = libcaes_key_initialize(
+	          &key,
 	          &error );
 
 	CAES_TEST_ASSERT_EQUAL_INT(
@@ -121,7 +125,7 @@ int caes_test_context_initialize(
 	libcerror_error_free(
 	 &error );
 
-	context = NULL;
+	key = NULL;
 
 #if defined( HAVE_CAES_TEST_MEMORY )
 
@@ -129,22 +133,22 @@ int caes_test_context_initialize(
 	     test_number < number_of_malloc_fail_tests;
 	     test_number++ )
 	{
-		/* Test libcaes_context_initialize with malloc failing
+		/* Test libcaes_key_initialize with malloc failing
 		 */
 		caes_test_malloc_attempts_before_fail = test_number;
 
-		result = libcaes_context_initialize(
-		          &context,
+		result = libcaes_key_initialize(
+		          &key,
 		          &error );
 
 		if( caes_test_malloc_attempts_before_fail != -1 )
 		{
 			caes_test_malloc_attempts_before_fail = -1;
 
-			if( context != NULL )
+			if( key != NULL )
 			{
-				libcaes_context_free(
-				 &context,
+				libcaes_key_free(
+				 &key,
 				 NULL );
 			}
 		}
@@ -156,8 +160,8 @@ int caes_test_context_initialize(
 			 -1 );
 
 			CAES_TEST_ASSERT_IS_NULL(
-			 "context",
-			 context );
+			 "key",
+			 key );
 
 			CAES_TEST_ASSERT_IS_NOT_NULL(
 			 "error",
@@ -171,22 +175,22 @@ int caes_test_context_initialize(
 	     test_number < number_of_memset_fail_tests;
 	     test_number++ )
 	{
-		/* Test libcaes_context_initialize with memset failing
+		/* Test libcaes_key_initialize with memset failing
 		 */
 		caes_test_memset_attempts_before_fail = test_number;
 
-		result = libcaes_context_initialize(
-		          &context,
+		result = libcaes_key_initialize(
+		          &key,
 		          &error );
 
 		if( caes_test_memset_attempts_before_fail != -1 )
 		{
 			caes_test_memset_attempts_before_fail = -1;
 
-			if( context != NULL )
+			if( key != NULL )
 			{
-				libcaes_context_free(
-				 &context,
+				libcaes_key_free(
+				 &key,
 				 NULL );
 			}
 		}
@@ -198,8 +202,8 @@ int caes_test_context_initialize(
 			 -1 );
 
 			CAES_TEST_ASSERT_IS_NULL(
-			 "context",
-			 context );
+			 "key",
+			 key );
 
 			CAES_TEST_ASSERT_IS_NOT_NULL(
 			 "error",
@@ -219,19 +223,19 @@ on_error:
 		libcerror_error_free(
 		 &error );
 	}
-	if( context != NULL )
+	if( key != NULL )
 	{
-		libcaes_context_free(
-		 &context,
+		libcaes_key_free(
+		 &key,
 		 NULL );
 	}
 	return( 0 );
 }
 
-/* Tests the libcaes_context_free function
+/* Tests the libcaes_key_free function
  * Returns 1 if successful or 0 if not
  */
-int caes_test_context_free(
+int caes_test_key_free(
      void )
 {
 	libcerror_error_t *error = NULL;
@@ -239,7 +243,7 @@ int caes_test_context_free(
 
 	/* Test error cases
 	 */
-	result = libcaes_context_free(
+	result = libcaes_key_free(
 	          NULL,
 	          &error );
 
@@ -266,6 +270,8 @@ on_error:
 	return( 0 );
 }
 
+#endif /* defined( WINAPI ) && ( WINVER >= 0x0600 ) && defined( TODO ) */
+
 /* The main program
  */
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
@@ -281,15 +287,19 @@ int main(
 	CAES_TEST_UNREFERENCED_PARAMETER( argc )
 	CAES_TEST_UNREFERENCED_PARAMETER( argv )
 
-	CAES_TEST_RUN(
-	 "libcaes_context_initialize",
-	 caes_test_context_initialize );
+#if defined( WINAPI ) && ( WINVER >= 0x0600 ) && defined( TODO )
 
 	CAES_TEST_RUN(
-	 "libcaes_context_free",
-	 caes_test_context_free );
+	 "libcaes_key_initialize",
+	 caes_test_key_initialize );
 
-	/* TODO: add tests for libcaes_context_set_key */
+	CAES_TEST_RUN(
+	 "libcaes_key_free",
+	 caes_test_key_free );
+
+	/* TODO: add tests for libcaes_key_set */
+
+#endif /* defined( WINAPI ) && ( WINVER >= 0x0600 ) && defined( TODO ) */
 
 	return( EXIT_SUCCESS );
 
