@@ -1,7 +1,7 @@
 /*
  * Python object definition of the libcaes crypt modes
  *
- * Copyright (C) 2010-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -191,39 +191,39 @@ on_error:
 PyObject *pycaes_crypt_modes_new(
            void )
 {
-	pycaes_crypt_modes_t *pycaes_crypt_modes = NULL;
+	pycaes_crypt_modes_t *definitions_object = NULL;
 	static char *function                    = "pycaes_crypt_modes_new";
 
-	pycaes_crypt_modes = PyObject_New(
-	                           struct pycaes_crypt_modes,
-	                           &pycaes_crypt_modes_type_object );
+	definitions_object = PyObject_New(
+	                      struct pycaes_crypt_modes,
+	                      &pycaes_crypt_modes_type_object );
 
-	if( pycaes_crypt_modes == NULL )
+	if( definitions_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
-		 "%s: unable to initialize crypt modes.",
+		 "%s: unable to create definitions object.",
 		 function );
 
 		goto on_error;
 	}
 	if( pycaes_crypt_modes_init(
-	     pycaes_crypt_modes ) != 0 )
+	     definitions_object ) != 0 )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
-		 "%s: unable to initialize crypt modes.",
+		 "%s: unable to initialize definitions object.",
 		 function );
 
 		goto on_error;
 	}
-	return( (PyObject *) pycaes_crypt_modes );
+	return( (PyObject *) definitions_object );
 
 on_error:
-	if( pycaes_crypt_modes != NULL )
+	if( definitions_object != NULL )
 	{
 		Py_DecRef(
-		 (PyObject *) pycaes_crypt_modes );
+		 (PyObject *) definitions_object );
 	}
 	return( NULL );
 }
@@ -232,15 +232,15 @@ on_error:
  * Returns 0 if successful or -1 on error
  */
 int pycaes_crypt_modes_init(
-     pycaes_crypt_modes_t *pycaes_crypt_modes )
+     pycaes_crypt_modes_t *definitions_object )
 {
 	static char *function = "pycaes_crypt_modes_init";
 
-	if( pycaes_crypt_modes == NULL )
+	if( definitions_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_TypeError,
-		 "%s: invalid crypt modes.",
+		 "%s: invalid definitions object.",
 		 function );
 
 		return( -1 );
@@ -251,22 +251,22 @@ int pycaes_crypt_modes_init(
 /* Frees a crypt modes object
  */
 void pycaes_crypt_modes_free(
-      pycaes_crypt_modes_t *pycaes_crypt_modes )
+      pycaes_crypt_modes_t *definitions_object )
 {
 	struct _typeobject *ob_type = NULL;
 	static char *function       = "pycaes_crypt_modes_free";
 
-	if( pycaes_crypt_modes == NULL )
+	if( definitions_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_TypeError,
-		 "%s: invalid crypt modes.",
+		 "%s: invalid definitions object.",
 		 function );
 
 		return;
 	}
 	ob_type = Py_TYPE(
-	           pycaes_crypt_modes );
+	           definitions_object );
 
 	if( ob_type == NULL )
 	{
@@ -287,6 +287,6 @@ void pycaes_crypt_modes_free(
 		return;
 	}
 	ob_type->tp_free(
-	 (PyObject*) pycaes_crypt_modes );
+	 (PyObject*) definitions_object );
 }
 

@@ -1,5 +1,5 @@
 /*
- * Python object definition of the libcaes context
+ * Python object wrapper of libcaes_context_t
  *
  * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -40,7 +40,7 @@ PyMethodDef pycaes_context_object_methods[] = {
 	  METH_VARARGS | METH_KEYWORDS,
 	  "set_key(mode, key) -> None\n"
 	  "\n"
-	  "Sets the key for a specific crypt mode" },
+	  "Sets the key for a specific crypt mode." },
 
 	/* Sentinel */
 	{ NULL, NULL, 0, NULL }
@@ -159,7 +159,7 @@ PyObject *pycaes_context_new(
 	pycaes_context = PyObject_New(
 	                  struct pycaes_context,
 	                  &pycaes_context_type_object );
-   
+
 	if( pycaes_context == NULL )
 	{
 		PyErr_Format(
@@ -196,8 +196,8 @@ on_error:
 int pycaes_context_init(
      pycaes_context_t *pycaes_context )
 {
-	static char *function    = "pycaes_context_init";
 	libcerror_error_t *error = NULL;
+	static char *function    = "pycaes_context_init";
 
 	if( pycaes_context == NULL )
 	{
@@ -233,8 +233,8 @@ int pycaes_context_init(
 void pycaes_context_free(
       pycaes_context_t *pycaes_context )
 {
-	libcerror_error_t *error    = NULL;
 	struct _typeobject *ob_type = NULL;
+	libcerror_error_t *error    = NULL;
 	static char *function       = "pycaes_context_free";
 	int result                  = 0;
 
@@ -308,15 +308,24 @@ PyObject *pycaes_context_set_key(
            PyObject *arguments,
            PyObject *keywords )
 {
-	libcerror_error_t *error    = NULL;
 	PyObject *string_object     = NULL;
+	libcerror_error_t *error    = NULL;
 	static char *function       = "pycaes_context_set_key";
-	static char *keyword_list[] = { "mode", "key", NULL };
 	char *key_data              = NULL;
+	static char *keyword_list[] = { "mode", "key", NULL };
         Py_ssize_t key_data_size    = 0;
 	int mode                    = 0;
 	int result                  = 0;
 
+	if( pycaes_context == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid context.",
+		 function );
+
+		return( NULL );
+	}
 	if( PyArg_ParseTupleAndKeywords(
 	     arguments,
 	     keywords,
@@ -379,3 +388,4 @@ PyObject *pycaes_context_set_key(
 
 	return( Py_None );
 }
+

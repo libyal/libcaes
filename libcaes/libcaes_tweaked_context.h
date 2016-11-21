@@ -48,17 +48,17 @@ struct libcaes_internal_tweaked_context
 
 LIBCAES_EXTERN \
 int libcaes_tweaked_context_initialize(
-     libcaes_tweaked_context_t **context,
+     libcaes_tweaked_context_t **tweaked_context,
      libcerror_error_t **error );
 
 LIBCAES_EXTERN \
 int libcaes_tweaked_context_free(
-     libcaes_tweaked_context_t **context,
+     libcaes_tweaked_context_t **tweaked_context,
      libcerror_error_t **error );
 
 LIBCAES_EXTERN \
 int libcaes_tweaked_context_set_keys(
-     libcaes_tweaked_context_t *context,
+     libcaes_tweaked_context_t *tweaked_context,
      int mode,
      const uint8_t *key,
      size_t key_bit_size,
@@ -68,7 +68,7 @@ int libcaes_tweaked_context_set_keys(
 
 LIBCAES_EXTERN \
 int libcaes_crypt_xts(
-     libcaes_tweaked_context_t *context,
+     libcaes_tweaked_context_t *tweaked_context,
      int mode,
      const uint8_t *tweak_value,
      size_t tweak_value_size,

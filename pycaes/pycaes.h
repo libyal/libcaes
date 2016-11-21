@@ -47,5 +47,5 @@ PyMODINIT_FUNC initpycaes(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYCAES_H ) */
 

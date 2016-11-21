@@ -740,7 +740,7 @@ PyObject *pycaes_crypt_xts(
 	Py_BEGIN_ALLOW_THREADS
 
 	result = libcaes_crypt_xts(
-	          pycaes_context->context,
+	          pycaes_context->tweaked_context,
 	          mode,
 	          (uint8_t *) tweak_value_data,
 	          (size_t) tweak_value_data_size,

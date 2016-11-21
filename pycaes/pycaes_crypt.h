@@ -63,5 +63,5 @@ PyObject *pycaes_crypt_xts(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYCAES_CRYPT_H ) */
 

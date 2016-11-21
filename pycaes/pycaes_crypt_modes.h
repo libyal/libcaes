@@ -1,5 +1,5 @@
 /*
- * Python object definition of the libcaes encryption types
+ * Python object definition of the libcaes crypt modes
  *
  * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -50,14 +50,14 @@ PyObject *pycaes_crypt_modes_new(
            void );
 
 int pycaes_crypt_modes_init(
-     pycaes_crypt_modes_t *pycaes_crypt_modes );
+     pycaes_crypt_modes_t *definitions_object );
 
 void pycaes_crypt_modes_free(
-      pycaes_crypt_modes_t *pycaes_crypt_modes );
+      pycaes_crypt_modes_t *definitions_object );
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif
+#endif /* !defined( _PYCAES_CRYPT_MODES_H ) */
 

@@ -35,50 +35,50 @@
  * Returns 1 if successful or -1 on error
  */
 int libcaes_tweaked_context_initialize(
-     libcaes_tweaked_context_t **context,
+     libcaes_tweaked_context_t **tweaked_context,
      libcerror_error_t **error )
 {
-	libcaes_internal_tweaked_context_t *internal_context = NULL;
-	static char *function                                = "libcaes_tweaked_context_initialize";
+	libcaes_internal_tweaked_context_t *internal_tweaked_context = NULL;
+	static char *function                                        = "libcaes_tweaked_context_initialize";
 
-	if( context == NULL )
+	if( tweaked_context == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid context.",
+		 "%s: invalid tweaked context.",
 		 function );
 
 		return( -1 );
 	}
-	if( *context != NULL )
+	if( *tweaked_context != NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: invalid context value already set.",
+		 "%s: invalid tweaked context value already set.",
 		 function );
 
 		return( -1 );
 	}
-	internal_context = memory_allocate_structure(
-	                    libcaes_internal_tweaked_context_t );
+	internal_tweaked_context = memory_allocate_structure(
+	                            libcaes_internal_tweaked_context_t );
 
-	if( internal_context == NULL )
+	if( internal_tweaked_context == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_MEMORY,
 		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-		 "%s: unable to create context.",
+		 "%s: unable to create tweaked context.",
 		 function );
 
 		goto on_error;
 	}
 	if( memory_set(
-	     internal_context,
+	     internal_tweaked_context,
 	     0,
 	     sizeof( libcaes_internal_tweaked_context_t ) ) == NULL )
 	{
@@ -86,16 +86,16 @@ int libcaes_tweaked_context_initialize(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_MEMORY,
 		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
-		 "%s: unable to clear context.",
+		 "%s: unable to clear tweaked context.",
 		 function );
 
 		memory_free(
-		 internal_context );
+		 internal_tweaked_context );
 
 		return( -1 );
 	}
 	if( libcaes_context_initialize(
-	     &( internal_context->main_context ),
+	     &( internal_tweaked_context->main_context ),
 	     error ) != 1)
 	{
 		libcerror_error_set(
@@ -108,7 +108,7 @@ int libcaes_tweaked_context_initialize(
 		goto on_error;
 	}
 	if( libcaes_context_initialize(
-	     &( internal_context->tweak_context ),
+	     &( internal_tweaked_context->tweak_context ),
 	     error ) != 1)
 	{
 		libcerror_error_set(
@@ -120,21 +120,21 @@ int libcaes_tweaked_context_initialize(
 
 		goto on_error;
 	}
-	*context = (libcaes_tweaked_context_t *) internal_context;
+	*tweaked_context = (libcaes_tweaked_context_t *) internal_tweaked_context;
 
 	return( 1 );
 
 on_error:
-	if( internal_context != NULL )
+	if( internal_tweaked_context != NULL )
 	{
-		if( internal_context->main_context != NULL )
+		if( internal_tweaked_context->main_context != NULL )
 		{
 			libcaes_context_free(
-			 &( internal_context->main_context ),
+			 &( internal_tweaked_context->main_context ),
 			 NULL );
 		}
 		memory_free(
-		 internal_context );
+		 internal_tweaked_context );
 	}
 	return( -1 );
 }
@@ -143,31 +143,31 @@ on_error:
  * Returns 1 if successful or -1 on error
  */
 int libcaes_tweaked_context_free(
-     libcaes_tweaked_context_t **context,
+     libcaes_tweaked_context_t **tweaked_context,
      libcerror_error_t **error )
 {
-	libcaes_internal_tweaked_context_t *internal_context = NULL;
-	static char *function                                = "libcaes_tweaked_context_free";
-	int result                                           = 1;
+	libcaes_internal_tweaked_context_t *internal_tweaked_context = NULL;
+	static char *function                                        = "libcaes_tweaked_context_free";
+	int result                                                   = 1;
 
-	if( context == NULL )
+	if( tweaked_context == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid context.",
+		 "%s: invalid tweaked context.",
 		 function );
 
 		return( -1 );
 	}
-	if( *context != NULL )
+	if( *tweaked_context != NULL )
 	{
-		internal_context = (libcaes_internal_tweaked_context_t *) *context;
-		*context         = NULL;
+		internal_tweaked_context = (libcaes_internal_tweaked_context_t *) *tweaked_context;
+		*tweaked_context         = NULL;
 
 		if( libcaes_context_free(
-		     &( internal_context->tweak_context ),
+		     &( internal_tweaked_context->tweak_context ),
 		     error ) != 1 )
 		{
 			libcerror_error_set(
@@ -180,7 +180,7 @@ int libcaes_tweaked_context_free(
 			result = -1;
 		}
 		if( libcaes_context_free(
-		     &( internal_context->main_context ),
+		     &( internal_tweaked_context->main_context ),
 		     error ) != 1 )
 		{
 			libcerror_error_set(
@@ -193,7 +193,7 @@ int libcaes_tweaked_context_free(
 			result = -1;
 		}
 		memory_free(
-		 internal_context );
+		 internal_tweaked_context );
 	}
 	return( result );
 }
@@ -202,7 +202,7 @@ int libcaes_tweaked_context_free(
  * Returns 1 if successful or -1 on error
  */
 int libcaes_tweaked_context_set_keys(
-     libcaes_tweaked_context_t *context,
+     libcaes_tweaked_context_t *tweaked_context,
      int mode,
      const uint8_t *key,
      size_t key_bit_size,
@@ -210,21 +210,21 @@ int libcaes_tweaked_context_set_keys(
      size_t tweak_key_bit_size,
      libcerror_error_t **error )
 {
-	libcaes_internal_tweaked_context_t *internal_context = NULL;
-	static char *function                                = "libcaes_tweaked_context_set_key";
+	libcaes_internal_tweaked_context_t *internal_tweaked_context = NULL;
+	static char *function                                        = "libcaes_tweaked_context_set_key";
 
-	if( context == NULL )
+	if( tweaked_context == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid context.",
+		 "%s: invalid tweaked context.",
 		 function );
 
 		return( -1 );
 	}
-	internal_context = (libcaes_internal_tweaked_context_t *) context;
+	internal_tweaked_context = (libcaes_internal_tweaked_context_t *) tweaked_context;
 
 	if( ( mode != LIBCAES_CRYPT_MODE_DECRYPT )
 	 && ( mode != LIBCAES_CRYPT_MODE_ENCRYPT ) )
@@ -252,7 +252,7 @@ int libcaes_tweaked_context_set_keys(
 		return( -1 );
 	}
 	if( libcaes_context_set_key(
-	     internal_context->main_context,
+	     internal_tweaked_context->main_context,
 	     mode,
 	     key,
 	     key_bit_size,
@@ -268,7 +268,7 @@ int libcaes_tweaked_context_set_keys(
 		return( -1 );
 	}
 	if( libcaes_context_set_key(
-	     internal_context->tweak_context,
+	     internal_tweaked_context->tweak_context,
 	     LIBCAES_CRYPT_MODE_ENCRYPT,
 	     tweak_key,
 	     tweak_key_bit_size,
@@ -290,7 +290,7 @@ int libcaes_tweaked_context_set_keys(
  * Returns 1 if successful or -1 on error
  */
 int libcaes_crypt_xts(
-     libcaes_tweaked_context_t *context,
+     libcaes_tweaked_context_t *tweaked_context,
      int mode,
      const uint8_t *tweak_value,
      size_t tweak_value_size,
@@ -303,26 +303,26 @@ int libcaes_crypt_xts(
 	uint8_t encrypted_tweak_value[ 16 ];
 	uint8_t encrypted_tweak_value_copy[ 16 ];
 
-	libcaes_internal_tweaked_context_t *internal_context = NULL;
-	static char *function                                = "libcaes_crypt_xts";
-	size_t data_offset                                   = 0;
-	size_t remaining_data_size                           = 0;
-	uint8_t block_index                                  = 0;
-	uint8_t byte_value                                   = 0;
-	uint8_t carry_bit                                    = 0;
+	libcaes_internal_tweaked_context_t *internal_tweaked_context = NULL;
+	static char *function                                        = "libcaes_crypt_xts";
+	size_t data_offset                                           = 0;
+	size_t remaining_data_size                                   = 0;
+	uint8_t block_index                                          = 0;
+	uint8_t byte_value                                           = 0;
+	uint8_t carry_bit                                            = 0;
 
-	if( context == NULL )
+	if( tweaked_context == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid context.",
+		 "%s: invalid tweaked context.",
 		 function );
 
 		return( -1 );
 	}
-	internal_context = (libcaes_internal_tweaked_context_t *) context;
+	internal_tweaked_context = (libcaes_internal_tweaked_context_t *) tweaked_context;
 
 	if( ( mode != LIBCAES_CRYPT_MODE_DECRYPT )
 	 && ( mode != LIBCAES_CRYPT_MODE_ENCRYPT ) )
@@ -425,7 +425,7 @@ int libcaes_crypt_xts(
 		return( -1 );
 	}
 	if( libcaes_crypt_ecb(
-	     internal_context->tweak_context,
+	     internal_tweaked_context->tweak_context,
 	     LIBCAES_CRYPT_MODE_ENCRYPT,
 	     tweak_value,
 	     16,
@@ -528,7 +528,7 @@ int libcaes_crypt_xts(
 		data_offset -= 16;
 
 		if( libcaes_crypt_ecb(
-		     internal_context->main_context,
+		     internal_tweaked_context->main_context,
 		     mode,
 		     &( output_data[ data_offset ] ),
 		     16,
@@ -685,7 +685,7 @@ int libcaes_crypt_xts(
 		data_offset -= 16;
 
 		if( libcaes_crypt_ecb(
-		     internal_context->main_context,
+		     internal_tweaked_context->main_context,
 		     mode,
 		     &( output_data[ data_offset ] ),
 		     16,

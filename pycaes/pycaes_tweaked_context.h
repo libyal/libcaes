@@ -1,5 +1,5 @@
 /*
- * Python object definition of the libcaes tweaked context
+ * Python object wrapper of libcaes_tweaked_context_t
  *
  * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -42,7 +42,7 @@ struct pycaes_tweaked_context
 
 	/* The libcaes tweaked context
 	 */
-	libcaes_tweaked_context_t *context;
+	libcaes_tweaked_context_t *tweaked_context;
 };
 
 extern PyMethodDef pycaes_tweaked_context_object_methods[];
@@ -52,13 +52,13 @@ PyObject *pycaes_tweaked_context_new(
            void );
 
 int pycaes_tweaked_context_init(
-     pycaes_tweaked_context_t *pycaes_context );
+     pycaes_tweaked_context_t *pycaes_tweaked_context );
 
 void pycaes_tweaked_context_free(
-      pycaes_tweaked_context_t *pycaes_context );
+      pycaes_tweaked_context_t *pycaes_tweaked_context );
 
 PyObject *pycaes_tweaked_context_set_keys(
-           pycaes_tweaked_context_t *pycaes_context,
+           pycaes_tweaked_context_t *pycaes_tweaked_context,
            PyObject *arguments,
            PyObject *keywords );
 
@@ -66,5 +66,5 @@ PyObject *pycaes_tweaked_context_set_keys(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYCAES_TWEAKED_CONTEXT_H ) */
 

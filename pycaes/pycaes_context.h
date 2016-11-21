@@ -1,5 +1,5 @@
 /*
- * Python object definition of the libcaes context
+ * Python object wrapper of libcaes_context_t
  *
  * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -66,5 +66,5 @@ PyObject *pycaes_context_set_key(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYCAES_CONTEXT_H ) */
 

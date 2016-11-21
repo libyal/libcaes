@@ -1,5 +1,5 @@
 /*
- * Python object definition of the libcaes tweaked context
+ * Python object wrapper of libcaes_tweaked_context_t
  *
  * Copyright (C) 2011-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -40,7 +40,7 @@ PyMethodDef pycaes_tweaked_context_object_methods[] = {
 	  METH_VARARGS | METH_KEYWORDS,
 	  "set_keys(mode, key, tweak_key) -> None\n"
 	  "\n"
-	  "Sets the key and tweak key for a specific crypt mode" },
+	  "Sets the key and tweak key for a specific crypt mode." },
 
 	/* Sentinel */
 	{ NULL, NULL, 0, NULL }
@@ -153,14 +153,14 @@ PyTypeObject pycaes_tweaked_context_type_object = {
 PyObject *pycaes_tweaked_context_new(
            void )
 {
-	pycaes_tweaked_context_t *pycaes_context = NULL;
-	static char *function                    = "pycaes_tweaked_context_new";
+	pycaes_tweaked_context_t *pycaes_tweaked_context = NULL;
+	static char *function                            = "pycaes_tweaked_context_new";
 
-	pycaes_context = PyObject_New(
-	                  struct pycaes_tweaked_context,
-	                  &pycaes_tweaked_context_type_object );
-   
-	if( pycaes_context == NULL )
+	pycaes_tweaked_context = PyObject_New(
+	                          struct pycaes_tweaked_context,
+	                          &pycaes_tweaked_context_type_object );
+
+	if( pycaes_tweaked_context == NULL )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
@@ -170,7 +170,7 @@ PyObject *pycaes_tweaked_context_new(
 		goto on_error;
 	}
 	if( pycaes_tweaked_context_init(
-	     pycaes_context ) != 0 )
+	     pycaes_tweaked_context ) != 0 )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
@@ -179,13 +179,13 @@ PyObject *pycaes_tweaked_context_new(
 
 		goto on_error;
 	}
-	return( (PyObject *) pycaes_context );
+	return( (PyObject *) pycaes_tweaked_context );
 
 on_error:
-	if( pycaes_context != NULL )
+	if( pycaes_tweaked_context != NULL )
 	{
 		Py_DecRef(
-		 (PyObject *) pycaes_context );
+		 (PyObject *) pycaes_tweaked_context );
 	}
 	return( NULL );
 }
@@ -194,12 +194,12 @@ on_error:
  * Returns 0 if successful or -1 on error
  */
 int pycaes_tweaked_context_init(
-     pycaes_tweaked_context_t *pycaes_context )
+     pycaes_tweaked_context_t *pycaes_tweaked_context )
 {
-	static char *function    = "pycaes_tweaked_context_init";
 	libcerror_error_t *error = NULL;
+	static char *function    = "pycaes_tweaked_context_init";
 
-	if( pycaes_context == NULL )
+	if( pycaes_tweaked_context == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
@@ -208,10 +208,10 @@ int pycaes_tweaked_context_init(
 
 		return( -1 );
 	}
-	pycaes_context->context = NULL;
+	pycaes_tweaked_context->tweaked_context = NULL;
 
 	if( libcaes_tweaked_context_initialize(
-	     &( pycaes_context->context ),
+	     &( pycaes_tweaked_context->tweaked_context ),
 	     &error ) != 1 )
 	{
 		pycaes_error_raise(
@@ -231,14 +231,14 @@ int pycaes_tweaked_context_init(
 /* Frees a tweaked context object
  */
 void pycaes_tweaked_context_free(
-      pycaes_tweaked_context_t *pycaes_context )
+      pycaes_tweaked_context_t *pycaes_tweaked_context )
 {
-	libcerror_error_t *error    = NULL;
 	struct _typeobject *ob_type = NULL;
+	libcerror_error_t *error    = NULL;
 	static char *function       = "pycaes_tweaked_context_free";
 	int result                  = 0;
 
-	if( pycaes_context == NULL )
+	if( pycaes_tweaked_context == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
@@ -247,17 +247,17 @@ void pycaes_tweaked_context_free(
 
 		return;
 	}
-	if( pycaes_context->context == NULL )
+	if( pycaes_tweaked_context->tweaked_context == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid tweaked context - missing libcaes context.",
+		 "%s: invalid tweaked context - missing libcaes tweaked context.",
 		 function );
 
 		return;
 	}
 	ob_type = Py_TYPE(
-	           pycaes_context );
+	           pycaes_tweaked_context );
 
 	if( ob_type == NULL )
 	{
@@ -280,7 +280,7 @@ void pycaes_tweaked_context_free(
 	Py_BEGIN_ALLOW_THREADS
 
 	result = libcaes_tweaked_context_free(
-	          &( pycaes_context->context ),
+	          &( pycaes_tweaked_context->tweaked_context ),
 	          &error );
 
 	Py_END_ALLOW_THREADS
@@ -297,29 +297,38 @@ void pycaes_tweaked_context_free(
 		 &error );
 	}
 	ob_type->tp_free(
-	 (PyObject*) pycaes_context );
+	 (PyObject*) pycaes_tweaked_context );
 }
 
 /* Sets the keys
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pycaes_tweaked_context_set_keys(
-           pycaes_tweaked_context_t *pycaes_context,
+           pycaes_tweaked_context_t *pycaes_tweaked_context,
            PyObject *arguments,
            PyObject *keywords )
 {
-	libcerror_error_t *error          = NULL;
 	PyObject *key_string_object       = NULL;
 	PyObject *tweak_key_string_object = NULL;
+	libcerror_error_t *error          = NULL;
 	static char *function             = "pycaes_tweaked_context_set_key";
-	static char *keyword_list[]       = { "mode", "key", "tweak_key", NULL };
 	char *key_data                    = NULL;
+	static char *keyword_list[]       = { "mode", "key", "tweak_key", NULL };
 	char *tweak_key_data              = NULL;
         Py_ssize_t key_data_size          = 0;
         Py_ssize_t tweak_key_data_size    = 0;
 	int mode                          = 0;
 	int result                        = 0;
 
+	if( pycaes_tweaked_context == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid tweaked context.",
+		 function );
+
+		return( NULL );
+	}
 	if( PyArg_ParseTupleAndKeywords(
 	     arguments,
 	     keywords,
@@ -380,7 +389,7 @@ PyObject *pycaes_tweaked_context_set_keys(
 	Py_BEGIN_ALLOW_THREADS
 
 	result = libcaes_tweaked_context_set_keys(
-	          pycaes_context->context,
+	          pycaes_tweaked_context->tweaked_context,
 	          mode,
 	          (uint8_t *) key_data,
 	          (size_t) ( key_data_size * 8 ),
