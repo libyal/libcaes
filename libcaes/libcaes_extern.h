@@ -38,9 +38,9 @@
 #include <libcaes/extern.h>
 
 #else
-#define LIBCAES_EXTERN	extern
+#define LIBCAES_EXTERN	/* extern */
 
-#endif
+#endif /* !defined( HAVE_LOCAL_LIBCAES ) */
 
 #endif /* !defined( _LIBCAES_INTERNAL_EXTERN_H ) */
 
