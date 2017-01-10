@@ -19,7 +19,7 @@ check_SCRIPTS = \
 	pycaes_test_crypt_ccm.py \
 	pycaes_test_crypt_ecb.py \
 	pycaes_test_crypt_xts.py \
-	pycaes_test_get_version.py \
+	pycaes_test_support.py \
 	test_api_functions.sh \
 	test_python_functions.sh \
 	test_runner.sh
