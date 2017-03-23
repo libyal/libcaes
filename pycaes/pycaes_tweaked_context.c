@@ -315,8 +315,8 @@ PyObject *pycaes_tweaked_context_set_keys(
 	char *key_data                    = NULL;
 	static char *keyword_list[]       = { "mode", "key", "tweak_key", NULL };
 	char *tweak_key_data              = NULL;
-        Py_ssize_t key_data_size          = 0;
-        Py_ssize_t tweak_key_data_size    = 0;
+	Py_ssize_t key_data_size          = 0;
+	Py_ssize_t tweak_key_data_size    = 0;
 	int mode                          = 0;
 	int result                        = 0;
 
@@ -358,7 +358,7 @@ PyObject *pycaes_tweaked_context_set_keys(
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid argument key data size value out of bounds.",
+		 "%s: invalid key data size value out of bounds.",
 		 function );
 
 		return( NULL );
@@ -381,7 +381,7 @@ PyObject *pycaes_tweaked_context_set_keys(
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid argument tweak key data size value out of bounds.",
+		 "%s: invalid tweak key data size value out of bounds.",
 		 function );
 
 		return( NULL );

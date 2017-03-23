@@ -6,12 +6,11 @@ AM_CPPFLAGS = \
 
 if HAVE_PYTHON
 TESTS_PYCAES = \
-	test_python_functions.sh
+	test_python_module.sh
 endif
 
 TESTS = \
-	test_api_functions.sh \
-	test_api_types.sh \
+	test_library.sh \
 	$(TESTS_PYCAES)
 
 check_SCRIPTS = \
@@ -20,8 +19,8 @@ check_SCRIPTS = \
 	pycaes_test_crypt_ecb.py \
 	pycaes_test_crypt_xts.py \
 	pycaes_test_support.py \
-	test_api_functions.sh \
-	test_python_functions.sh \
+	test_library.sh \
+	test_python_module.sh \
 	test_runner.sh
 
 EXTRA_DIST = \

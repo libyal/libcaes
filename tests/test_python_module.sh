@@ -1,7 +1,7 @@
 #!/bin/bash
-# Python module functions testing script
+# Tests Python module functions and types.
 #
-# Version: 20161105
+# Version: 20170115
 
 EXIT_SUCCESS=0;
 EXIT_FAILURE=1;
@@ -11,7 +11,7 @@ TEST_PREFIX=`dirname ${PWD}`;
 TEST_PREFIX=`basename ${TEST_PREFIX} | sed 's/^lib\([^-]*\).*$/\1/'`;
 
 TEST_PROFILE="py${TEST_PREFIX}";
-TEST_FUNCTIONS="support";
+TEST_FUNCTIONS="context support tweaked_context";
 TEST_FUNCTIONS_WITH_INPUT="";
 OPTION_SETS="";
 
