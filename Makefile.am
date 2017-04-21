@@ -19,12 +19,11 @@ DPKG_FILES = \
 	dpkg/compat \
 	dpkg/control \
 	dpkg/copyright \
-	dpkg/copyright.in \
 	dpkg/rules \
-	dpkg/libcaes.docs \
-	dpkg/libcaes-dev.docs \
-	dpkg/libcaes-python.docs \
-	dpkg/libcaes-python3.docs \
+	dpkg/libcaes.install \
+	dpkg/libcaes-dev.install \
+	dpkg/libcaes-python.install \
+	dpkg/libcaes-python3.install \
 	dpkg/source/format
 
 GETTEXT_FILES = \
