@@ -24,7 +24,7 @@
 #include <memory.h>
 #include <types.h>
 
-#if defined( WINAPI )
+#if defined( WINAPI ) && defined( HAVE_WINCRYPT )
 #include <wincrypt.h>
 
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
@@ -267,7 +267,7 @@ int libcaes_context_initialize(
 	libcaes_internal_context_t *internal_context = NULL;
 	static char *function                        = "libcaes_context_initialize";
 
-#if defined( WINAPI ) && ( WINVER >= 0x0600 )
+#if defined( WINAPI ) && defined( HAVE_WINCRYPT ) && ( WINVER >= 0x0600 )
 	DWORD error_code                             = 0;
 #endif
 
@@ -321,7 +321,7 @@ int libcaes_context_initialize(
 
 		goto on_error;
 	}
-#if defined( WINAPI ) && ( WINVER >= 0x0600 )
+#if defined( WINAPI ) && defined( HAVE_WINCRYPT ) && ( WINVER >= 0x0600 )
 	/* Request the AES crypt provider, fail back to the RSA crypt provider
 	*/
 	if( CryptAcquireContext(
@@ -441,7 +441,7 @@ int libcaes_context_free(
 		internal_context = (libcaes_internal_context_t *) *context;
 		*context         = NULL;
 
-#if defined( WINAPI ) && ( WINVER >= 0x0600 )
+#if defined( WINAPI ) && defined( HAVE_WINCRYPT ) && ( WINVER >= 0x0600 )
 		if( internal_context->key != 0 )
 		{
 			CryptDestroyKey(
@@ -488,7 +488,7 @@ int libcaes_context_set_key(
 	libcaes_internal_context_t *internal_context = NULL;
 	static char *function                        = "libcaes_context_set_key";
 
-#if defined( WINAPI ) && ( WINVER >= 0x0600 )
+#if defined( WINAPI ) && defined( HAVE_WINCRYPT ) && ( WINVER >= 0x0600 )
 	libcaes_key_t *wincrypt_key                  = NULL;
 	DWORD error_code                             = 0;
 	DWORD wincrypt_key_size                      = 0;
@@ -532,7 +532,7 @@ int libcaes_context_set_key(
 
 		return( -1 );
 	}
-#if defined( WINAPI ) && ( WINVER >= 0x0600 )
+#if defined( WINAPI ) && defined( HAVE_WINCRYPT ) && ( WINVER >= 0x0600 )
 	if( libcaes_key_initialize(
 	     &wincrypt_key,
 	     error ) != 1 )
@@ -1251,7 +1251,7 @@ int libcaes_crypt_cbc(
 #endif
 	static char *function                        = "libcaes_crypt_cbc";
 
-#if defined( WINAPI ) && ( WINVER >= 0x0600 )
+#if defined( WINAPI ) && defined( HAVE_WINCRYPT ) && ( WINVER >= 0x0600 )
 	uint8_t block_data[ 128 ];
 
 	DWORD block_length                           = 0;
@@ -1396,7 +1396,7 @@ int libcaes_crypt_cbc(
 
 		return( -1 );
 	}
-#if defined( WINAPI ) && ( WINVER >= 0x0600 )
+#if defined( WINAPI ) && defined( HAVE_WINCRYPT ) && ( WINVER >= 0x0600 )
 	if( input_data_size > (size_t) UINT32_MAX )
 	{
 		libcerror_error_set(
@@ -2394,7 +2394,7 @@ int libcaes_crypt_ecb(
 	static char *function                        = "libcaes_crypt_ecb";
 	int result                                   = 1;
 
-#if defined( WINAPI ) && ( WINVER >= 0x0600 )
+#if defined( WINAPI ) && defined( HAVE_WINCRYPT ) && ( WINVER >= 0x0600 )
 	uint8_t block_data[ 128 ];
 
 	DWORD block_length                           = 0;
@@ -2514,7 +2514,7 @@ int libcaes_crypt_ecb(
 
 		return( -1 );
 	}
-#if defined( WINAPI ) && ( WINVER >= 0x0600 )
+#if defined( WINAPI ) && defined( HAVE_WINCRYPT ) && ( WINVER >= 0x0600 )
 	if( input_data_size > (size_t) UINT32_MAX )
 	{
 		libcerror_error_set(
