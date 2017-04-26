@@ -25,7 +25,7 @@
 #include <common.h>
 #include <types.h>
 
-#if defined( WINAPI )
+#if defined( HAVE_WINCRYPT ) && defined( WINAPI ) && ( WINVER >= 0x0600 )
 #include <wincrypt.h>
 
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
@@ -48,7 +48,7 @@ typedef struct libcaes_internal_context libcaes_internal_context_t;
 
 struct libcaes_internal_context
 {
-#if defined( WINAPI ) && ( WINVER >= 0x0600 )
+#if defined( HAVE_WINCRYPT ) && defined( WINAPI ) && ( WINVER >= 0x0600 )
 	/* The crypto provider handle
 	 */
 	HCRYPTPROV crypt_provider;
