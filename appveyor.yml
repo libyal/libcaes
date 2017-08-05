@@ -49,11 +49,15 @@ build_script:
     C:\Python27\python.exe ..\libyal\scripts\msvscpp-convert.py --to 2015 msvscpp\libcaes.sln &&
     msbuild vs2015\libcaes.sln /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" )
 - cmd: if [%TARGET%]==[cygwin] (
+    C:\cygwin\bin\bash -e -l -c "wget https://raw.github.com/transcode-open/apt-cyg/master/apt-cyg" &&
+    C:\cygwin\bin\bash -e -l -c "sh apt-cyg install python2-devel python3-devel" &&
     xcopy /q /s C:\projects\libcaes C:\cygwin\home\appveyor\ &&
     C:\cygwin\bin\bash -e -l -c "cd libcaes" &&
     C:\cygwin\bin\bash -e -l -c "./synclibs.sh && ./autogen.sh" &&
     C:\cygwin\bin\bash -e -l -c "./runtests.sh" )
 - cmd: if [%TARGET%]==[cygwin64] (
+    C:\cygwin\bin\bash -e -l -c "wget https://raw.github.com/transcode-open/apt-cyg/master/apt-cyg" &&
+    C:\cygwin\bin\bash -e -l -c "sh apt-cyg install python2-devel python3-devel" &&
     xcopy /q /s C:\projects\libcaes C:\cygwin64\home\appveyor\ &&
     C:\cygwin64\bin\bash -e -l -c "cd libcaes" &&
     C:\cygwin64\bin\bash -e -l -c "./synclibs.sh && ./autogen.sh" &&
