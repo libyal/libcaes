@@ -167,7 +167,7 @@ AC_DEFUN([AX_PYTHON_CHECK],
     dnl For CygWin add the -no-undefined linker flag
     AS_CASE(
       [$host_os],
-      [*mingw*],[PYTHON_LDFLAGS="${PYTHON_LDFLAGS} -no-undefined"],
+      [cygwin*],[PYTHON_LDFLAGS="${PYTHON_LDFLAGS} -no-undefined"],
       [*],[])
 
     dnl Check for the existence of Python.h
