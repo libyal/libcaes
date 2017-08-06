@@ -15,6 +15,8 @@ environment:
   - TARGET: vs2015
     APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
     VisualStudioVersion: 14.0
+  - TARGET: python27
+  - TARGET: python36
   - TARGET: cygwin
   - TARGET: cygwin64
   - TARGET: mingw
@@ -52,6 +54,10 @@ build_script:
 - cmd: if [%TARGET%]==[vs2015] (
     C:\Python27\python.exe ..\libyal\scripts\msvscpp-convert.py --to 2015 msvscpp\libcaes.sln &&
     msbuild vs2015\libcaes.sln /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" )
+- cmd: if [%TARGET%]==[python27] (
+    C:\Python27\python.exe setup.py bdist_msi )
+- cmd: if [%TARGET%]==[python36] (
+    C:\Python36\python.exe setup.py bdist_msi )
 - cmd: if [%TARGET%]==[cygwin] (
     xcopy /q /s C:\projects\libcaes C:\cygwin\home\appveyor\ &&
     C:\cygwin\bin\bash -e -l -c "cd libcaes" &&
