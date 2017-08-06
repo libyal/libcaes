@@ -1,6 +1,6 @@
 dnl Functions for Python bindings
 dnl
-dnl Version: 20170805
+dnl Version: 20170806
 
 dnl Function to check if the python binary is available
 dnl "python${PYTHON_VERSION} python python# python#.#"
@@ -8,7 +8,7 @@ AC_DEFUN([AX_PROG_PYTHON],
   [AS_IF(
     [test "x${PYTHON_VERSION}" != x],
     [ax_python_progs="python${PYTHON_VERSION}"],
-    [ax_python_progs="python python2 python2.7 python2.6 python2.5 python3 python3.4 python3.3 python3.2 python3.1 python3.0"])
+    [ax_python_progs="python python2 python2.7 python2.6 python2.5 python3 python3.6 python3.5 python3.4 python3.3 python3.2 python3.1 python3.0"])
   AC_CHECK_PROGS(
     [PYTHON],
     [$ax_python_progs])
