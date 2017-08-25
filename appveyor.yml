@@ -33,7 +33,7 @@ environment:
   - TARGET: mingw-w64
 
 install:
-- cmd: git clone https://github.com/libyal/libyal.git && move libyal ..\
+- cmd: git clone https://github.com/libyal/vstools.git && move vstools ..\
 - cmd: if [%TARGET%]==[cygwin] (
     C:\cygwin\setup-x86.exe -qgnNdO -l C:\cygwin\var\cache\setup -R c:\cygwin -s http://cygwin.mirror.constant.com -P python2-devel -P python3-devel )
 - cmd: if [%TARGET%]==[cygwin64] (
@@ -45,16 +45,20 @@ build_script:
 - cmd: if [%TARGET%]==[vs2008] (
     msbuild msvscpp\libcaes.sln /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" )
 - cmd: if [%TARGET%]==[vs2010] (
-    C:\Python27\python.exe ..\libyal\scripts\msvscpp-convert.py --to 2010 msvscpp\libcaes.sln &&
+    set PYTHONPATH=..\vstools &&
+    C:\Python27\python.exe ..\vstools\scripts\msvscpp-convert.py --to 2010 msvscpp\libcaes.sln &&
     msbuild vs2010\libcaes.sln /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" )
 - cmd: if [%TARGET%]==[vs2012] (
-    C:\Python27\python.exe ..\libyal\scripts\msvscpp-convert.py --to 2012 msvscpp\libcaes.sln &&
+    set PYTHONPATH=..\vstools &&
+    C:\Python27\python.exe ..\vstools\scripts\msvscpp-convert.py --to 2012 msvscpp\libcaes.sln &&
     msbuild vs2012\libcaes.sln /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" )
 - cmd: if [%TARGET%]==[vs2013] (
-    C:\Python27\python.exe ..\libyal\scripts\msvscpp-convert.py --to 2013 msvscpp\libcaes.sln &&
+    set PYTHONPATH=..\vstools &&
+    C:\Python27\python.exe ..\vstools\scripts\msvscpp-convert.py --to 2013 msvscpp\libcaes.sln &&
     msbuild vs2013\libcaes.sln /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" )
 - cmd: if [%TARGET%]==[vs2015] (
-    C:\Python27\python.exe ..\libyal\scripts\msvscpp-convert.py --to 2015 msvscpp\libcaes.sln &&
+    set PYTHONPATH=..\vstools &&
+    C:\Python27\python.exe ..\vstools\scripts\msvscpp-convert.py --to 2015 msvscpp\libcaes.sln &&
     msbuild vs2015\libcaes.sln /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" )
 - cmd: if [%TARGET%]==[python27] (
     C:\Python27\python.exe setup.py bdist_msi )
