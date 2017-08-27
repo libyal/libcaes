@@ -46,7 +46,7 @@ build_script:
     msbuild msvscpp\libcaes.sln /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" )
 - cmd: if [%TARGET%]==[vs2010] (
     set PYTHONPATH=..\vstools &&
-    C:\Python27\python.exe ..\vstools\scripts\msvscpp-convert.py --to 2010 msvscpp\libcaes.sln &&
+    C:\Python27\python.exe ..\vstools\scripts\msvscpp-convert.py --no-python-dll --to 2010 msvscpp\libcaes.sln &&
     msbuild vs2010\libcaes.sln /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" )
 - cmd: if [%TARGET%]==[vs2012] (
     set PYTHONPATH=..\vstools &&
