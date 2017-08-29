@@ -1,6 +1,6 @@
 # Tests C library functions and types.
 #
-# Version: 20170807
+# Version: 20170827
 
 $ExitSuccess = 0
 $ExitFailure = 1

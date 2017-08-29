@@ -60,13 +60,13 @@ int caes_test_tweaked_context_initialize(
 	 result,
 	 1 );
 
-        CAES_TEST_ASSERT_IS_NOT_NULL(
-         "tweaked_context",
-         tweaked_context );
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "tweaked_context",
+	 tweaked_context );
 
-        CAES_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	CAES_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libcaes_tweaked_context_free(
 	          &tweaked_context,
@@ -77,13 +77,13 @@ int caes_test_tweaked_context_initialize(
 	 result,
 	 1 );
 
-        CAES_TEST_ASSERT_IS_NULL(
-         "tweaked_context",
-         tweaked_context );
+	CAES_TEST_ASSERT_IS_NULL(
+	 "tweaked_context",
+	 tweaked_context );
 
-        CAES_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	CAES_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -96,9 +96,9 @@ int caes_test_tweaked_context_initialize(
 	 result,
 	 -1 );
 
-        CAES_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -114,9 +114,9 @@ int caes_test_tweaked_context_initialize(
 	 result,
 	 -1 );
 
-        CAES_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -248,9 +248,9 @@ int caes_test_tweaked_context_free(
 	 result,
 	 -1 );
 
-        CAES_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
