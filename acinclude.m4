@@ -1,32 +1,31 @@
-dnl Functions for libcaes
+dnl Checks for required headers and functions
 dnl
-dnl Version: 20160827
+dnl Version: 20170904
 
 dnl Function to detect if libcaes dependencies are available
 AC_DEFUN([AX_LIBCAES_CHECK_LOCAL],
- [dnl Check for Windows crypto API support
- AX_WINCRYPT_CHECK_LIB
+  [ac_cv_libcaes_aes=no
 
- AS_IF(
-  [test "x$ac_cv_wincrypt" != xno],
-  [ac_cv_libcaes_aes=$ac_cv_wincrypt],
-  [ac_cv_libcaes_aes=no])
- 
- dnl Check for libcrypto (openssl) support
- AS_IF(
-  [test "x$ac_cv_libcaes_aes" = xno],
-  [AX_LIBCRYPTO_CHECK_ENABLE
-
+  dnl Check for Windows crypto API support
   AS_IF(
-   [test "x$ac_cv_libcrypto" != xno],
-   [AX_LIBCRYPTO_CHECK_AES
+    [test "x$ac_cv_enable_winapi" = xyes],
+    [ac_cv_libcaes_aes=libadvapi32])
 
-   ac_cv_libcaes_aes=$ac_cv_libcrypto_aes])
+  dnl Check for libcrypto (openssl) support
+  AS_IF(
+    [test "x$ac_cv_libcaes_aes" = xno],
+    [AX_LIBCRYPTO_CHECK_ENABLE
+
+    AS_IF(
+      [test "x$ac_cv_libcrypto" != xno],
+      [AX_LIBCRYPTO_CHECK_AES
+
+      ac_cv_libcaes_aes=$ac_cv_libcrypto_aes])
+    ])
+
+  dnl Fallback to local versions if necessary
+  AS_IF(
+    [test "x$ac_cv_libcaes_aes" = xno],
+    [ac_cv_libcaes_aes=local])
   ])
-  
- dnl Fallback to local versions if necessary 
- AS_IF(
-  [test "x$ac_cv_libcaes_aes" = xno],
-  [ac_cv_libcaes_aes=local])
- ])
 

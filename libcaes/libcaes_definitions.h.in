@@ -48,7 +48,7 @@ enum LIBCAES_CRYPT_MODES
 	LIBCAES_CRYPT_MODE_ENCRYPT		= 1
 };
 
-#endif
+#endif /* !defined( HAVE_LOCAL_LIBCAES ) */
 
 #if defined( WINAPI ) && ( WINVER >= 0x0600 )
 #define LIBCAES_HAVE_AES_SUPPORT
@@ -71,5 +71,5 @@ enum LIBCAES_CRYPT_MODES
 
 #define LIBCAES_UNFOLLED_LOOPS
 
-#endif
+#endif /* !defined( LIBCAES_INTERNAL_DEFINITIONS_H ) */
 
