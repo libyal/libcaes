@@ -1,17 +1,17 @@
 Name: libcaes
 Version: @VERSION@
 Release: 1
-Summary: Library to support support cross-platform AES encryption
+Summary: Library to support cross-platform AES encryption
 Group: System Environment/Libraries
 License: LGPL
 Source: %{name}-%{version}.tar.gz
-URL: https://github.com/libyal/libcaes/
+URL: https://github.com/libyal/libcaes
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 @libcaes_spec_requires@ @ax_libcerror_spec_requires@ @ax_libcrypto_spec_requires@
 @libcaes_spec_build_requires@ @ax_libcerror_spec_build_requires@ @ax_libcrypto_spec_build_requires@
 
 %description
-libcaes is a library to support cross-platform AES encryption
+Library to support cross-platform AES encryption
 
 %package devel
 Summary: Header files and libraries for developing applications for libcaes
