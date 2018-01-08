@@ -2,7 +2,7 @@
 #
 # Python-bindings AES-XTS de/encryption testing program
 #
-# Copyright (C) 2011-2017, Joachim Metz <joachim.metz@gmail.com>
+# Copyright (C) 2011-2018, Joachim Metz <joachim.metz@gmail.com>
 #
 # Refer to AUTHORS for acknowledgements.
 #
