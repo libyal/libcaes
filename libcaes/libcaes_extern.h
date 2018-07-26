@@ -37,8 +37,11 @@
 
 #include <libcaes/extern.h>
 
+#define LIBCAES_EXTERN_VARIABLE	LIBCAES_EXTERN
+
 #else
-#define LIBCAES_EXTERN	/* extern */
+#define LIBCAES_EXTERN		/* extern */
+#define LIBCAES_EXTERN_VARIABLE	extern
 
 #endif /* !defined( HAVE_LOCAL_LIBCAES ) */
 
