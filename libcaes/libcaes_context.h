@@ -33,7 +33,6 @@
 
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
 #include <openssl/evp.h>
-
 #endif
 
 #include "libcaes_extern.h"
@@ -65,7 +64,11 @@ struct libcaes_internal_context
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
 	/* The EVP context
 	 */
-	EVP_CIPHER_CTX evp_context;
+#if defined( HAVE_EVP_CIPHER_CTX_INIT )
+	EVP_CIPHER_CTX internal_evp_context;
+#endif
+
+	EVP_CIPHER_CTX *evp_context;
 
 	/* The key
 	 */

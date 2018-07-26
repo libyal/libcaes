@@ -33,7 +33,6 @@
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
 #include <openssl/err.h>
 #include <openssl/evp.h>
-
 #endif
 
 #include "libcaes_context.h"
@@ -349,7 +348,7 @@ int libcaes_context_initialize(
 		 "%s: unable to create AES crypt provider.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	if( internal_context->crypt_provider == 0 )
 	{
@@ -360,18 +359,35 @@ int libcaes_context_initialize(
 		 "%s: unable to create AES crypt provider.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
 	/* No additional initialization necessary */
 
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
+#if defined( HAVE_EVP_CIPHER_CTX_INIT )
 	EVP_CIPHER_CTX_init(
-	 &( internal_context->evp_context ) );
+	 &( internal_context->internal_evp_context ) );
 
+	internal_context->evp_context = &( internal_context->internal_evp_context );
+#else
+	internal_context->evp_context = EVP_CIPHER_CTX_new();
+
+	if( internal_context->evp_context == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create EVP cipher context.",
+		 function );
+
+		goto on_error;
+	}
+#endif
 	if( EVP_CIPHER_CTX_set_padding(
-	     &( internal_context->evp_context ),
+	     internal_context->evp_context,
 	     1 ) != 1 )
 	{
 		libcerror_error_set(
@@ -383,7 +399,6 @@ int libcaes_context_initialize(
 
 		goto on_error;
 	}
-
 #else
 	if( libcaes_tables_initialized == 0 )
 	{
@@ -458,14 +473,21 @@ int libcaes_context_free(
 		/* No additional clean up necessary */
 
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
+#if defined( HAVE_EVP_CIPHER_CTX_CLEANUP )
 		EVP_CIPHER_CTX_cleanup(
-		 &( internal_context->evp_context ) );
+		 &( internal_context->internal_evp_context ) );
 
 		/* Make sure the error state is removed otherwise openssl will leak memory
 		 */
 		ERR_remove_thread_state(
 		 NULL );
+#else
+		EVP_CIPHER_CTX_free(
+		 internal_context->evp_context );
 
+#endif /* defined( HAVE_EVP_CIPHER_CTX_CLEANUP ) */
+
+		internal_context->evp_context = NULL;
 #else
 		/* No additional clean up necessary */
 #endif
@@ -642,6 +664,17 @@ int libcaes_context_set_key(
 	}
 
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
+	if( key == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid key.",
+		 function );
+
+		return( -1 );
+	}
 	if( memory_copy(
 	     internal_context->key,
 	     key,
@@ -695,7 +728,8 @@ int libcaes_context_set_key(
 			return( -1 );
 		}
 	}
-#endif
+#endif /* defined( HAVE_WINCRYPT ) && defined( WINAPI ) && ( WINVER >= 0x0600 ) */
+
 	return( 1 );
 }
 
@@ -920,6 +954,17 @@ int libcaes_internal_context_set_decryption_key(
 
 		return( -1 );
 	}
+	if( key == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid key.",
+		 function );
+
+		return( -1 );
+	}
 	if( ( key_bit_size != 128 )
 	 && ( key_bit_size != 192 )
 	 && ( key_bit_size != 256 ) )
@@ -1115,6 +1160,17 @@ int libcaes_internal_context_set_encryption_key(
 
 		return( -1 );
 	}
+	if( key == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid key.",
+		 function );
+
+		return( -1 );
+	}
 	if( ( key_bit_size != 128 )
 	 && ( key_bit_size != 192 )
 	 && ( key_bit_size != 256 ) )
@@ -1227,7 +1283,9 @@ int libcaes_internal_context_set_encryption_key(
 
 #endif /* !defined( LIBCAES_HAVE_AES_SUPPORT ) */
 
-/* De- or encrypts a block of data using AES-CBC (Cipher Block Chaining)
+#if defined( HAVE_WINCRYPT ) && defined( WINAPI ) && ( WINVER >= 0x0600 )
+
+/* De- or encrypts a block of data using AES-CBC (Cipher Block Chaining) using the Windows Crypto API
  * The size must be a multitude of the AES block size (16 byte)
  * Returns 1 if successful or -1 on error
  */
@@ -1242,42 +1300,15 @@ int libcaes_crypt_cbc(
      size_t output_data_size,
      libcerror_error_t **error )
 {
-#if !defined( LIBCAES_HAVE_AES_SUPPORT )
-	uint8_t internal_initialization_vector[ 16 ];
-#endif
-
-#if defined( LIBCAES_HAVE_AES_SUPPORT )
-	libcaes_internal_context_t *internal_context = NULL;
-#endif
-	static char *function                        = "libcaes_crypt_cbc";
-
-#if defined( HAVE_WINCRYPT ) && defined( WINAPI ) && ( WINVER >= 0x0600 )
 	uint8_t block_data[ 128 ];
 
+	libcaes_internal_context_t *internal_context = NULL;
+	static char *function                        = "libcaes_crypt_cbc";
 	DWORD block_length                           = 0;
 	DWORD cipher_mode                            = CRYPT_MODE_CBC;
 	DWORD error_code                             = 0;
 	DWORD parameter_data_size                    = 0;
 	DWORD safe_output_data_size                  = 0;
-
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
-	uint8_t safe_initialization_vector[ 16 ];
-
-	int safe_mode                                = 0;
-
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
-	uint8_t block_data[ EVP_MAX_BLOCK_LENGTH ];
-
-	const EVP_CIPHER *cipher                     = NULL;
-	int safe_output_data_size                    = 0;
-
-#elif !defined( LIBCAES_HAVE_AES_SUPPORT )
-	size_t data_offset                           = 0;
-
-#if !defined( LIBCAES_UNFOLLED_LOOPS )
-	uint8_t block_index                          = 0;
-#endif
-#endif
 
 	if( context == NULL )
 	{
@@ -1290,9 +1321,7 @@ int libcaes_crypt_cbc(
 
 		return( -1 );
 	}
-#if defined( LIBCAES_HAVE_AES_SUPPORT )
 	internal_context = (libcaes_internal_context_t *) context;
-#endif
 
 	if( ( mode != LIBCAES_CRYPT_MODE_DECRYPT )
 	 && ( mode != LIBCAES_CRYPT_MODE_ENCRYPT ) )
@@ -1339,7 +1368,7 @@ int libcaes_crypt_cbc(
 
 		return( -1 );
 	}
-	if( input_data_size > (size_t) SSIZE_MAX )
+	if( input_data_size > (size_t) UINT32_MAX )
 	{
 		libcerror_error_set(
 		 error,
@@ -1374,7 +1403,7 @@ int libcaes_crypt_cbc(
 
 		return( -1 );
 	}
-	if( output_data_size > (size_t) SSIZE_MAX )
+	if( output_data_size > (size_t) UINT32_MAX )
 	{
 		libcerror_error_set(
 		 error,
@@ -1392,18 +1421,6 @@ int libcaes_crypt_cbc(
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
 		 "%s: invalid ouput data size smaller than input data size.",
-		 function );
-
-		return( -1 );
-	}
-#if defined( HAVE_WINCRYPT ) && defined( WINAPI ) && ( WINVER >= 0x0600 )
-	if( input_data_size > (size_t) UINT32_MAX )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid input data size value exceeds maximum.",
 		 function );
 
 		return( -1 );
@@ -1583,8 +1600,147 @@ int libcaes_crypt_cbc(
 			 &safe_output_data_size );
 		}
 	}
+	return( 1 );
+}
 
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
+
+/* De- or encrypts a block of data using AES-CBC (Cipher Block Chaining) using OpenSSL
+ * The size must be a multitude of the AES block size (16 byte)
+ * Returns 1 if successful or -1 on error
+ */
+int libcaes_crypt_cbc(
+     libcaes_context_t *context,
+     int mode,
+     const uint8_t *initialization_vector,
+     size_t initialization_vector_size,
+     const uint8_t *input_data,
+     size_t input_data_size,
+     uint8_t *output_data,
+     size_t output_data_size,
+     libcerror_error_t **error )
+{
+	uint8_t safe_initialization_vector[ 16 ];
+
+	libcaes_internal_context_t *internal_context = NULL;
+	static char *function                        = "libcaes_crypt_cbc";
+	int safe_mode                                = 0;
+
+	if( context == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid context.",
+		 function );
+
+		return( -1 );
+	}
+	internal_context = (libcaes_internal_context_t *) context;
+
+	if( ( mode != LIBCAES_CRYPT_MODE_DECRYPT )
+	 && ( mode != LIBCAES_CRYPT_MODE_ENCRYPT ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported mode.",
+		 function );
+
+		return( -1 );
+	}
+	if( initialization_vector == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid initialization vector.",
+		 function );
+
+		return( -1 );
+	}
+	if( initialization_vector_size != 16 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid initialization vector size value out of bounds.",
+		 function );
+
+		return( -1 );
+	}
+	if( input_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid input data.",
+		 function );
+
+		return( -1 );
+	}
+	if( input_data_size > (size_t) SSIZE_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid input data size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
+	/* Check if the input data size is a multitude of 16-byte
+	 */
+	if( ( input_data_size & (size_t) 0x0f ) != 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid input data size value out of bounds.",
+		 function );
+
+		return( -1 );
+	}
+	if( output_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid output data.",
+		 function );
+
+		return( -1 );
+	}
+	if( output_data_size > (size_t) SSIZE_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid output data size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
+	if( output_data_size < input_data_size )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid ouput data size smaller than input data size.",
+		 function );
+
+		return( -1 );
+	}
 	if( mode == LIBCAES_CRYPT_MODE_ENCRYPT )
 	{
 		safe_mode = AES_ENCRYPT;
@@ -1631,8 +1787,91 @@ int libcaes_crypt_cbc(
 
 		return( -1 );
 	}
+	return( 1 );
+}
 
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
+
+/* De- or encrypts a block of data using AES-CBC (Cipher Block Chaining) using OpenSSL EVP
+ * The size must be a multitude of the AES block size (16 byte)
+ * Returns 1 if successful or -1 on error
+ */
+int libcaes_crypt_cbc(
+     libcaes_context_t *context,
+     int mode,
+     const uint8_t *initialization_vector,
+     size_t initialization_vector_size,
+     const uint8_t *input_data,
+     size_t input_data_size,
+     uint8_t *output_data,
+     size_t output_data_size,
+     libcerror_error_t **error )
+{
+	uint8_t block_data[ EVP_MAX_BLOCK_LENGTH ];
+
+	const EVP_CIPHER *cipher                     = NULL;
+	libcaes_internal_context_t *internal_context = NULL;
+	static char *function                        = "libcaes_crypt_cbc";
+	int safe_output_data_size                    = 0;
+
+	if( context == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid context.",
+		 function );
+
+		return( -1 );
+	}
+	internal_context = (libcaes_internal_context_t *) context;
+
+	if( ( mode != LIBCAES_CRYPT_MODE_DECRYPT )
+	 && ( mode != LIBCAES_CRYPT_MODE_ENCRYPT ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported mode.",
+		 function );
+
+		return( -1 );
+	}
+	if( initialization_vector == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid initialization vector.",
+		 function );
+
+		return( -1 );
+	}
+	if( initialization_vector_size != 16 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid initialization vector size value out of bounds.",
+		 function );
+
+		return( -1 );
+	}
+	if( input_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid input data.",
+		 function );
+
+		return( -1 );
+	}
 	if( input_data_size > (size_t) INT_MAX )
 	{
 		libcerror_error_set(
@@ -1644,6 +1883,30 @@ int libcaes_crypt_cbc(
 
 		return( -1 );
 	}
+	/* Check if the input data size is a multitude of 16-byte
+	 */
+	if( ( input_data_size & (size_t) 0x0f ) != 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid input data size value out of bounds.",
+		 function );
+
+		return( -1 );
+	}
+	if( output_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid output data.",
+		 function );
+
+		return( -1 );
+	}
 	if( output_data_size > (size_t) INT_MAX )
 	{
 		libcerror_error_set(
@@ -1651,6 +1914,17 @@ int libcaes_crypt_cbc(
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
 		 "%s: invalid output data size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
+	if( output_data_size < input_data_size )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid ouput data size smaller than input data size.",
 		 function );
 
 		return( -1 );
@@ -1682,7 +1956,7 @@ int libcaes_crypt_cbc(
 		cipher = EVP_aes_256_cbc();
 	}
 	if( EVP_CipherInit_ex(
-	     &( internal_context->evp_context ),
+	     internal_context->evp_context,
 	     cipher,
 	     NULL,
 	     (unsigned char *) internal_context->key,
@@ -1699,7 +1973,7 @@ int libcaes_crypt_cbc(
 		return( -1 );
 	}
 	if( EVP_CipherUpdate(
-	     &( internal_context->evp_context ),
+	     internal_context->evp_context,
 	     (unsigned char *) output_data,
 	     &safe_output_data_size,
 	     (unsigned char *) input_data,
@@ -1717,11 +1991,152 @@ int libcaes_crypt_cbc(
 	/* Just ignore the output of this function
 	 */
 	EVP_CipherFinal_ex(
-	 &( internal_context->evp_context ),
+	 internal_context->evp_context,
 	 (unsigned char *) block_data,
 	 &safe_output_data_size );
 
+	return( 1 );
+}
+
 #else
+
+/* De- or encrypts a block of data using AES-CBC (Cipher Block Chaining) using fallback implementation
+ * The size must be a multitude of the AES block size (16 byte)
+ * Returns 1 if successful or -1 on error
+ */
+int libcaes_crypt_cbc(
+     libcaes_context_t *context,
+     int mode,
+     const uint8_t *initialization_vector,
+     size_t initialization_vector_size,
+     const uint8_t *input_data,
+     size_t input_data_size,
+     uint8_t *output_data,
+     size_t output_data_size,
+     libcerror_error_t **error )
+{
+	uint8_t internal_initialization_vector[ 16 ];
+
+	static char *function = "libcaes_crypt_cbc";
+	size_t data_offset    = 0;
+
+#if !defined( LIBCAES_UNFOLLED_LOOPS )
+	uint8_t block_index   = 0;
+#endif
+
+	if( context == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid context.",
+		 function );
+
+		return( -1 );
+	}
+	if( ( mode != LIBCAES_CRYPT_MODE_DECRYPT )
+	 && ( mode != LIBCAES_CRYPT_MODE_ENCRYPT ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported mode.",
+		 function );
+
+		return( -1 );
+	}
+	if( initialization_vector == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid initialization vector.",
+		 function );
+
+		return( -1 );
+	}
+	if( initialization_vector_size != 16 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid initialization vector size value out of bounds.",
+		 function );
+
+		return( -1 );
+	}
+	if( input_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid input data.",
+		 function );
+
+		return( -1 );
+	}
+	if( input_data_size > (size_t) SSIZE_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid input data size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
+	/* Check if the input data size is a multitude of 16-byte
+	 */
+	if( ( input_data_size & (size_t) 0x0f ) != 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid input data size value out of bounds.",
+		 function );
+
+		return( -1 );
+	}
+	if( output_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid output data.",
+		 function );
+
+		return( -1 );
+	}
+	if( output_data_size > (size_t) SSIZE_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid output data size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
+	if( output_data_size < input_data_size )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid ouput data size smaller than input data size.",
+		 function );
+
+		return( -1 );
+	}
 	if( memory_copy(
 	     internal_initialization_vector,
 	     initialization_vector,
@@ -1895,10 +2310,8 @@ int libcaes_crypt_cbc(
 
 		goto on_error;
 	}
-#endif
 	return( 1 );
 
-#if !defined( LIBCAES_HAVE_AES_SUPPORT )
 on_error:
 	memory_set(
 	 internal_initialization_vector,
@@ -1906,8 +2319,9 @@ on_error:
 	 16 );
 
 	return( -1 );
-#endif
 }
+
+#endif /* defined( HAVE_WINCRYPT ) && defined( WINAPI ) && ( WINVER >= 0x0600 ) */
 
 /* De- or encrypts a block of data using AES-CCM (Counter with CBC-MAC)
  * Note that the key must be set in encryption mode (LIBCAES_CRYPT_MODE_ENCRYPT) for both de- and encryption.
@@ -2377,7 +2791,9 @@ int libcaes_crypt_cfb(
 
 #endif /* TODO */
 
-/* De- or encrypts a block of data using AES-ECB (Electronic CodeBook)
+#if defined( HAVE_WINCRYPT ) && defined( WINAPI ) && ( WINVER >= 0x0600 )
+
+/* De- or encrypts a block of data using AES-ECB (Electronic CodeBook) using the Windows Crypto API
  * The size must be a multitude of the AES block size (16 byte)
  * Returns 1 if successful or -1 on error
  */
@@ -2390,38 +2806,16 @@ int libcaes_crypt_ecb(
      size_t output_data_size,
      libcerror_error_t **error )
 {
-	libcaes_internal_context_t *internal_context = NULL;
-	static char *function                        = "libcaes_crypt_ecb";
-	int result                                   = 1;
-
-#if defined( HAVE_WINCRYPT ) && defined( WINAPI ) && ( WINVER >= 0x0600 )
 	uint8_t block_data[ 128 ];
 
+	libcaes_internal_context_t *internal_context = NULL;
+	static char *function                        = "libcaes_crypt_ecb";
 	DWORD block_length                           = 0;
 	DWORD cipher_mode                            = CRYPT_MODE_ECB;
 	DWORD error_code                             = 0;
 	DWORD parameter_data_size                    = 0;
 	DWORD safe_output_data_size                  = 0;
-
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
-	int safe_mode                                = 0;
-
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
-	uint8_t block_data[ EVP_MAX_BLOCK_LENGTH ];
-
-	const EVP_CIPHER *cipher                     = NULL;
-	int safe_output_data_size                    = 0;
-
-#elif !defined( LIBCAES_HAVE_AES_SUPPORT )
-	uint32_t cipher_values_32bit[ 4 ];
-	uint32_t values_32bit[ 4 ];
-
-	uint32_t *round_keys                         = NULL;
-	size_t data_offset                           = 0;
-	uint32_t substitution_value                  = 0;
-	uint32_t table_value                         = 0;
-	int round_key_iterator                       = 0;
-#endif
+	int result                                   = 1;
 
 	if( context == NULL )
 	{
@@ -2459,6 +2853,17 @@ int libcaes_crypt_ecb(
 
 		return( -1 );
 	}
+	if( input_data_size > (size_t) UINT32_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid input data size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
 	if( input_data_size < 16 )
 	{
 		libcerror_error_set(
@@ -2466,17 +2871,6 @@ int libcaes_crypt_ecb(
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
 		 "%s: invalid input data size value too small.",
-		 function );
-
-		return( -1 );
-	}
-	if( input_data_size > (size_t) SSIZE_MAX )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid input data size value exceeds maximum.",
 		 function );
 
 		return( -1 );
@@ -2492,18 +2886,7 @@ int libcaes_crypt_ecb(
 
 		return( -1 );
 	}
-	if( output_data_size < 16 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
-		 "%s: invalid output data size value too small.",
-		 function );
-
-		return( -1 );
-	}
-	if( output_data_size > (size_t) SSIZE_MAX )
+	if( output_data_size > (size_t) UINT32_MAX )
 	{
 		libcerror_error_set(
 		 error,
@@ -2514,14 +2897,13 @@ int libcaes_crypt_ecb(
 
 		return( -1 );
 	}
-#if defined( HAVE_WINCRYPT ) && defined( WINAPI ) && ( WINVER >= 0x0600 )
-	if( input_data_size > (size_t) UINT32_MAX )
+	if( output_data_size < 16 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid input data size value exceeds maximum.",
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+		 "%s: invalid output data size value too small.",
 		 function );
 
 		return( -1 );
@@ -2683,8 +3065,120 @@ int libcaes_crypt_ecb(
 			 &safe_output_data_size );
 		}
 	}
+	return( result );
+}
 
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
+
+/* De- or encrypts a block of data using AES-ECB (Electronic CodeBook) using OpenSSL
+ * The size must be a multitude of the AES block size (16 byte)
+ * Returns 1 if successful or -1 on error
+ */
+int libcaes_crypt_ecb(
+     libcaes_context_t *context,
+     int mode,
+     const uint8_t *input_data,
+     size_t input_data_size,
+     uint8_t *output_data,
+     size_t output_data_size,
+     libcerror_error_t **error )
+{
+	libcaes_internal_context_t *internal_context = NULL;
+	static char *function                        = "libcaes_crypt_ecb";
+	int result                                   = 1;
+	int safe_mode                                = 0;
+
+	if( context == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid context.",
+		 function );
+
+		return( -1 );
+	}
+	internal_context = (libcaes_internal_context_t *) context;
+
+	if( ( mode != LIBCAES_CRYPT_MODE_DECRYPT )
+	 && ( mode != LIBCAES_CRYPT_MODE_ENCRYPT ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported mode.",
+		 function );
+
+		return( -1 );
+	}
+	if( input_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid input data.",
+		 function );
+
+		return( -1 );
+	}
+	if( input_data_size > (size_t) SSIZE_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid input data size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
+	if( input_data_size < 16 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+		 "%s: invalid input data size value too small.",
+		 function );
+
+		return( -1 );
+	}
+	if( output_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid output data.",
+		 function );
+
+		return( -1 );
+	}
+	if( output_data_size > (size_t) SSIZE_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid output data size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
+	if( output_data_size < 16 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+		 "%s: invalid output data size value too small.",
+		 function );
+
+		return( -1 );
+	}
 	if( mode == LIBCAES_CRYPT_MODE_ENCRYPT )
 	{
 		safe_mode = AES_ENCRYPT;
@@ -2699,7 +3193,68 @@ int libcaes_crypt_ecb(
 	 &( internal_context->key ),
 	 safe_mode );
 
+	return( result );
+}
+
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
+
+/* De- or encrypts a block of data using AES-ECB (Electronic CodeBook) using OpenSSL EVP
+ * The size must be a multitude of the AES block size (16 byte)
+ * Returns 1 if successful or -1 on error
+ */
+int libcaes_crypt_ecb(
+     libcaes_context_t *context,
+     int mode,
+     const uint8_t *input_data,
+     size_t input_data_size,
+     uint8_t *output_data,
+     size_t output_data_size,
+     libcerror_error_t **error )
+{
+	uint8_t block_data[ EVP_MAX_BLOCK_LENGTH ];
+
+	const EVP_CIPHER *cipher                     = NULL;
+	libcaes_internal_context_t *internal_context = NULL;
+	static char *function                        = "libcaes_crypt_ecb";
+	int result                                   = 1;
+	int safe_output_data_size                    = 0;
+
+	if( context == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid context.",
+		 function );
+
+		return( -1 );
+	}
+	internal_context = (libcaes_internal_context_t *) context;
+
+	if( ( mode != LIBCAES_CRYPT_MODE_DECRYPT )
+	 && ( mode != LIBCAES_CRYPT_MODE_ENCRYPT ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported mode.",
+		 function );
+
+		return( -1 );
+	}
+	if( input_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid input data.",
+		 function );
+
+		return( -1 );
+	}
 	if( input_data_size > (size_t) INT_MAX )
 	{
 		libcerror_error_set(
@@ -2711,6 +3266,28 @@ int libcaes_crypt_ecb(
 
 		return( -1 );
 	}
+	if( input_data_size < 16 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+		 "%s: invalid input data size value too small.",
+		 function );
+
+		return( -1 );
+	}
+	if( output_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid output data.",
+		 function );
+
+		return( -1 );
+	}
 	if( output_data_size > (size_t) INT_MAX )
 	{
 		libcerror_error_set(
@@ -2718,6 +3295,17 @@ int libcaes_crypt_ecb(
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
 		 "%s: invalid output data size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
+	if( output_data_size < 16 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+		 "%s: invalid output data size value too small.",
 		 function );
 
 		return( -1 );
@@ -2749,7 +3337,7 @@ int libcaes_crypt_ecb(
 		cipher = EVP_aes_256_ecb();
 	}
 	if( EVP_CipherInit_ex(
-	     &( internal_context->evp_context ),
+	     internal_context->evp_context,
 	     cipher,
 	     NULL,
 	     (unsigned char *) internal_context->key,
@@ -2766,7 +3354,7 @@ int libcaes_crypt_ecb(
 		return( -1 );
 	}
 	if( EVP_CipherUpdate(
-	     &( internal_context->evp_context ),
+	     internal_context->evp_context,
 	     (unsigned char *) output_data,
 	     &safe_output_data_size,
 	     (unsigned char *) input_data,
@@ -2784,11 +3372,131 @@ int libcaes_crypt_ecb(
 	/* Just ignore the output of this function
 	 */
 	EVP_CipherFinal_ex(
-	 &( internal_context->evp_context ),
+	 internal_context->evp_context,
 	 (unsigned char *) block_data,
 	 &safe_output_data_size );
 
+	return( result );
+}
+
 #else
+
+/* De- or encrypts a block of data using AES-ECB (Electronic CodeBook) using fallback implementation
+ * The size must be a multitude of the AES block size (16 byte)
+ * Returns 1 if successful or -1 on error
+ */
+int libcaes_crypt_ecb(
+     libcaes_context_t *context,
+     int mode,
+     const uint8_t *input_data,
+     size_t input_data_size,
+     uint8_t *output_data,
+     size_t output_data_size,
+     libcerror_error_t **error )
+{
+	uint32_t cipher_values_32bit[ 4 ];
+	uint32_t values_32bit[ 4 ];
+
+	libcaes_internal_context_t *internal_context = NULL;
+	uint32_t *round_keys                         = NULL;
+	static char *function                        = "libcaes_crypt_ecb";
+	size_t data_offset                           = 0;
+	uint32_t substitution_value                  = 0;
+	uint32_t table_value                         = 0;
+	int result                                   = 1;
+	int round_key_iterator                       = 0;
+
+	if( context == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid context.",
+		 function );
+
+		return( -1 );
+	}
+	internal_context = (libcaes_internal_context_t *) context;
+
+	if( ( mode != LIBCAES_CRYPT_MODE_DECRYPT )
+	 && ( mode != LIBCAES_CRYPT_MODE_ENCRYPT ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported mode.",
+		 function );
+
+		return( -1 );
+	}
+	if( input_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid input data.",
+		 function );
+
+		return( -1 );
+	}
+	if( input_data_size > (size_t) SSIZE_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid input data size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
+	if( input_data_size < 16 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+		 "%s: invalid input data size value too small.",
+		 function );
+
+		return( -1 );
+	}
+	if( output_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid output data.",
+		 function );
+
+		return( -1 );
+	}
+	if( output_data_size > (size_t) SSIZE_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid output data size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
+	if( output_data_size < 16 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+		 "%s: invalid output data size value too small.",
+		 function );
+
+		return( -1 );
+	}
 	while( data_offset < input_data_size )
 	{
 		byte_stream_copy_to_uint32_little_endian(
@@ -2934,7 +3642,8 @@ int libcaes_crypt_ecb(
 		}
 		data_offset += 16;
 	}
-#endif
 	return( result );
 }
+
+#endif /* defined( HAVE_WINCRYPT ) && defined( WINAPI ) && ( WINVER >= 0x0600 ) */
 
