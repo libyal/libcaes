@@ -864,16 +864,16 @@ int libcaes_initialize_tables(
 		libcaes_forward_table0[ byte_index ]  |= substitution_value;
 
 		libcaes_forward_table1[ byte_index ] = byte_stream_bit_rotate_left(
-		                                           libcaes_forward_table0[ byte_index ],
-		                                           8 );
+		                                        libcaes_forward_table0[ byte_index ],
+		                                        8 );
 
 		libcaes_forward_table2[ byte_index ] = byte_stream_bit_rotate_left(
-		                                           libcaes_forward_table1[ byte_index ],
-		                                           8 );
+		                                        libcaes_forward_table1[ byte_index ],
+		                                        8 );
 
 		libcaes_forward_table3[ byte_index ] = byte_stream_bit_rotate_left(
-		                                           libcaes_forward_table2[ byte_index ],
-		                                           8 );
+		                                        libcaes_forward_table2[ byte_index ],
+		                                        8 );
 
 		substitution_value = libcaes_reverse_substitution_box[ byte_index ];
 
@@ -909,16 +909,16 @@ int libcaes_initialize_tables(
 			libcaes_reverse_table0[ byte_index ] ^= powers_table[ table_index ];
 		}
 		libcaes_reverse_table1[ byte_index ] = byte_stream_bit_rotate_left(
-		                                           libcaes_reverse_table0[ byte_index ],
-		                                           8 );
+		                                        libcaes_reverse_table0[ byte_index ],
+		                                        8 );
 
 		libcaes_reverse_table2[ byte_index ] = byte_stream_bit_rotate_left(
-		                                           libcaes_reverse_table1[ byte_index ],
-		                                           8 );
+		                                        libcaes_reverse_table1[ byte_index ],
+		                                        8 );
 
 		libcaes_reverse_table3[ byte_index ] = byte_stream_bit_rotate_left(
-		                                           libcaes_reverse_table2[ byte_index ],
-		                                           8 );
+		                                        libcaes_reverse_table2[ byte_index ],
+		                                        8 );
 	}
 	return( 1 );
 }
