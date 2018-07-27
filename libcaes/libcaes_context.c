@@ -268,6 +268,7 @@ int libcaes_context_initialize(
 
 #if defined( HAVE_WINCRYPT ) && defined( WINAPI ) && ( WINVER >= 0x0600 )
 	DWORD error_code                             = 0;
+	BOOL result                                  = FALSE;
 #endif
 
 	if( context == NULL )
@@ -323,21 +324,29 @@ int libcaes_context_initialize(
 #if defined( HAVE_WINCRYPT ) && defined( WINAPI ) && ( WINVER >= 0x0600 )
 	/* Request the AES crypt provider, fail back to the RSA crypt provider
 	*/
-	if( CryptAcquireContext(
-	     &( internal_context->crypt_provider ),
-	     NULL,
-	     MS_ENH_RSA_AES_PROV,
-	     PROV_RSA_AES,
-	     0 ) == 0 )
+	result = CryptAcquireContext(
+	          &( internal_context->crypt_provider ),
+	          NULL,
+	          MS_ENH_RSA_AES_PROV,
+	          PROV_RSA_AES,
+	          0 );
+
+	if( result == FALSE )
 	{
-/* TODO fallback for XP
-		if( CryptAcquireContext(
-		     &( internal_context->crypt_provider ),
-		     NULL,
-		     MS_ENH_RSA_AES_PROV_XP,
-		     PROV_RSA_AES,
-		     CRYPT_NEWKEYSET ) == 0 )
-*/
+		error_code = GetLastError();
+
+		if( error_code == NTE_BAD_KEYSET )
+		{
+			result = CryptAcquireContext(
+			          &( internal_context->crypt_provider ),
+			          NULL,
+			          MS_ENH_RSA_AES_PROV,
+			          PROV_RSA_AES,
+			          CRYPT_NEWKEYSET );
+		}
+	}
+	if( result == FALSE )
+	{
 		error_code = GetLastError();
 
 		libcerror_system_set_error(
@@ -416,7 +425,8 @@ int libcaes_context_initialize(
 		}
 		libcaes_tables_initialized = 1;
 	}
-#endif
+#endif /* defined( HAVE_WINCRYPT ) && defined( WINAPI ) && ( WINVER >= 0x0600 ) */
+
 	*context = (libcaes_context_t *) internal_context;
 
 	return( 1 );
@@ -1368,6 +1378,7 @@ int libcaes_crypt_cbc(
 
 		return( -1 );
 	}
+#if ( SIZEOF_SIZE_T > 4 )
 	if( input_data_size > (size_t) UINT32_MAX )
 	{
 		libcerror_error_set(
@@ -1379,6 +1390,7 @@ int libcaes_crypt_cbc(
 
 		return( -1 );
 	}
+#endif
 	/* Check if the input data size is a multitude of 16-byte
 	 */
 	if( ( input_data_size & (size_t) 0x0f ) != 0 )
@@ -1403,6 +1415,7 @@ int libcaes_crypt_cbc(
 
 		return( -1 );
 	}
+#if ( SIZEOF_SIZE_T > 4 )
 	if( output_data_size > (size_t) UINT32_MAX )
 	{
 		libcerror_error_set(
@@ -1414,6 +1427,7 @@ int libcaes_crypt_cbc(
 
 		return( -1 );
 	}
+#endif
 	if( output_data_size < input_data_size )
 	{
 		libcerror_error_set(
@@ -2853,6 +2867,7 @@ int libcaes_crypt_ecb(
 
 		return( -1 );
 	}
+#if ( SIZEOF_SIZE_T > 4 )
 	if( input_data_size > (size_t) UINT32_MAX )
 	{
 		libcerror_error_set(
@@ -2864,6 +2879,7 @@ int libcaes_crypt_ecb(
 
 		return( -1 );
 	}
+#endif
 	if( input_data_size < 16 )
 	{
 		libcerror_error_set(
@@ -2886,6 +2902,7 @@ int libcaes_crypt_ecb(
 
 		return( -1 );
 	}
+#if ( SIZEOF_SIZE_T > 4 )
 	if( output_data_size > (size_t) UINT32_MAX )
 	{
 		libcerror_error_set(
@@ -2897,6 +2914,7 @@ int libcaes_crypt_ecb(
 
 		return( -1 );
 	}
+#endif
 	if( output_data_size < 16 )
 	{
 		libcerror_error_set(

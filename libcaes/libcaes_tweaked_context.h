@@ -62,8 +62,8 @@ int libcaes_tweaked_context_set_keys(
      int mode,
      const uint8_t *key,
      size_t key_bit_size,
-     const uint8_t *tweaked_key,
-     size_t tweaked_key_bit_size,
+     const uint8_t *tweak_key,
+     size_t tweak_key_bit_size,
      libcerror_error_t **error );
 
 LIBCAES_EXTERN \

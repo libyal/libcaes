@@ -54,7 +54,12 @@
 #if defined( HAVE_GNU_DL_DLSYM ) && defined( __GNUC__ ) && !defined( __clang__ ) && !defined( __CYGWIN__ )
 
 #if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
-/* No additional hook function variable definitions needed */
+
+static int (*caes_test_real_AES_set_encrypt_key)(const unsigned char *, const int, AES_KEY *)                                                     = NULL;
+static int (*caes_test_real_AES_set_decrypt_key)(const unsigned char *, const int, AES_KEY *)                                                     = NULL;
+
+int caes_test_AES_set_encrypt_key_attempts_before_fail                                                                                            = -1;
+int caes_test_AES_set_decrypt_key_attempts_before_fail                                                                                            = -1;
 
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
 
@@ -73,12 +78,79 @@ int caes_test_EVP_CipherUpdate_attempts_before_fail                             
 #if defined( HAVE_GNU_DL_DLSYM ) && defined( __GNUC__ ) && !defined( __clang__ ) && !defined( __CYGWIN__ )
 
 #if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
-/* No additional hook function definitions needed */
+
+/* Custom AES_set_encrypt_key for testing error cases
+ * Returns 0 if successful or a negative value otherwise
+ */
+int AES_set_encrypt_key(
+     const unsigned char *userKey,
+     const int bits,
+     AES_KEY *key )
+{
+	int result = 0;
+
+	if( caes_test_real_AES_set_encrypt_key == NULL )
+	{
+		caes_test_real_AES_set_encrypt_key = dlsym(
+		                                      RTLD_NEXT,
+		                                      "AES_set_encrypt_key" );
+	}
+	if( caes_test_AES_set_encrypt_key_attempts_before_fail == 0 )
+	{
+		caes_test_AES_set_encrypt_key_attempts_before_fail = -1;
+
+		return( -1 );
+	}
+	else if( caes_test_AES_set_encrypt_key_attempts_before_fail > 0 )
+	{
+		caes_test_AES_set_encrypt_key_attempts_before_fail--;
+	}
+	result = caes_test_real_AES_set_encrypt_key(
+	          userKey,
+	          bits,
+	          key );
+
+	return( result );
+}
+
+/* Custom AES_set_decrypt_key for testing error cases
+ * Returns 0 if successful or a negative value otherwise
+ */
+int AES_set_decrypt_key(
+     const unsigned char *userKey,
+     const int bits,
+     AES_KEY *key )
+{
+	int result = 0;
+
+	if( caes_test_real_AES_set_decrypt_key == NULL )
+	{
+		caes_test_real_AES_set_decrypt_key = dlsym(
+		                                      RTLD_NEXT,
+		                                      "AES_set_decrypt_key" );
+	}
+	if( caes_test_AES_set_decrypt_key_attempts_before_fail == 0 )
+	{
+		caes_test_AES_set_decrypt_key_attempts_before_fail = -1;
+
+		return( -1 );
+	}
+	else if( caes_test_AES_set_decrypt_key_attempts_before_fail > 0 )
+	{
+		caes_test_AES_set_decrypt_key_attempts_before_fail--;
+	}
+	result = caes_test_real_AES_set_decrypt_key(
+	          userKey,
+	          bits,
+	          key );
+
+	return( result );
+}
 
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
 
 /* Custom EVP_CIPHER_CTX_set_padding for testing error cases
- * Returns 0 if successful or an error value otherwise
+ * Returns 1 if successful or 0 otherwise
  */
 int EVP_CIPHER_CTX_set_padding(
      EVP_CIPHER_CTX *c,
@@ -110,7 +182,7 @@ int EVP_CIPHER_CTX_set_padding(
 }
 
 /* Custom EVP_CipherInit_ex for testing error cases
- * Returns 0 if successful or an error value otherwise
+ * Returns 1 if successful or 0 otherwise
  */
 int EVP_CipherInit_ex(
      EVP_CIPHER_CTX *ctx,
@@ -150,7 +222,7 @@ int EVP_CipherInit_ex(
 }
 
 /* Custom EVP_CipherUpdate for testing error cases
- * Returns 0 if successful or an error value otherwise
+ * Returns 1 if successful or 0 otherwise
  */
 int EVP_CipherUpdate(
      EVP_CIPHER_CTX *ctx,
@@ -197,9 +269,15 @@ int EVP_CipherUpdate(
 int caes_test_context_initialize(
      void )
 {
-	libcaes_context_t *context = NULL;
-	libcerror_error_t *error   = NULL;
-	int result                 = 0;
+	libcaes_context_t *context      = NULL;
+	libcerror_error_t *error        = NULL;
+	int result                      = 0;
+
+#if defined( HAVE_CAES_TEST_MEMORY )
+	int number_of_malloc_fail_tests = 1;
+	int number_of_memset_fail_tests = 1;
+	int test_number                 = 0;
+#endif
 
 	/* Test regular cases
 	 */
@@ -281,46 +359,99 @@ int caes_test_context_initialize(
 	/* No additional test definitions needed */
 
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && !defined( HAVE_EVP_CIPHER_CTX_INIT )
+	number_of_malloc_fail_tests = 2;
 
-	/* Test libcaes_context_initialize with malloc failing in EVP_CIPHER_CTX_new
-	 */
-	caes_test_malloc_attempts_before_fail = 0;
-
-	result = libcaes_context_initialize(
-	          &context,
-	          &error );
-
-	if( caes_test_malloc_attempts_before_fail != -1 )
-	{
-		caes_test_malloc_attempts_before_fail = -1;
-
-		if( context != NULL )
-		{
-			libcaes_context_free(
-			 &context,
-			 NULL );
-		}
-	}
-	else
-	{
-		CAES_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
-
-		CAES_TEST_ASSERT_IS_NULL(
-		 "context",
-		 context );
-
-		CAES_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
-
-		libcerror_error_free(
-		 &error );
-	}
 #endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) */
 
+	/* 1 fail in memory_allocate_structure
+	 * 2 fail in EVP_CIPHER_CTX_new
+	 */
+	for( test_number = 0;
+	     test_number < number_of_malloc_fail_tests;
+	     test_number++ )
+	{
+		/* Test libcaes_context_initialize with malloc failing
+		 */
+		caes_test_malloc_attempts_before_fail = test_number;
+
+		result = libcaes_context_initialize(
+		          &context,
+		          &error );
+
+		if( caes_test_malloc_attempts_before_fail != -1 )
+		{
+			caes_test_malloc_attempts_before_fail = -1;
+
+			if( context != NULL )
+			{
+				libcaes_context_free(
+				 &context,
+				 NULL );
+			}
+		}
+		else
+		{
+			CAES_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 -1 );
+
+			CAES_TEST_ASSERT_IS_NULL(
+			 "context",
+			 context );
+
+			CAES_TEST_ASSERT_IS_NOT_NULL(
+			 "error",
+			 error );
+
+			libcerror_error_free(
+			 &error );
+		}
+	}
+	/* 1 fail in memset after memory_allocate_structure
+	 */
+	for( test_number = 0;
+	     test_number < number_of_memset_fail_tests;
+	     test_number++ )
+	{
+		/* Test libcaes_context_initialize with memset failing
+		 */
+		caes_test_memset_attempts_before_fail = test_number;
+
+		result = libcaes_context_initialize(
+		          &context,
+		          &error );
+
+		if( caes_test_memset_attempts_before_fail != -1 )
+		{
+			caes_test_memset_attempts_before_fail = -1;
+
+			if( context != NULL )
+			{
+				libcaes_context_free(
+				 &context,
+				 NULL );
+			}
+		}
+		else
+		{
+			CAES_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 -1 );
+
+			CAES_TEST_ASSERT_IS_NULL(
+			 "context",
+			 context );
+
+			CAES_TEST_ASSERT_IS_NOT_NULL(
+			 "error",
+			 error );
+
+			libcerror_error_free(
+			 &error );
+		}
+	}
 #endif /* defined( HAVE_CAES_TEST_MEMORY ) */
 
 #if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
@@ -554,7 +685,68 @@ int caes_test_context_set_key(
 	 &error );
 
 #if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
-	/* No additional test definitions needed */
+
+#if defined( HAVE_GNU_DL_DLSYM ) && defined( __GNUC__ ) && !defined( __clang__ ) && !defined( __CYGWIN__ )
+
+	/* Test libcaes_context_set_key with AES_set_encrypt_key failing
+	 */
+	caes_test_AES_set_encrypt_key_attempts_before_fail = 0;
+
+	result = libcaes_context_set_key(
+	          context,
+	          LIBCAES_CRYPT_MODE_ENCRYPT,
+	          key,
+	          128,
+	          &error );
+
+	if( caes_test_AES_set_encrypt_key_attempts_before_fail != -1 )
+	{
+		caes_test_AES_set_encrypt_key_attempts_before_fail = -1;
+	}
+	else
+	{
+		CAES_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		CAES_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Test libcaes_context_set_key with AES_set_decrypt_key failing
+	 */
+	caes_test_AES_set_decrypt_key_attempts_before_fail = 0;
+
+	result = libcaes_context_set_key(
+	          context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          key,
+	          128,
+	          &error );
+
+	if( caes_test_AES_set_decrypt_key_attempts_before_fail != -1 )
+	{
+		caes_test_AES_set_decrypt_key_attempts_before_fail = -1;
+	}
+	else
+	{
+		CAES_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		CAES_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_GNU_DL_DLSYM ) && defined( __GNUC__ ) && !defined( __clang__ ) && !defined( __CYGWIN__ ) */
 
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
 
@@ -989,9 +1181,9 @@ int caes_test_crypt_cbc(
      void )
 {
 	uint8_t initialization_vector[ 16 ];
-	uint8_t input_data[ 16 ];
+	uint8_t input_data[ 208 ];
 	uint8_t key[ 16 ];
-	uint8_t output_data[ 16 ];
+	uint8_t output_data[ 208 ];
 
 	libcaes_context_t *context = NULL;
 	libcerror_error_t *error   = NULL;
@@ -1001,7 +1193,9 @@ int caes_test_crypt_cbc(
 	/* Initialize test
 	 */
 #if defined( HAVE_WINCRYPT ) && defined( WINAPI ) && ( WINVER >= 0x0600 )
+#if ( SIZEOF_SIZE_T > 4 )
 	maximum_size = (size_t) UINT32_MAX;
+#endif
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
 	maximum_size = (size_t) SSIZE_MAX;
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
@@ -1051,9 +1245,9 @@ int caes_test_crypt_cbc(
 	          initialization_vector,
 	          16,
 	          input_data,
-	          16,
+	          208,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	CAES_TEST_ASSERT_EQUAL_INT(
@@ -1073,9 +1267,9 @@ int caes_test_crypt_cbc(
 	          initialization_vector,
 	          16,
 	          input_data,
-	          16,
+	          208,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	CAES_TEST_ASSERT_EQUAL_INT(
@@ -1096,9 +1290,9 @@ int caes_test_crypt_cbc(
 	          initialization_vector,
 	          16,
 	          input_data,
-	          16,
+	          208,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	CAES_TEST_ASSERT_EQUAL_INT(
@@ -1119,9 +1313,9 @@ int caes_test_crypt_cbc(
 	          NULL,
 	          16,
 	          input_data,
-	          16,
+	          208,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	CAES_TEST_ASSERT_EQUAL_INT(
@@ -1142,9 +1336,9 @@ int caes_test_crypt_cbc(
 	          initialization_vector,
 	          0,
 	          input_data,
-	          16,
+	          208,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	CAES_TEST_ASSERT_EQUAL_INT(
@@ -1165,9 +1359,9 @@ int caes_test_crypt_cbc(
 	          initialization_vector,
 	          16,
 	          NULL,
-	          16,
+	          208,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	CAES_TEST_ASSERT_EQUAL_INT(
@@ -1182,29 +1376,31 @@ int caes_test_crypt_cbc(
 	libcerror_error_free(
 	 &error );
 
-	result = libcaes_crypt_cbc(
-	          context,
-	          LIBCAES_CRYPT_MODE_DECRYPT,
-	          initialization_vector,
-	          16,
-	          input_data,
-	          maximum_size + 1,
-	          output_data,
-	          16,
-	          &error );
+	if( maximum_size > 0 )
+	{
+		result = libcaes_crypt_cbc(
+		          context,
+		          LIBCAES_CRYPT_MODE_DECRYPT,
+		          initialization_vector,
+		          16,
+		          input_data,
+		          maximum_size + 1,
+		          output_data,
+		          208,
+		          &error );
 
-	CAES_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
+		CAES_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
 
-	CAES_TEST_ASSERT_IS_NOT_NULL(
-	 "error",
-	 error );
+		CAES_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
-	libcerror_error_free(
-	 &error );
-
+		libcerror_error_free(
+		 &error );
+	}
 	result = libcaes_crypt_cbc(
 	          context,
 	          LIBCAES_CRYPT_MODE_DECRYPT,
@@ -1213,7 +1409,7 @@ int caes_test_crypt_cbc(
 	          input_data,
 	          8,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	CAES_TEST_ASSERT_EQUAL_INT(
@@ -1234,9 +1430,9 @@ int caes_test_crypt_cbc(
 	          initialization_vector,
 	          16,
 	          input_data,
-	          16,
+	          208,
 	          NULL,
-	          16,
+	          208,
 	          &error );
 
 	CAES_TEST_ASSERT_EQUAL_INT(
@@ -1251,36 +1447,38 @@ int caes_test_crypt_cbc(
 	libcerror_error_free(
 	 &error );
 
+	if( maximum_size > 0 )
+	{
+		result = libcaes_crypt_cbc(
+		          context,
+		          LIBCAES_CRYPT_MODE_DECRYPT,
+		          initialization_vector,
+		          16,
+		          input_data,
+		          208,
+		          output_data,
+		          maximum_size + 1,
+		          &error );
+
+		CAES_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		CAES_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
 	result = libcaes_crypt_cbc(
 	          context,
 	          LIBCAES_CRYPT_MODE_DECRYPT,
 	          initialization_vector,
 	          16,
 	          input_data,
-	          16,
-	          output_data,
-	          maximum_size + 1,
-	          &error );
-
-	CAES_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-	CAES_TEST_ASSERT_IS_NOT_NULL(
-	 "error",
-	 error );
-
-	libcerror_error_free(
-	 &error );
-
-	result = libcaes_crypt_cbc(
-	          context,
-	          LIBCAES_CRYPT_MODE_DECRYPT,
-	          initialization_vector,
-	          16,
-	          input_data,
-	          16,
+	          208,
 	          output_data,
 	          8,
 	          &error );
@@ -1315,9 +1513,9 @@ int caes_test_crypt_cbc(
 	          initialization_vector,
 	          16,
 	          input_data,
-	          16,
+	          208,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	if( caes_test_memset_attempts_before_fail != -1 )
@@ -1352,9 +1550,9 @@ int caes_test_crypt_cbc(
 	          initialization_vector,
 	          16,
 	          input_data,
-	          16,
+	          208,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	if( caes_test_memcpy_attempts_before_fail != -1 )
@@ -1395,9 +1593,9 @@ int caes_test_crypt_cbc(
 	          initialization_vector,
 	          16,
 	          input_data,
-	          16,
+	          208,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	if( caes_test_memcpy_attempts_before_fail != -1 )
@@ -1432,9 +1630,9 @@ int caes_test_crypt_cbc(
 	          initialization_vector,
 	          16,
 	          input_data,
-	          16,
+	          208,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	if( caes_test_memset_attempts_before_fail != -1 )
@@ -1471,9 +1669,9 @@ int caes_test_crypt_cbc(
 	          initialization_vector,
 	          16,
 	          input_data,
-	          16,
+	          208,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	if( caes_test_memset_attempts_before_fail != -1 )
@@ -1496,9 +1694,75 @@ int caes_test_crypt_cbc(
 	}
 #endif /* defined( HAVE_CAES_TEST_MEMORY ) */
 
-	/* TODO test libcaes_crypt_cbc with EVP_CipherInit_ex failing */
+#if defined( HAVE_GNU_DL_DLSYM ) && defined( __GNUC__ ) && !defined( __clang__ ) && !defined( __CYGWIN__ )
 
-	/* TODO test libcaes_crypt_cbc with EVP_CipherUpdate failing */
+	/* Test libcaes_crypt_cbc with EVP_CipherInit_ex failing
+	 */
+	caes_test_EVP_CipherInit_ex_attempts_before_fail = 0;
+
+	result = libcaes_crypt_cbc(
+	          context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          initialization_vector,
+	          16,
+	          input_data,
+	          208,
+	          output_data,
+	          208,
+	          &error );
+
+	if( caes_test_EVP_CipherInit_ex_attempts_before_fail != -1 )
+	{
+		caes_test_EVP_CipherInit_ex_attempts_before_fail = -1;
+	}
+	else
+	{
+		CAES_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		CAES_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Test libcaes_crypt_cbc with EVP_CipherUpdate failing
+	 */
+	caes_test_EVP_CipherUpdate_attempts_before_fail = 0;
+
+	result = libcaes_crypt_cbc(
+	          context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          initialization_vector,
+	          16,
+	          input_data,
+	          208,
+	          output_data,
+	          208,
+	          &error );
+
+	if( caes_test_EVP_CipherUpdate_attempts_before_fail != -1 )
+	{
+		caes_test_EVP_CipherUpdate_attempts_before_fail = -1;
+	}
+	else
+	{
+		CAES_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		CAES_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_GNU_DL_DLSYM ) && defined( __GNUC__ ) && !defined( __clang__ ) && !defined( __CYGWIN__ ) */
 
 #else
 
@@ -1514,9 +1778,9 @@ int caes_test_crypt_cbc(
 	          initialization_vector,
 	          16,
 	          input_data,
-	          16,
+	          208,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	if( caes_test_memcpy_attempts_before_fail != -1 )
@@ -1547,9 +1811,9 @@ int caes_test_crypt_cbc(
 	          initialization_vector,
 	          16,
 	          input_data,
-	          16,
+	          208,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	if( caes_test_memcpy_attempts_before_fail != -1 )
@@ -1580,9 +1844,9 @@ int caes_test_crypt_cbc(
 	          initialization_vector,
 	          16,
 	          input_data,
-	          16,
+	          208,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	if( caes_test_memcpy_attempts_before_fail != -1 )
@@ -1613,9 +1877,9 @@ int caes_test_crypt_cbc(
 	          initialization_vector,
 	          16,
 	          input_data,
-	          16,
+	          208,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	if( caes_test_memcpy_attempts_before_fail != -1 )
@@ -1650,9 +1914,9 @@ int caes_test_crypt_cbc(
 	          initialization_vector,
 	          16,
 	          input_data,
-	          16,
+	          208,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	if( caes_test_memset_attempts_before_fail != -1 )
@@ -1719,10 +1983,10 @@ on_error:
 int caes_test_crypt_ccm(
      void )
 {
-	uint8_t input_data[ 16 ];
+	uint8_t input_data[ 208 ];
 	uint8_t key[ 16 ];
 	uint8_t nonce[ 8 ];
-	uint8_t output_data[ 16 ];
+	uint8_t output_data[ 208 ];
 
 	libcaes_context_t *context = NULL;
 	libcerror_error_t *error   = NULL;
@@ -1780,9 +2044,9 @@ int caes_test_crypt_ccm(
 	          nonce,
 	          8,
 	          input_data,
-	          16,
+	          208,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	CAES_TEST_ASSERT_EQUAL_INT(
@@ -1802,9 +2066,9 @@ int caes_test_crypt_ccm(
 	          nonce,
 	          8,
 	          input_data,
-	          16,
+	          208,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	CAES_TEST_ASSERT_EQUAL_INT(
@@ -1825,9 +2089,9 @@ int caes_test_crypt_ccm(
 	          nonce,
 	          8,
 	          input_data,
-	          16,
+	          208,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	CAES_TEST_ASSERT_EQUAL_INT(
@@ -1846,11 +2110,11 @@ int caes_test_crypt_ccm(
 	          context,
 	          LIBCAES_CRYPT_MODE_DECRYPT,
 	          NULL,
-	          16,
+	          8,
 	          input_data,
-	          16,
+	          208,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	CAES_TEST_ASSERT_EQUAL_INT(
@@ -1871,9 +2135,9 @@ int caes_test_crypt_ccm(
 	          nonce,
 	          15,
 	          input_data,
-	          16,
+	          208,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	CAES_TEST_ASSERT_EQUAL_INT(
@@ -1894,9 +2158,9 @@ int caes_test_crypt_ccm(
 	          nonce,
 	          8,
 	          NULL,
-	          16,
+	          208,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	CAES_TEST_ASSERT_EQUAL_INT(
@@ -1919,7 +2183,7 @@ int caes_test_crypt_ccm(
 	          input_data,
 	          (size_t) SSIZE_MAX + 1,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	CAES_TEST_ASSERT_EQUAL_INT(
@@ -1940,9 +2204,9 @@ int caes_test_crypt_ccm(
 	          nonce,
 	          8,
 	          input_data,
-	          16,
+	          208,
 	          NULL,
-	          16,
+	          208,
 	          &error );
 
 	CAES_TEST_ASSERT_EQUAL_INT(
@@ -1963,7 +2227,7 @@ int caes_test_crypt_ccm(
 	          nonce,
 	          8,
 	          input_data,
-	          16,
+	          208,
 	          output_data,
 	          (size_t) SSIZE_MAX + 1,
 	          &error );
@@ -2002,9 +2266,9 @@ int caes_test_crypt_ccm(
 		          nonce,
 		          8,
 		          input_data,
-		          16,
+		          208,
 		          output_data,
-		          16,
+		          208,
 		          &error );
 
 		if( caes_test_memset_attempts_before_fail != -1 )
@@ -2045,9 +2309,9 @@ int caes_test_crypt_ccm(
 		          nonce,
 		          8,
 		          input_data,
-		          16,
+		          208,
 		          output_data,
-		          16,
+		          208,
 		          &error );
 
 		if( caes_test_memcpy_attempts_before_fail != -1 )
@@ -2114,9 +2378,9 @@ on_error:
 int caes_test_crypt_ecb(
      void )
 {
-	uint8_t input_data[ 16 ];
+	uint8_t input_data[ 208 ];
 	uint8_t key[ 16 ];
-	uint8_t output_data[ 16 ];
+	uint8_t output_data[ 208 ];
 
 	libcaes_context_t *context = NULL;
 	libcerror_error_t *error   = NULL;
@@ -2126,7 +2390,9 @@ int caes_test_crypt_ecb(
 	/* Initialize test
 	 */
 #if defined( HAVE_WINCRYPT ) && defined( WINAPI ) && ( WINVER >= 0x0600 )
+#if ( SIZEOF_SIZE_T > 4 )
 	maximum_size = (size_t) UINT32_MAX;
+#endif
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
 	maximum_size = (size_t) SSIZE_MAX;
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
@@ -2174,9 +2440,9 @@ int caes_test_crypt_ecb(
 	          context,
 	          LIBCAES_CRYPT_MODE_DECRYPT,
 	          input_data,
-	          16,
+	          208,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	CAES_TEST_ASSERT_EQUAL_INT(
@@ -2194,9 +2460,9 @@ int caes_test_crypt_ecb(
 	          NULL,
 	          LIBCAES_CRYPT_MODE_DECRYPT,
 	          input_data,
-	          16,
+	          208,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	CAES_TEST_ASSERT_EQUAL_INT(
@@ -2215,9 +2481,9 @@ int caes_test_crypt_ecb(
 	          context,
 	          -1,
 	          input_data,
-	          16,
+	          208,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	CAES_TEST_ASSERT_EQUAL_INT(
@@ -2236,9 +2502,9 @@ int caes_test_crypt_ecb(
 	          context,
 	          LIBCAES_CRYPT_MODE_DECRYPT,
 	          NULL,
-	          16,
+	          208,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	CAES_TEST_ASSERT_EQUAL_INT(
@@ -2253,34 +2519,36 @@ int caes_test_crypt_ecb(
 	libcerror_error_free(
 	 &error );
 
-	result = libcaes_crypt_ecb(
-	          context,
-	          LIBCAES_CRYPT_MODE_DECRYPT,
-	          input_data,
-	          (size_t) maximum_size + 1,
-	          output_data,
-	          16,
-	          &error );
+	if( maximum_size > 0 )
+	{
+		result = libcaes_crypt_ecb(
+		          context,
+		          LIBCAES_CRYPT_MODE_DECRYPT,
+		          input_data,
+		          (size_t) maximum_size + 1,
+		          output_data,
+		          208,
+		          &error );
 
-	CAES_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
+		CAES_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
 
-	CAES_TEST_ASSERT_IS_NOT_NULL(
-	 "error",
-	 error );
+		CAES_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
-	libcerror_error_free(
-	 &error );
-
+		libcerror_error_free(
+		 &error );
+	}
 	result = libcaes_crypt_ecb(
 	          context,
 	          LIBCAES_CRYPT_MODE_DECRYPT,
 	          input_data,
 	          0,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	CAES_TEST_ASSERT_EQUAL_INT(
@@ -2299,9 +2567,9 @@ int caes_test_crypt_ecb(
 	          context,
 	          LIBCAES_CRYPT_MODE_DECRYPT,
 	          input_data,
-	          16,
+	          208,
 	          NULL,
-	          16,
+	          208,
 	          &error );
 
 	CAES_TEST_ASSERT_EQUAL_INT(
@@ -2316,32 +2584,34 @@ int caes_test_crypt_ecb(
 	libcerror_error_free(
 	 &error );
 
+	if( maximum_size > 0 )
+	{
+		result = libcaes_crypt_ecb(
+		          context,
+		          LIBCAES_CRYPT_MODE_DECRYPT,
+		          input_data,
+		          208,
+		          output_data,
+		          (size_t) maximum_size + 1,
+		          &error );
+
+		CAES_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		CAES_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
 	result = libcaes_crypt_ecb(
 	          context,
 	          LIBCAES_CRYPT_MODE_DECRYPT,
 	          input_data,
-	          16,
-	          output_data,
-	          (size_t) maximum_size + 1,
-	          &error );
-
-	CAES_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-	CAES_TEST_ASSERT_IS_NOT_NULL(
-	 "error",
-	 error );
-
-	libcerror_error_free(
-	 &error );
-
-	result = libcaes_crypt_ecb(
-	          context,
-	          LIBCAES_CRYPT_MODE_DECRYPT,
-	          input_data,
-	          16,
+	          208,
 	          output_data,
 	          0,
 	          &error );
@@ -2374,9 +2644,9 @@ int caes_test_crypt_ecb(
 	          context,
 	          LIBCAES_CRYPT_MODE_DECRYPT,
 	          input_data,
-	          16,
+	          208,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	if( caes_test_memset_attempts_before_fail != -1 )
@@ -2409,9 +2679,9 @@ int caes_test_crypt_ecb(
 	          context,
 	          LIBCAES_CRYPT_MODE_DECRYPT,
 	          input_data,
-	          16,
+	          208,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	if( caes_test_memcpy_attempts_before_fail != -1 )
@@ -2443,9 +2713,44 @@ int caes_test_crypt_ecb(
 
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
 
+#if defined( HAVE_CAES_TEST_MEMORY )
+
+	/* Test libcaes_crypt_ecb with memset of block_data failing
+	 */
+	caes_test_memset_attempts_before_fail = 0;
+
+	result = libcaes_crypt_ecb(
+	          context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          input_data,
+	          208,
+	          output_data,
+	          208,
+	          &error );
+
+	if( caes_test_memset_attempts_before_fail != -1 )
+	{
+		caes_test_memset_attempts_before_fail = -1;
+	}
+	else
+	{
+		CAES_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		CAES_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_CAES_TEST_MEMORY ) */
+
 #if defined( HAVE_GNU_DL_DLSYM ) && defined( __GNUC__ ) && !defined( __clang__ ) && !defined( __CYGWIN__ )
 
-	/* Test libcaes_context_initialize with EVP_CipherInit_ex failing
+	/* Test libcaes_crypt_ecb with EVP_CipherInit_ex failing
 	 */
 	caes_test_EVP_CipherInit_ex_attempts_before_fail = 0;
 
@@ -2453,9 +2758,9 @@ int caes_test_crypt_ecb(
 	          context,
 	          LIBCAES_CRYPT_MODE_DECRYPT,
 	          input_data,
-	          16,
+	          208,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	if( caes_test_EVP_CipherInit_ex_attempts_before_fail != -1 )
@@ -2476,7 +2781,7 @@ int caes_test_crypt_ecb(
 		libcerror_error_free(
 		 &error );
 	}
-	/* Test libcaes_context_initialize with EVP_CipherUpdate failing
+	/* Test libcaes_crypt_ecb with EVP_CipherUpdate failing
 	 */
 	caes_test_EVP_CipherUpdate_attempts_before_fail = 0;
 
@@ -2484,9 +2789,9 @@ int caes_test_crypt_ecb(
 	          context,
 	          LIBCAES_CRYPT_MODE_DECRYPT,
 	          input_data,
-	          16,
+	          208,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	if( caes_test_EVP_CipherUpdate_attempts_before_fail != -1 )
@@ -2521,9 +2826,9 @@ int caes_test_crypt_ecb(
 	          context,
 	          LIBCAES_CRYPT_MODE_DECRYPT,
 	          input_data,
-	          16,
+	          208,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	if( caes_test_memset_attempts_before_fail != -1 )
@@ -2552,9 +2857,9 @@ int caes_test_crypt_ecb(
 	          context,
 	          LIBCAES_CRYPT_MODE_DECRYPT,
 	          input_data,
-	          16,
+	          208,
 	          output_data,
-	          16,
+	          208,
 	          &error );
 
 	if( caes_test_memset_attempts_before_fail != -1 )
@@ -2654,7 +2959,9 @@ int main(
 	 "libcaes_internal_context_set_decryption_key",
 	 caes_test_internal_context_set_decryption_key );
 
-	/* TODO: add tests for libcaes_internal_context_set_encryption_key */
+	CAES_TEST_RUN(
+	 "libcaes_internal_context_set_encryption_key",
+	 caes_test_internal_context_set_encryption_key );
 
 #endif /* defined( __GNUC__ ) && !defined( LIBCAES_DLL_IMPORT ) */
 

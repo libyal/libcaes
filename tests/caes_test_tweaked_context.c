@@ -44,7 +44,7 @@ int caes_test_tweaked_context_initialize(
 	int result                                 = 0;
 
 #if defined( HAVE_CAES_TEST_MEMORY )
-	int number_of_malloc_fail_tests            = 1;
+	int number_of_malloc_fail_tests            = 3;
 	int number_of_memset_fail_tests            = 1;
 	int test_number                            = 0;
 #endif
@@ -125,6 +125,18 @@ int caes_test_tweaked_context_initialize(
 
 #if defined( HAVE_CAES_TEST_MEMORY )
 
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
+	/* No additional test definitions needed */
+
+#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && !defined( HAVE_EVP_CIPHER_CTX_INIT )
+	number_of_malloc_fail_tests = 5;
+
+#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) */
+
+	/* 1 fail in memory_allocate_structure
+	 * 2 fail in libcaes_context_initialize of main context
+	 * 3 fail in libcaes_context_initialize of tweak context
+	 */
 	for( test_number = 0;
 	     test_number < number_of_malloc_fail_tests;
 	     test_number++ )
@@ -266,6 +278,708 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libcaes_tweaked_context_set_keys function
+ * Returns 1 if successful or 0 if not
+ */
+int caes_test_tweaked_context_set_keys(
+     void )
+{
+	uint8_t key[ 16 ];
+	uint8_t tweak_key[ 16 ];
+
+	libcaes_tweaked_context_t *tweaked_context = NULL;
+	libcerror_error_t *error                   = NULL;
+	int result                                 = 0;
+
+	/* Initialize test
+	 */
+	result = libcaes_tweaked_context_initialize(
+	          &tweaked_context,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "tweaked_context",
+	 tweaked_context );
+
+	CAES_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libcaes_tweaked_context_set_keys(
+	          tweaked_context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          key,
+	          128,
+	          tweak_key,
+	          128,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	CAES_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libcaes_tweaked_context_set_keys(
+	          NULL,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          key,
+	          128,
+	          tweak_key,
+	          128,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libcaes_tweaked_context_set_keys(
+	          tweaked_context,
+	          -1,
+	          key,
+	          128,
+	          tweak_key,
+	          128,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libcaes_tweaked_context_set_keys(
+	          tweaked_context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          NULL,
+	          128,
+	          tweak_key,
+	          128,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libcaes_tweaked_context_set_keys(
+	          tweaked_context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          key,
+	          0,
+	          tweak_key,
+	          128,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libcaes_tweaked_context_set_keys(
+	          tweaked_context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          key,
+	          128,
+	          NULL,
+	          128,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libcaes_tweaked_context_set_keys(
+	          tweaked_context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          key,
+	          128,
+	          tweak_key,
+	          0,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
+	/* No additional test definitions needed */
+
+#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
+
+#if defined( HAVE_CAES_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED )
+
+	/* Test libcaes_tweaked_context_set_keys with memcpy failing in libcaes_context_set_key of main context
+	 */
+	caes_test_memcpy_attempts_before_fail = 0;
+
+	result = libcaes_tweaked_context_set_keys(
+	          tweaked_context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          key,
+	          128,
+	          tweak_key,
+	          128,
+	          &error );
+
+	if( caes_test_memcpy_attempts_before_fail != -1 )
+	{
+		caes_test_memcpy_attempts_before_fail = -1;
+	}
+	else
+	{
+		CAES_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		CAES_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Test libcaes_tweaked_context_set_keys with memcpy failing in libcaes_context_set_key of tweak context
+	 */
+	caes_test_memcpy_attempts_before_fail = 1;
+
+	result = libcaes_tweaked_context_set_keys(
+	          tweaked_context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          key,
+	          128,
+	          tweak_key,
+	          128,
+	          &error );
+
+	if( caes_test_memcpy_attempts_before_fail != -1 )
+	{
+		caes_test_memcpy_attempts_before_fail = -1;
+	}
+	else
+	{
+		CAES_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		CAES_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_CAES_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED ) */
+
+#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) */
+
+	/* Clean up
+	 */
+	result = libcaes_tweaked_context_free(
+	          &tweaked_context,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	CAES_TEST_ASSERT_IS_NULL(
+	 "tweaked_context",
+	 tweaked_context );
+
+	CAES_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( tweaked_context != NULL )
+	{
+		libcaes_tweaked_context_free(
+		 &tweaked_context,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libcaes_crypt_xts function
+ * Returns 1 if successful or 0 if not
+ */
+int caes_test_crypt_xts(
+     void )
+{
+	uint8_t input_data[ 200 ];
+	uint8_t key[ 16 ];
+	uint8_t output_data[ 200 ];
+	uint8_t tweak_key[ 16 ];
+	uint8_t tweak_value[ 8 ];
+
+	libcaes_tweaked_context_t *tweaked_context = NULL;
+	libcerror_error_t *error                   = NULL;
+	int result                                 = 0;
+
+	/* Initialize test
+	 */
+	result = libcaes_tweaked_context_initialize(
+	          &tweaked_context,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "tweaked_context",
+	 tweaked_context );
+
+	CAES_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libcaes_tweaked_context_set_keys(
+	          tweaked_context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          key,
+	          128,
+	          tweak_key,
+	          128,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	CAES_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libcaes_crypt_xts(
+	          tweaked_context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          tweak_value,
+	          16,
+	          input_data,
+	          200,
+	          output_data,
+	          200,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	CAES_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libcaes_crypt_xts(
+	          NULL,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          tweak_value,
+	          16,
+	          input_data,
+	          200,
+	          output_data,
+	          200,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libcaes_crypt_xts(
+	          tweaked_context,
+	          -1,
+	          tweak_value,
+	          16,
+	          input_data,
+	          200,
+	          output_data,
+	          200,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libcaes_crypt_xts(
+	          tweaked_context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          NULL,
+	          16,
+	          input_data,
+	          200,
+	          output_data,
+	          200,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libcaes_crypt_xts(
+	          tweaked_context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          tweak_value,
+	          0,
+	          input_data,
+	          200,
+	          output_data,
+	          200,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libcaes_crypt_xts(
+	          tweaked_context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          tweak_value,
+	          16,
+	          NULL,
+	          200,
+	          output_data,
+	          200,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libcaes_crypt_xts(
+	          tweaked_context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          tweak_value,
+	          16,
+	          input_data,
+	          (size_t) SSIZE_MAX + 1,
+	          output_data,
+	          200,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libcaes_crypt_xts(
+	          tweaked_context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          tweak_value,
+	          16,
+	          input_data,
+	          0,
+	          output_data,
+	          200,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libcaes_crypt_xts(
+	          tweaked_context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          tweak_value,
+	          16,
+	          input_data,
+	          200,
+	          NULL,
+	          200,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libcaes_crypt_xts(
+	          tweaked_context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          tweak_value,
+	          16,
+	          input_data,
+	          200,
+	          output_data,
+	          (size_t) SSIZE_MAX + 1,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libcaes_crypt_xts(
+	          tweaked_context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          tweak_value,
+	          16,
+	          input_data,
+	          200,
+	          output_data,
+	          0,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+#if defined( HAVE_CAES_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED )
+
+	/* Test libcaes_crypt_xts with memcpy of input_data to output_data failing
+	 */
+	caes_test_memcpy_attempts_before_fail = 0;
+
+	result = libcaes_crypt_xts(
+	          tweaked_context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          tweak_value,
+	          16,
+	          input_data,
+	          200,
+	          output_data,
+	          200,
+	          &error );
+
+	if( caes_test_memcpy_attempts_before_fail != -1 )
+	{
+		caes_test_memcpy_attempts_before_fail = -1;
+	}
+	else
+	{
+		CAES_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		CAES_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Test libcaes_crypt_xts with memcpy of encrypted_tweak_value to encrypted_tweak_value_copy failing
+	 */
+	caes_test_memcpy_attempts_before_fail = 1;
+
+	result = libcaes_crypt_xts(
+	          tweaked_context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          tweak_value,
+	          16,
+	          input_data,
+	          200,
+	          output_data,
+	          200,
+	          &error );
+
+	if( caes_test_memcpy_attempts_before_fail != -1 )
+	{
+		caes_test_memcpy_attempts_before_fail = -1;
+	}
+	else
+	{
+		CAES_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		CAES_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_CAES_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED ) */
+
+	/* Clean up
+	 */
+	result = libcaes_tweaked_context_free(
+	          &tweaked_context,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	CAES_TEST_ASSERT_IS_NULL(
+	 "tweaked_context",
+	 tweaked_context );
+
+	CAES_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( tweaked_context != NULL )
+	{
+		libcaes_tweaked_context_free(
+		 &tweaked_context,
+		 NULL );
+	}
+	return( 0 );
+}
+
 /* The main program
  */
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
@@ -289,7 +1003,13 @@ int main(
 	 "libcaes_tweaked_context_free",
 	 caes_test_tweaked_context_free );
 
-	/* TODO: add tests for libcaes_tweaked_context_set_keys */
+	CAES_TEST_RUN(
+	 "libcaes_tweaked_context_set_keys",
+	 caes_test_tweaked_context_set_keys );
+
+	CAES_TEST_RUN(
+	 "libcaes_crypt_xts",
+	 caes_test_crypt_xts );
 
 	return( EXIT_SUCCESS );
 
