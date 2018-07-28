@@ -62,13 +62,13 @@ struct libcaes_internal_context
         AES_KEY key;
 
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
-	/* The EVP context
+	/* The EVP cipher context
 	 */
 #if defined( HAVE_EVP_CIPHER_CTX_INIT )
-	EVP_CIPHER_CTX internal_evp_context;
+	EVP_CIPHER_CTX internal_evp_cipher_context;
 #endif
 
-	EVP_CIPHER_CTX *evp_context;
+	EVP_CIPHER_CTX *evp_cipher_context;
 
 	/* The key
 	 */

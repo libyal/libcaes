@@ -377,13 +377,13 @@ int libcaes_context_initialize(
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
 #if defined( HAVE_EVP_CIPHER_CTX_INIT )
 	EVP_CIPHER_CTX_init(
-	 &( internal_context->internal_evp_context ) );
+	 &( internal_context->internal_evp_cipher_context ) );
 
-	internal_context->evp_context = &( internal_context->internal_evp_context );
+	internal_context->evp_cipher_context = &( internal_context->internal_evp_cipher_context );
 #else
-	internal_context->evp_context = EVP_CIPHER_CTX_new();
+	internal_context->evp_cipher_context = EVP_CIPHER_CTX_new();
 
-	if( internal_context->evp_context == NULL )
+	if( internal_context->evp_cipher_context == NULL )
 	{
 		libcerror_error_set(
 		 error,
@@ -394,9 +394,10 @@ int libcaes_context_initialize(
 
 		goto on_error;
 	}
-#endif
+#endif /* defined( HAVE_EVP_CIPHER_CTX_INIT ) */
+
 	if( EVP_CIPHER_CTX_set_padding(
-	     internal_context->evp_context,
+	     internal_context->evp_cipher_context,
 	     1 ) != 1 )
 	{
 		libcerror_error_set(
@@ -405,6 +406,17 @@ int libcaes_context_initialize(
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to set padding in context.",
 		 function );
+
+#if defined( HAVE_EVP_CIPHER_CTX_CLEANUP )
+		EVP_CIPHER_CTX_cleanup(
+		 &( internal_context->internal_evp_cipher_context ) );
+		ERR_remove_thread_state(
+		 NULL );
+#else
+		EVP_CIPHER_CTX_free(
+		 internal_context->evp_cipher_context );
+#endif
+		internal_context->evp_cipher_context = NULL;
 
 		goto on_error;
 	}
@@ -484,20 +496,27 @@ int libcaes_context_free(
 
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
 #if defined( HAVE_EVP_CIPHER_CTX_CLEANUP )
-		EVP_CIPHER_CTX_cleanup(
-		 &( internal_context->internal_evp_context ) );
-
-		/* Make sure the error state is removed otherwise openssl will leak memory
+		if( EVP_CIPHER_CTX_cleanup(
+		     &( internal_context->internal_evp_cipher_context ) ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to clean up EVP cipher context.",
+			 function );
+		}
+		/* Make sure the error state is removed otherwise OpenSSL will leak memory
 		 */
 		ERR_remove_thread_state(
 		 NULL );
 #else
 		EVP_CIPHER_CTX_free(
-		 internal_context->evp_context );
+		 internal_context->evp_cipher_context );
 
 #endif /* defined( HAVE_EVP_CIPHER_CTX_CLEANUP ) */
 
-		internal_context->evp_context = NULL;
+		internal_context->evp_cipher_context = NULL;
 #else
 		/* No additional clean up necessary */
 #endif
@@ -1970,7 +1989,7 @@ int libcaes_crypt_cbc(
 		cipher = EVP_aes_256_cbc();
 	}
 	if( EVP_CipherInit_ex(
-	     internal_context->evp_context,
+	     internal_context->evp_cipher_context,
 	     cipher,
 	     NULL,
 	     (unsigned char *) internal_context->key,
@@ -1987,7 +2006,7 @@ int libcaes_crypt_cbc(
 		return( -1 );
 	}
 	if( EVP_CipherUpdate(
-	     internal_context->evp_context,
+	     internal_context->evp_cipher_context,
 	     (unsigned char *) output_data,
 	     &safe_output_data_size,
 	     (unsigned char *) input_data,
@@ -2005,7 +2024,7 @@ int libcaes_crypt_cbc(
 	/* Just ignore the output of this function
 	 */
 	EVP_CipherFinal_ex(
-	 internal_context->evp_context,
+	 internal_context->evp_cipher_context,
 	 (unsigned char *) block_data,
 	 &safe_output_data_size );
 
@@ -3355,7 +3374,7 @@ int libcaes_crypt_ecb(
 		cipher = EVP_aes_256_ecb();
 	}
 	if( EVP_CipherInit_ex(
-	     internal_context->evp_context,
+	     internal_context->evp_cipher_context,
 	     cipher,
 	     NULL,
 	     (unsigned char *) internal_context->key,
@@ -3372,7 +3391,7 @@ int libcaes_crypt_ecb(
 		return( -1 );
 	}
 	if( EVP_CipherUpdate(
-	     internal_context->evp_context,
+	     internal_context->evp_cipher_context,
 	     (unsigned char *) output_data,
 	     &safe_output_data_size,
 	     (unsigned char *) input_data,
@@ -3390,7 +3409,7 @@ int libcaes_crypt_ecb(
 	/* Just ignore the output of this function
 	 */
 	EVP_CipherFinal_ex(
-	 internal_context->evp_context,
+	 internal_context->evp_cipher_context,
 	 (unsigned char *) block_data,
 	 &safe_output_data_size );
 
