@@ -2,7 +2,8 @@ if HAVE_PYTHON
 AM_CFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCERROR_CPPFLAGS@
+	@LIBCERROR_CPPFLAGS@ \
+	@LIBCAES_DLL_IMPORT@
 
 pyexec_LTLIBRARIES = pycaes.la
 

@@ -8,7 +8,8 @@ if HAVE_PYTHON2
 AM_CFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCERROR_CPPFLAGS@
+	@LIBCERROR_CPPFLAGS@ \
+	@LIBCAES_DLL_IMPORT@
 
 am_pycaes_la_rpath = -rpath $(pyexecdir2)
 

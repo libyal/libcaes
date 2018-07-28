@@ -57,6 +57,9 @@ AX_LIBCERROR_CHECK_ENABLE
 dnl Check if libcrypto or required headers and functions are available
 AX_LIBCRYPTO_CHECK_ENABLE
 
+dnl Check for Windows crypto API support
+AX_WINCRYPT_CHECK_LIB
+
 dnl Check if libcaes required headers and functions are available
 AX_LIBCAES_CHECK_LOCAL
 
@@ -91,7 +94,7 @@ AS_IF(
  [test "x$enable_shared" = xyes],
  [AS_CASE(
   [$host],
-  [*cygwin* | *mingw*],
+  [*cygwin* | *mingw* | *msys*],
   [AC_DEFINE(
    [HAVE_DLLMAIN],
    [1],
@@ -100,7 +103,10 @@ AS_IF(
    [HAVE_DLLMAIN],
    [1])
 
-  dnl Used in tests
+  AC_SUBST(
+   [LIBCAES_DLL_EXPORT],
+   ["-DLIBCAES_DLL_EXPORT"])
+
   AC_SUBST(
    [LIBCAES_DLL_IMPORT],
    ["-DLIBCAES_DLL_IMPORT"])

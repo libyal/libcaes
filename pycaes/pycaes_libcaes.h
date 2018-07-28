@@ -24,14 +24,7 @@
 
 #include <common.h>
 
-/* If Cygwin libtool DLL support is enabled set LIBCAES_DLL_IMPORT
- * before including libcaes.h
- */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
-#define LIBCAES_DLL_IMPORT
-#endif
-
 #include <libcaes.h>
 
-#endif
+#endif /* !defined( _PYCAES_LIBCAES_H ) */
 

@@ -28,13 +28,6 @@
  */
 #if !defined( HAVE_LOCAL_LIBCAES )
 
-/* If libtool DLL support is enabled set LIBCAES_DLL_EXPORT
- * before including libcaes/extern.h
- */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
-#define LIBCAES_DLL_EXPORT
-#endif
-
 #include <libcaes/extern.h>
 
 #define LIBCAES_EXTERN_VARIABLE	LIBCAES_EXTERN
