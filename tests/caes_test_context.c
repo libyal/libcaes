@@ -1192,11 +1192,7 @@ int caes_test_crypt_cbc(
 
 	/* Initialize test
 	 */
-#if defined( HAVE_WINCRYPT ) && defined( WINAPI ) && ( WINVER >= 0x0600 )
-#if ( SIZEOF_SIZE_T > 4 )
-	maximum_size = (size_t) UINT32_MAX;
-#endif
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
 	maximum_size = (size_t) SSIZE_MAX;
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
 	maximum_size = (size_t) INT_MAX;
@@ -1495,91 +1491,7 @@ int caes_test_crypt_cbc(
 	libcerror_error_free(
 	 &error );
 
-#if defined( HAVE_WINCRYPT ) && defined( WINAPI ) && ( WINVER >= 0x0600 )
-
-	/* TODO test libcaes_crypt_cbc with CryptSetKeyParam failing 2 times */
-
-	/* TODO test libcaes_crypt_cbc with CryptGetKeyParam failing */
-
-#if defined( HAVE_CAES_TEST_MEMORY )
-
-	/* Test libcaes_crypt_cbc with memset of block_data failing
-	 */
-	caes_test_memset_attempts_before_fail = 0;
-
-	result = libcaes_crypt_cbc(
-	          context,
-	          LIBCAES_CRYPT_MODE_DECRYPT,
-	          initialization_vector,
-	          16,
-	          input_data,
-	          208,
-	          output_data,
-	          208,
-	          &error );
-
-	if( caes_test_memset_attempts_before_fail != -1 )
-	{
-		caes_test_memset_attempts_before_fail = -1;
-	}
-	else
-	{
-		CAES_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
-
-		CAES_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
-
-		libcerror_error_free(
-		 &error );
-	}
-#endif /* defined( HAVE_CAES_TEST_MEMORY ) */
-
-#if defined( HAVE_CAES_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED )
-
-	/* Test libcaes_crypt_cbc with memcpy of input_data to output_data failing
-	 */
-	caes_test_memcpy_attempts_before_fail = 0;
-
-	result = libcaes_crypt_cbc(
-	          context,
-	          LIBCAES_CRYPT_MODE_DECRYPT,
-	          initialization_vector,
-	          16,
-	          input_data,
-	          208,
-	          output_data,
-	          208,
-	          &error );
-
-	if( caes_test_memcpy_attempts_before_fail != -1 )
-	{
-		caes_test_memcpy_attempts_before_fail = -1;
-	}
-	else
-	{
-		CAES_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
-
-		CAES_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
-
-		libcerror_error_free(
-		 &error );
-	}
-#endif /* defined( HAVE_CAES_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED ) */
-
-	/* TODO test libcaes_crypt_cbc with CryptEncrypt failing */
-
-	/* TODO test libcaes_crypt_cbc with CryptDecrypt failing */
-
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
 
 #if defined( HAVE_CAES_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED )
 
@@ -1939,7 +1851,7 @@ int caes_test_crypt_cbc(
 	}
 #endif /* defined( HAVE_CAES_TEST_MEMORY ) */
 
-#endif /* defined( HAVE_WINCRYPT ) && defined( WINAPI ) && ( WINVER >= 0x0600 ) */
+#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) */
 
 	/* Clean up
 	 */
@@ -2389,11 +2301,7 @@ int caes_test_crypt_ecb(
 
 	/* Initialize test
 	 */
-#if defined( HAVE_WINCRYPT ) && defined( WINAPI ) && ( WINVER >= 0x0600 )
-#if ( SIZEOF_SIZE_T > 4 )
-	maximum_size = (size_t) UINT32_MAX;
-#endif
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
 	maximum_size = (size_t) SSIZE_MAX;
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
 	maximum_size = (size_t) INT_MAX;
@@ -2628,87 +2536,7 @@ int caes_test_crypt_ecb(
 	libcerror_error_free(
 	 &error );
 
-#if defined( HAVE_WINCRYPT ) && defined( WINAPI ) && ( WINVER >= 0x0600 )
-
-	/* TODO test libcaes_crypt_ecb with CryptSetKeyParam failing */
-
-	/* TODO test libcaes_crypt_ecb with CryptGetKeyParam failing */
-
-#if defined( HAVE_CAES_TEST_MEMORY )
-
-	/* Test libcaes_crypt_ecb with memset of block_data failing
-	 */
-	caes_test_memset_attempts_before_fail = 0;
-
-	result = libcaes_crypt_ecb(
-	          context,
-	          LIBCAES_CRYPT_MODE_DECRYPT,
-	          input_data,
-	          208,
-	          output_data,
-	          208,
-	          &error );
-
-	if( caes_test_memset_attempts_before_fail != -1 )
-	{
-		caes_test_memset_attempts_before_fail = -1;
-	}
-	else
-	{
-		CAES_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
-
-		CAES_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
-
-		libcerror_error_free(
-		 &error );
-	}
-#endif /* defined( HAVE_CAES_TEST_MEMORY ) */
-
-#if defined( HAVE_CAES_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED )
-
-	/* Test libcaes_crypt_cbc with memcpy of input_data to output_data failing
-	 */
-	caes_test_memcpy_attempts_before_fail = 0;
-
-	result = libcaes_crypt_ecb(
-	          context,
-	          LIBCAES_CRYPT_MODE_DECRYPT,
-	          input_data,
-	          208,
-	          output_data,
-	          208,
-	          &error );
-
-	if( caes_test_memcpy_attempts_before_fail != -1 )
-	{
-		caes_test_memcpy_attempts_before_fail = -1;
-	}
-	else
-	{
-		CAES_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
-
-		CAES_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
-
-		libcerror_error_free(
-		 &error );
-	}
-#endif /* defined( HAVE_CAES_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED ) */
-
-	/* TODO test libcaes_crypt_ecb with CryptEncrypt failing */
-
-	/* TODO test libcaes_crypt_ecb with CryptDecrypt failing */
-
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
 	/* No additional test definitions needed */
 
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
@@ -2882,7 +2710,7 @@ int caes_test_crypt_ecb(
 	}
 #endif /* defined( HAVE_CAES_TEST_MEMORY ) */
 
-#endif /* defined( HAVE_WINCRYPT ) && defined( WINAPI ) && ( WINVER >= 0x0600 ) */
+#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) */
 
 	/* Clean up
 	 */

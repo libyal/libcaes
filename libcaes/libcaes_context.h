@@ -25,10 +25,7 @@
 #include <common.h>
 #include <types.h>
 
-#if defined( HAVE_WINCRYPT ) && defined( WINAPI ) && ( WINVER >= 0x0600 )
-#include <wincrypt.h>
-
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
 #include <openssl/aes.h>
 
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
@@ -47,16 +44,7 @@ typedef struct libcaes_internal_context libcaes_internal_context_t;
 
 struct libcaes_internal_context
 {
-#if defined( HAVE_WINCRYPT ) && defined( WINAPI ) && ( WINVER >= 0x0600 )
-	/* The crypto provider handle
-	 */
-	HCRYPTPROV crypt_provider;
-
-	/* The crypto key handle
-	 */
-        HCRYPTKEY key;
-
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
 	/* The AES key
 	 */
         AES_KEY key;
@@ -91,7 +79,7 @@ struct libcaes_internal_context
 	 */
 	uint32_t round_keys_data[ 68 ];
 
-#endif
+#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) */
 };
 
 LIBCAES_EXTERN \

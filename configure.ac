@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libcaes],
- [20180730],
+ [20180812],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -57,9 +57,6 @@ AX_LIBCERROR_CHECK_ENABLE
 dnl Check if libcrypto or required headers and functions are available
 AX_LIBCRYPTO_CHECK_ENABLE
 
-dnl Check for Windows crypto API support
-AX_WINCRYPT_CHECK_LIB
-
 dnl Check if libcaes required headers and functions are available
 AX_LIBCAES_CHECK_LOCAL
 
@@ -68,12 +65,12 @@ AX_PYTHON_CHECK_ENABLE
 
 AS_IF(
   [test "x${ac_cv_enable_python}" != xno || test "x${ac_cv_enable_python2}" != xno || test "x${ac_cv_enable_python3}" != xno],
-  [AC_CHECK_HEADERS([stdarg.h varargs.h])
+  [dnl Headers included in pycaes/pycaes_error.c
+  AC_CHECK_HEADERS([stdarg.h varargs.h])
 
   AS_IF(
     [test "x$ac_cv_header_stdarg_h" != xyes && test "x$ac_cv_header_varargs_h" != xyes],
-    [dnl Headers included in pycaes/pycaes_error.c
-    AC_MSG_FAILURE(
+    [AC_MSG_FAILURE(
       [Missing headers: stdarg.h and varargs.h],
       [1])
     ])
