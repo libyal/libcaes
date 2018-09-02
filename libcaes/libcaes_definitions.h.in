@@ -50,10 +50,7 @@ enum LIBCAES_CRYPT_MODES
 
 #endif /* !defined( HAVE_LOCAL_LIBCAES ) */
 
-#if defined( WINAPI ) && ( WINVER >= 0x0600 )
-#define LIBCAES_HAVE_AES_SUPPORT
-
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
 #define LIBCAES_HAVE_AES_SUPPORT
 
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )

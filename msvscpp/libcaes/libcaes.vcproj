@@ -182,10 +182,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libcaes\libcaes_key.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libcaes\libcaes_support.c"
 				>
 			</File>
@@ -213,10 +209,6 @@
 			</File>
 			<File
 				RelativePath="..\..\libcaes\libcaes_extern.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libcaes\libcaes_key.h"
 				>
 			</File>
 			<File

@@ -6,7 +6,6 @@ MSVSCPP_FILES = \
 	caes_test_crypt_ecb/caes_test_crypt_ecb.vcproj \
 	caes_test_crypt_xts/caes_test_crypt_xts.vcproj \
 	caes_test_error/caes_test_error.vcproj \
-	caes_test_key/caes_test_key.vcproj \
 	caes_test_support/caes_test_support.vcproj \
 	caes_test_tweaked_context/caes_test_tweaked_context.vcproj \
 	libcaes/libcaes.vcproj \

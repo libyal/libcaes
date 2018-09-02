@@ -34,7 +34,6 @@
 
 #include "libcaes_context.h"
 #include "libcaes_definitions.h"
-#include "libcaes_key.h"
 #include "libcaes_libcerror.h"
 #include "libcaes_types.h"
 

@@ -6,7 +6,7 @@ $ExitSuccess = 0
 $ExitFailure = 1
 $ExitIgnore = 77
 
-$LibraryTests = "context error key support tweaked_context"
+$LibraryTests = "context error support tweaked_context"
 $LibraryTestsWithInput = ""
 
 $InputGlob = "*"
