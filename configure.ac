@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libcaes],
- [20180902],
+ [20180919],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -112,9 +112,6 @@ AS_IF(
  [AC_SUBST(
   [libcaes_spec_requires],
   [Requires:])
- AC_SUBST(
-  [libcaes_spec_build_requires],
-  [BuildRequires:])
  ])
 
 dnl Set the date for the dpkg files
