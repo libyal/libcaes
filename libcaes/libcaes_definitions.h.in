@@ -58,14 +58,6 @@ enum LIBCAES_CRYPT_MODES
 
 #endif
 
-#if defined( WINAPI )
-
-#if !defined( PROV_RSA_AES )
-#define PROV_RSA_AES				24
-#endif
-
-#endif /* defined( WINAPI ) */
-
 #define LIBCAES_UNFOLLED_LOOPS
 
 #endif /* !defined( LIBCAES_INTERNAL_DEFINITIONS_H ) */
