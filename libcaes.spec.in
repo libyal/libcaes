@@ -10,33 +10,35 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 @libcaes_spec_requires@ @ax_libcerror_spec_requires@ @ax_libcrypto_spec_requires@
 BuildRequires: gcc @ax_libcerror_spec_build_requires@ @ax_libcrypto_spec_build_requires@
 
-%description
+%description -n libcaes
 Library to support cross-platform AES encryption
 
-%package devel
+%package -n libcaes-devel
 Summary: Header files and libraries for developing applications for libcaes
 Group: Development/Libraries
 Requires: libcaes = %{version}-%{release}
 
-%description devel
+%description -n libcaes-devel
 Header files and libraries for developing applications for libcaes.
 
-%package python
+%package -n libcaes-python2
+Obsoletes: libcaes-python < %{version}
+Provides: libcaes-python = %{version}
 Summary: Python 2 bindings for libcaes
 Group: System Environment/Libraries
-Requires: libcaes = %{version}-%{release} python
-BuildRequires: python-devel
+Requires: libcaes = %{version}-%{release} python2
+BuildRequires: python2-devel
 
-%description python
+%description -n libcaes-python2
 Python 2 bindings for libcaes
 
-%package python3
+%package -n libcaes-python3
 Summary: Python 3 bindings for libcaes
 Group: System Environment/Libraries
 Requires: libcaes = %{version}-%{release} python3
 BuildRequires: python3-devel
 
-%description python3
+%description -n libcaes-python3
 Python 3 bindings for libcaes
 
 %prep
@@ -57,13 +59,13 @@ rm -rf %{buildroot}
 
 %postun -p /sbin/ldconfig
 
-%files
+%files -n libcaes
 %defattr(644,root,root,755)
 %license COPYING
 %doc AUTHORS README
 %attr(755,root,root) %{_libdir}/*.so.*
 
-%files devel
+%files -n libcaes-devel
 %defattr(644,root,root,755)
 %license COPYING
 %doc AUTHORS README ChangeLog
@@ -74,7 +76,7 @@ rm -rf %{buildroot}
 %{_includedir}/*
 %{_mandir}/man3/*
 
-%files python
+%files -n libcaes-python2
 %defattr(644,root,root,755)
 %license COPYING
 %doc AUTHORS README
@@ -82,7 +84,7 @@ rm -rf %{buildroot}
 %{_libdir}/python2*/site-packages/*.la
 %{_libdir}/python2*/site-packages/*.so
 
-%files python3
+%files -n libcaes-python3
 %defattr(644,root,root,755)
 %license COPYING
 %doc AUTHORS README
