@@ -53,7 +53,7 @@
 
 #if defined( HAVE_GNU_DL_DLSYM ) && defined( __GNUC__ ) && !defined( __clang__ ) && !defined( __CYGWIN__ )
 
-#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) && ( defined( HAVE_AES_CBC_ENCRYPT ) || defined( HAVE_AES_EBC_ENCRYPT ) )
 
 static int (*caes_test_real_AES_set_encrypt_key)(const unsigned char *, const int, AES_KEY *)                                                     = NULL;
 static int (*caes_test_real_AES_set_decrypt_key)(const unsigned char *, const int, AES_KEY *)                                                     = NULL;
@@ -61,7 +61,7 @@ static int (*caes_test_real_AES_set_decrypt_key)(const unsigned char *, const in
 int caes_test_AES_set_encrypt_key_attempts_before_fail                                                                                            = -1;
 int caes_test_AES_set_decrypt_key_attempts_before_fail                                                                                            = -1;
 
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
+#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && ( defined( HAVE_EVP_CRYPTO_AES_CBC ) || defined( HAVE_EVP_CRYPTO_AES_ECB ) )
 
 static int (*caes_test_real_EVP_CIPHER_CTX_set_padding)(EVP_CIPHER_CTX *, int)                                                                    = NULL;
 static int (*caes_test_real_EVP_CipherInit_ex)(EVP_CIPHER_CTX *, const EVP_CIPHER *, ENGINE *, const unsigned char *, const unsigned char *, int) = NULL;
@@ -71,13 +71,13 @@ int caes_test_EVP_CIPHER_CTX_set_padding_attempts_before_fail                   
 int caes_test_EVP_CipherInit_ex_attempts_before_fail                                                                                              = -1;
 int caes_test_EVP_CipherUpdate_attempts_before_fail                                                                                               = -1;
 
-#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) */
+#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) && ( defined( HAVE_AES_CBC_ENCRYPT ) || defined( HAVE_AES_EBC_ENCRYPT ) ) */
 
 #endif /* defined( HAVE_GNU_DL_DLSYM ) && defined( __GNUC__ ) && !defined( __clang__ ) && !defined( __CYGWIN__ ) */
 
 #if defined( HAVE_GNU_DL_DLSYM ) && defined( __GNUC__ ) && !defined( __clang__ ) && !defined( __CYGWIN__ )
 
-#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) && ( defined( HAVE_AES_CBC_ENCRYPT ) || defined( HAVE_AES_EBC_ENCRYPT ) )
 
 /* Custom AES_set_encrypt_key for testing error cases
  * Returns 0 if successful or a negative value otherwise
@@ -147,7 +147,7 @@ int AES_set_decrypt_key(
 	return( result );
 }
 
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
+#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && ( defined( HAVE_EVP_CRYPTO_AES_CBC ) || defined( HAVE_EVP_CRYPTO_AES_ECB ) )
 
 /* Custom EVP_CIPHER_CTX_set_padding for testing error cases
  * Returns 1 if successful or 0 otherwise
@@ -259,7 +259,7 @@ int EVP_CipherUpdate(
 	return( result );
 }
 
-#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) */
+#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) && ( defined( HAVE_AES_CBC_ENCRYPT ) || defined( HAVE_AES_EBC_ENCRYPT ) ) */
 
 #endif /* defined( HAVE_GNU_DL_DLSYM ) && defined( __GNUC__ ) && !defined( __clang__ ) && !defined( __CYGWIN__ ) */
 
@@ -355,13 +355,13 @@ int caes_test_context_initialize(
 
 #if defined( HAVE_CAES_TEST_MEMORY )
 
-#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) && ( defined( HAVE_AES_CBC_ENCRYPT ) || defined( HAVE_AES_EBC_ENCRYPT ) )
 	/* No additional test definitions needed */
 
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && !defined( HAVE_EVP_CIPHER_CTX_INIT )
+#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && !defined( HAVE_EVP_CIPHER_CTX_INIT ) && ( defined( HAVE_EVP_CRYPTO_AES_CBC ) || defined( HAVE_EVP_CRYPTO_AES_ECB ) )
 	number_of_malloc_fail_tests = 2;
 
-#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) */
+#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) && ( defined( HAVE_AES_CBC_ENCRYPT ) || defined( HAVE_AES_EBC_ENCRYPT ) ) */
 
 	/* 1 fail in memory_allocate_structure
 	 * 2 fail in EVP_CIPHER_CTX_new
@@ -454,10 +454,10 @@ int caes_test_context_initialize(
 	}
 #endif /* defined( HAVE_CAES_TEST_MEMORY ) */
 
-#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) && ( defined( HAVE_AES_CBC_ENCRYPT ) || defined( HAVE_AES_EBC_ENCRYPT ) )
 	/* No additional test definitions needed */
 
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
+#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && ( defined( HAVE_EVP_CRYPTO_AES_CBC ) || defined( HAVE_EVP_CRYPTO_AES_ECB ) )
 
 #if defined( HAVE_GNU_DL_DLSYM ) && defined( __GNUC__ ) && !defined( __clang__ ) && !defined( __CYGWIN__ )
 
@@ -500,7 +500,7 @@ int caes_test_context_initialize(
 	}
 #endif /* defined( HAVE_GNU_DL_DLSYM ) && defined( __GNUC__ ) && !defined( __clang__ ) && !defined( __CYGWIN__ ) */
 
-#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) */
+#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) && ( defined( HAVE_AES_CBC_ENCRYPT ) || defined( HAVE_AES_EBC_ENCRYPT ) ) */
 
 	return( 1 );
 
@@ -684,7 +684,7 @@ int caes_test_context_set_key(
 	libcerror_error_free(
 	 &error );
 
-#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) && ( defined( HAVE_AES_CBC_ENCRYPT ) || defined( HAVE_AES_EBC_ENCRYPT ) )
 
 #if defined( HAVE_GNU_DL_DLSYM ) && defined( __GNUC__ ) && !defined( __clang__ ) && !defined( __CYGWIN__ )
 
@@ -748,7 +748,7 @@ int caes_test_context_set_key(
 	}
 #endif /* defined( HAVE_GNU_DL_DLSYM ) && defined( __GNUC__ ) && !defined( __clang__ ) && !defined( __CYGWIN__ ) */
 
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
+#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && ( defined( HAVE_EVP_CRYPTO_AES_CBC ) || defined( HAVE_EVP_CRYPTO_AES_ECB ) )
 
 #if defined( HAVE_CAES_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED )
 
@@ -783,7 +783,7 @@ int caes_test_context_set_key(
 	}
 #endif /* defined( HAVE_CAES_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED ) */
 
-#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) */
+#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) && ( defined( HAVE_AES_CBC_ENCRYPT ) || defined( HAVE_AES_EBC_ENCRYPT ) ) */
 
 	/* Clean up
 	 */
@@ -1192,9 +1192,9 @@ int caes_test_crypt_cbc(
 
 	/* Initialize test
 	 */
-#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) && defined( HAVE_AES_CBC_ENCRYPT )
 	maximum_size = (size_t) SSIZE_MAX;
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
+#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && defined( HAVE_EVP_CRYPTO_AES_CBC )
 	maximum_size = (size_t) INT_MAX;
 #else
 	maximum_size = (size_t) SSIZE_MAX;
@@ -1491,7 +1491,7 @@ int caes_test_crypt_cbc(
 	libcerror_error_free(
 	 &error );
 
-#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) && ( defined( HAVE_AES_CBC_ENCRYPT ) || defined( HAVE_AES_EBC_ENCRYPT ) )
 
 #if defined( HAVE_CAES_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED )
 
@@ -1567,7 +1567,7 @@ int caes_test_crypt_cbc(
 	}
 #endif /* defined( HAVE_CAES_TEST_MEMORY ) */
 
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
+#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && defined( HAVE_EVP_CRYPTO_AES_CBC )
 
 #if defined( HAVE_CAES_TEST_MEMORY )
 
@@ -1851,7 +1851,7 @@ int caes_test_crypt_cbc(
 	}
 #endif /* defined( HAVE_CAES_TEST_MEMORY ) */
 
-#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) */
+#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) && ( defined( HAVE_AES_CBC_ENCRYPT ) || defined( HAVE_AES_EBC_ENCRYPT ) ) */
 
 	/* Clean up
 	 */
@@ -2301,9 +2301,9 @@ int caes_test_crypt_ecb(
 
 	/* Initialize test
 	 */
-#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) && ( defined( HAVE_AES_CBC_ENCRYPT ) || defined( HAVE_AES_EBC_ENCRYPT ) )
 	maximum_size = (size_t) SSIZE_MAX;
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
+#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && defined( HAVE_EVP_CRYPTO_AES_ECB )
 	maximum_size = (size_t) INT_MAX;
 #else
 	maximum_size = (size_t) SSIZE_MAX;
@@ -2536,10 +2536,10 @@ int caes_test_crypt_ecb(
 	libcerror_error_free(
 	 &error );
 
-#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) && ( defined( HAVE_AES_CBC_ENCRYPT ) || defined( HAVE_AES_EBC_ENCRYPT ) )
 	/* No additional test definitions needed */
 
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
+#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && defined( HAVE_EVP_CRYPTO_AES_ECB )
 
 #if defined( HAVE_CAES_TEST_MEMORY )
 
@@ -2710,7 +2710,7 @@ int caes_test_crypt_ecb(
 	}
 #endif /* defined( HAVE_CAES_TEST_MEMORY ) */
 
-#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) */
+#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) && ( defined( HAVE_AES_CBC_ENCRYPT ) || defined( HAVE_AES_EBC_ENCRYPT ) ) */
 
 	/* Clean up
 	 */

@@ -44,12 +44,12 @@ typedef struct libcaes_internal_context libcaes_internal_context_t;
 
 struct libcaes_internal_context
 {
-#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) && ( defined( HAVE_AES_CBC_ENCRYPT ) || defined( HAVE_AES_ECB_ENCRYPT ) )
 	/* The AES key
 	 */
         AES_KEY key;
 
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
+#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && ( defined( HAVE_EVP_CRYPTO_AES_CBC ) || defined( HAVE_EVP_CRYPTO_AES_ECB ) )
 	/* The EVP cipher context
 	 */
 #if defined( HAVE_EVP_CIPHER_CTX_INIT )
@@ -79,7 +79,7 @@ struct libcaes_internal_context
 	 */
 	uint32_t round_keys_data[ 68 ];
 
-#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) */
+#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) && ( defined( HAVE_AES_CBC_ENCRYPT ) || defined( HAVE_AES_ECB_ENCRYPT ) ) */
 };
 
 LIBCAES_EXTERN \

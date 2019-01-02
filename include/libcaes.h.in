@@ -203,6 +203,7 @@ int libcaes_tweaked_context_set_keys(
      libcaes_error_t **error );
 
 /* De- or encrypts a block of data using AES-XTS (XEX-based tweaked-codebook mode with ciphertext stealing)
+ * The size must be a multitude of the AES block size (16 byte)
  * Returns 1 if successful or -1 on error
  */
 LIBCAES_EXTERN \

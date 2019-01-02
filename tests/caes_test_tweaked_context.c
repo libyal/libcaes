@@ -27,11 +27,155 @@
 #include <stdlib.h>
 #endif
 
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
+#include <openssl/evp.h>
+#endif
+
+#if defined( HAVE_GNU_DL_DLSYM ) && defined( __GNUC__ ) && !defined( __clang__ ) && !defined( __CYGWIN__ )
+#define __USE_GNU
+#include <dlfcn.h>
+#undef __USE_GNU
+#endif
+
 #include "caes_test_libcaes.h"
 #include "caes_test_libcerror.h"
 #include "caes_test_macros.h"
 #include "caes_test_memory.h"
 #include "caes_test_unused.h"
+
+#if defined( HAVE_GNU_DL_DLSYM ) && defined( __GNUC__ ) && !defined( __clang__ ) && !defined( __CYGWIN__ )
+
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && defined( HAVE_EVP_CRYPTO_AES_XTS )
+
+static int (*caes_test_real_EVP_CIPHER_CTX_set_padding)(EVP_CIPHER_CTX *, int)                                                                    = NULL;
+static int (*caes_test_real_EVP_CipherInit_ex)(EVP_CIPHER_CTX *, const EVP_CIPHER *, ENGINE *, const unsigned char *, const unsigned char *, int) = NULL;
+static int (*caes_test_real_EVP_CipherUpdate)(EVP_CIPHER_CTX *, unsigned char *, int *, const unsigned char *, int)                               = NULL;
+
+int caes_test_EVP_CIPHER_CTX_set_padding_attempts_before_fail                                                                                     = -1;
+int caes_test_EVP_CipherInit_ex_attempts_before_fail                                                                                              = -1;
+int caes_test_EVP_CipherUpdate_attempts_before_fail                                                                                               = -1;
+
+#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && defined( HAVE_EVP_CRYPTO_AES_XTS ) */
+
+#endif /* defined( HAVE_GNU_DL_DLSYM ) && defined( __GNUC__ ) && !defined( __clang__ ) && !defined( __CYGWIN__ ) */
+
+#if defined( HAVE_GNU_DL_DLSYM ) && defined( __GNUC__ ) && !defined( __clang__ ) && !defined( __CYGWIN__ )
+
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && defined( HAVE_EVP_CRYPTO_AES_XTS )
+
+/* Custom EVP_CIPHER_CTX_set_padding for testing error cases
+ * Returns 1 if successful or 0 otherwise
+ */
+int EVP_CIPHER_CTX_set_padding(
+     EVP_CIPHER_CTX *c,
+     int pad )
+{
+	int result = 0;
+
+	if( caes_test_real_EVP_CIPHER_CTX_set_padding == NULL )
+	{
+		caes_test_real_EVP_CIPHER_CTX_set_padding = dlsym(
+		                                             RTLD_NEXT,
+		                                             "EVP_CIPHER_CTX_set_padding" );
+	}
+	if( caes_test_EVP_CIPHER_CTX_set_padding_attempts_before_fail == 0 )
+	{
+		caes_test_EVP_CIPHER_CTX_set_padding_attempts_before_fail = -1;
+
+		return( 0 );
+	}
+	else if( caes_test_EVP_CIPHER_CTX_set_padding_attempts_before_fail > 0 )
+	{
+		caes_test_EVP_CIPHER_CTX_set_padding_attempts_before_fail--;
+	}
+	result = caes_test_real_EVP_CIPHER_CTX_set_padding(
+	          c,
+	          pad );
+
+	return( result );
+}
+
+/* Custom EVP_CipherInit_ex for testing error cases
+ * Returns 1 if successful or 0 otherwise
+ */
+int EVP_CipherInit_ex(
+     EVP_CIPHER_CTX *ctx,
+     const EVP_CIPHER *type,
+     ENGINE *impl,
+     const unsigned char *key,
+     const unsigned char *iv,
+     int enc )
+{
+	int result = 0;
+
+	if( caes_test_real_EVP_CipherInit_ex == NULL )
+	{
+		caes_test_real_EVP_CipherInit_ex = dlsym(
+		                                    RTLD_NEXT,
+		                                    "EVP_CipherInit_ex" );
+	}
+	if( caes_test_EVP_CipherInit_ex_attempts_before_fail == 0 )
+	{
+		caes_test_EVP_CipherInit_ex_attempts_before_fail = -1;
+
+		return( 0 );
+	}
+	else if( caes_test_EVP_CipherInit_ex_attempts_before_fail > 0 )
+	{
+		caes_test_EVP_CipherInit_ex_attempts_before_fail--;
+	}
+	result = caes_test_real_EVP_CipherInit_ex(
+	          ctx,
+	          type,
+	          impl,
+	          key,
+	          iv,
+	          enc );
+
+	return( result );
+}
+
+/* Custom EVP_CipherUpdate for testing error cases
+ * Returns 1 if successful or 0 otherwise
+ */
+int EVP_CipherUpdate(
+     EVP_CIPHER_CTX *ctx,
+     unsigned char *out,
+     int *outl,
+     const unsigned char *in,
+     int inl )
+{
+	int result = 0;
+
+	if( caes_test_real_EVP_CipherUpdate == NULL )
+	{
+		caes_test_real_EVP_CipherUpdate = dlsym(
+		                                   RTLD_NEXT,
+		                                   "EVP_CipherUpdate" );
+	}
+	if( caes_test_EVP_CipherUpdate_attempts_before_fail == 0 )
+	{
+		caes_test_EVP_CipherUpdate_attempts_before_fail = -1;
+
+		return( 0 );
+	}
+	else if( caes_test_EVP_CipherUpdate_attempts_before_fail > 0 )
+	{
+		caes_test_EVP_CipherUpdate_attempts_before_fail--;
+	}
+	result = caes_test_real_EVP_CipherUpdate(
+	          ctx,
+	          out,
+	          outl,
+	          in,
+	          inl );
+
+	return( result );
+}
+
+#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && defined( HAVE_EVP_CRYPTO_AES_XTS ) */
+
+#endif /* defined( HAVE_GNU_DL_DLSYM ) && defined( __GNUC__ ) && !defined( __clang__ ) && !defined( __CYGWIN__ ) */
 
 /* Tests the libcaes_tweaked_context_initialize function
  * Returns 1 if successful or 0 if not
@@ -128,14 +272,19 @@ int caes_test_tweaked_context_initialize(
 #if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
 	/* No additional test definitions needed */
 
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && !defined( HAVE_EVP_CIPHER_CTX_INIT )
+#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && !defined( HAVE_EVP_CIPHER_CTX_INIT ) && defined( HAVE_EVP_CRYPTO_AES_XTS )
+	number_of_malloc_fail_tests = 2;
+
+#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && !defined( HAVE_EVP_CIPHER_CTX_INIT ) && ( defined( HAVE_EVP_CRYPTO_AES_CBC ) || defined( HAVE_EVP_CRYPTO_AES_ECB ) )
 	number_of_malloc_fail_tests = 5;
 
 #endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) */
 
 	/* 1 fail in memory_allocate_structure
-	 * 2 fail in libcaes_context_initialize of main context
-	 * 3 fail in libcaes_context_initialize of tweak context
+	 * 2 fail in memory_allocate_structure of libcaes_context_initialize of main context or in EVP_CIPHER_CTX_new
+	 * 3 fail in memory_allocate_structure of libcaes_context_initialize of tweak context or in EVP_CIPHER_CTX_new of libcaes_context_initialize
+	 * 4 fail in memory_allocate_structure of libcaes_context_initialize of tweak context
+	 * 5 fail in EVP_CIPHER_CTX_new of libcaes_context_initialize of tweak context
 	 */
 	for( test_number = 0;
 	     test_number < number_of_malloc_fail_tests;
@@ -461,7 +610,44 @@ int caes_test_tweaked_context_set_keys(
 #if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
 	/* No additional test definitions needed */
 
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
+#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && defined( HAVE_EVP_CRYPTO_AES_XTS )
+
+#if defined( HAVE_CAES_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED )
+
+	/* Test libcaes_tweaked_context_set_key with memcpy failing
+	 */
+	caes_test_memcpy_attempts_before_fail = 0;
+
+	result = libcaes_tweaked_context_set_keys(
+	          tweaked_context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          key,
+	          128,
+	          tweak_key,
+	          128,
+	          &error );
+
+	if( caes_test_memcpy_attempts_before_fail != -1 )
+	{
+		caes_test_memcpy_attempts_before_fail = -1;
+	}
+	else
+	{
+		CAES_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		CAES_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_CAES_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED ) */
+
+#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && ( defined( HAVE_EVP_CRYPTO_AES_CBC ) || defined( HAVE_EVP_CRYPTO_AES_ECB ) )
 
 #if defined( HAVE_CAES_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED )
 
@@ -581,7 +767,14 @@ int caes_test_crypt_xts(
 
 	libcaes_tweaked_context_t *tweaked_context = NULL;
 	libcerror_error_t *error                   = NULL;
+	size_t maximum_size                        = 0;
 	int result                                 = 0;
+
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && defined( HAVE_EVP_CRYPTO_AES_XTS )
+	maximum_size = (size_t) INT_MAX;
+#else
+	maximum_size = (size_t) SSIZE_MAX;
+#endif
 
 	/* Initialize test
 	 */
@@ -759,29 +952,31 @@ int caes_test_crypt_xts(
 	libcerror_error_free(
 	 &error );
 
-	result = libcaes_crypt_xts(
-	          tweaked_context,
-	          LIBCAES_CRYPT_MODE_DECRYPT,
-	          tweak_value,
-	          16,
-	          input_data,
-	          (size_t) SSIZE_MAX + 1,
-	          output_data,
-	          200,
-	          &error );
+	if( maximum_size > 0 )
+	{
+		result = libcaes_crypt_xts(
+		          tweaked_context,
+		          LIBCAES_CRYPT_MODE_DECRYPT,
+		          tweak_value,
+		          16,
+		          input_data,
+		          maximum_size + 1,
+		          output_data,
+		          200,
+		          &error );
 
-	CAES_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
+		CAES_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
 
-	CAES_TEST_ASSERT_IS_NOT_NULL(
-	 "error",
-	 error );
+		CAES_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
 
-	libcerror_error_free(
-	 &error );
-
+		libcerror_error_free(
+		 &error );
+	}
 	result = libcaes_crypt_xts(
 	          tweaked_context,
 	          LIBCAES_CRYPT_MODE_DECRYPT,
@@ -874,6 +1069,117 @@ int caes_test_crypt_xts(
 	libcerror_error_free(
 	 &error );
 
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && defined( HAVE_EVP_CRYPTO_AES_XTS )
+
+#if defined( HAVE_CAES_TEST_MEMORY )
+
+	/* Test libcaes_crypt_xts with memset of block_data failing
+	 */
+	caes_test_memset_attempts_before_fail = 0;
+
+	result = libcaes_crypt_xts(
+	          tweaked_context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          tweak_value,
+	          16,
+	          input_data,
+	          200,
+	          output_data,
+	          200,
+	          &error );
+
+	if( caes_test_memset_attempts_before_fail != -1 )
+	{
+		caes_test_memset_attempts_before_fail = -1;
+	}
+	else
+	{
+		CAES_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		CAES_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_CAES_TEST_MEMORY ) */
+
+#if defined( HAVE_GNU_DL_DLSYM ) && defined( __GNUC__ ) && !defined( __clang__ ) && !defined( __CYGWIN__ )
+
+	/* Test libcaes_crypt_xts with EVP_CipherInit_ex failing
+	 */
+	caes_test_EVP_CipherInit_ex_attempts_before_fail = 0;
+
+	result = libcaes_crypt_xts(
+	          tweaked_context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          tweak_value,
+	          16,
+	          input_data,
+	          200,
+	          output_data,
+	          200,
+	          &error );
+
+	if( caes_test_EVP_CipherInit_ex_attempts_before_fail != -1 )
+	{
+		caes_test_EVP_CipherInit_ex_attempts_before_fail = -1;
+	}
+	else
+	{
+		CAES_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		CAES_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Test libcaes_crypt_xts with EVP_CipherUpdate failing
+	 */
+	caes_test_EVP_CipherUpdate_attempts_before_fail = 0;
+
+	result = libcaes_crypt_xts(
+	          tweaked_context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          tweak_value,
+	          16,
+	          input_data,
+	          200,
+	          output_data,
+	          200,
+	          &error );
+
+	if( caes_test_EVP_CipherUpdate_attempts_before_fail != -1 )
+	{
+		caes_test_EVP_CipherUpdate_attempts_before_fail = -1;
+	}
+	else
+	{
+		CAES_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		CAES_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_GNU_DL_DLSYM ) && defined( __GNUC__ ) && !defined( __clang__ ) && !defined( __CYGWIN__ ) */
+
+#else
+
 #if defined( HAVE_CAES_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED )
 
 	/* Test libcaes_crypt_xts with memcpy of input_data to output_data failing
@@ -943,6 +1249,8 @@ int caes_test_crypt_xts(
 		 &error );
 	}
 #endif /* defined( HAVE_CAES_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED ) */
+
+#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && defined( HAVE_EVP_CRYPTO_AES_XTS ) */
 
 	/* Clean up
 	 */

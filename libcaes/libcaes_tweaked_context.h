@@ -25,6 +25,10 @@
 #include <common.h>
 #include <types.h>
 
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
+#include <openssl/evp.h>
+#endif
+
 #include "libcaes_extern.h"
 #include "libcaes_libcerror.h"
 #include "libcaes_types.h"
@@ -37,6 +41,24 @@ typedef struct libcaes_internal_tweaked_context libcaes_internal_tweaked_context
 
 struct libcaes_internal_tweaked_context
 {
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && defined( HAVE_EVP_CRYPTO_AES_XTS )
+	/* The EVP cipher context
+	 */
+#if defined( HAVE_EVP_CIPHER_CTX_INIT )
+	EVP_CIPHER_CTX internal_evp_cipher_context;
+#endif
+
+	EVP_CIPHER_CTX *evp_cipher_context;
+
+	/* The key
+	 */
+        uint8_t key[ 64 ];
+
+	/* The key bit size
+	 */
+	size_t key_bit_size;
+
+#else
 	/* The main de/encryption context
 	 */
 	libcaes_context_t *main_context;
@@ -44,6 +66,8 @@ struct libcaes_internal_tweaked_context
 	/* The tweak encryption context
 	 */
 	libcaes_context_t *tweak_context;
+
+#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && defined( HAVE_EVP_CRYPTO_AES_XTS ) */
 };
 
 LIBCAES_EXTERN \

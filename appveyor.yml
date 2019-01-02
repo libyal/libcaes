@@ -124,6 +124,7 @@ environment:
 
 matrix:
   allow_failures:
+  - TARGET: vs2010
   - TARGET: python27-x64
 
 install:

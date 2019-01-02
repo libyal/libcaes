@@ -57,9 +57,6 @@ AX_COMMON_CHECK_LOCAL
 dnl Check if libcerror or required headers and functions are available
 AX_LIBCERROR_CHECK_ENABLE
 
-dnl Check if libcrypto or required headers and functions are available
-AX_LIBCRYPTO_CHECK_ENABLE
-
 dnl Check if libcaes required headers and functions are available
 AX_LIBCAES_CHECK_LOCAL
 
@@ -162,7 +159,9 @@ dnl Print a summary
 AC_MSG_NOTICE([
 Building:
    libcerror support:       $ac_cv_libcerror
-   AES support:             $ac_cv_libcaes_aes
+   AES-CBC support:         $ac_cv_libcaes_aes_cbc
+   AES-ECB support:         $ac_cv_libcaes_aes_ecb
+   AES-XTS support:         $ac_cv_libcaes_aes_xts
 
 Features:
    Python (pycaes) support: $ac_cv_enable_python

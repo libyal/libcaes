@@ -312,10 +312,10 @@ int libcaes_context_initialize(
 
 		goto on_error;
 	}
-#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) && ( defined( HAVE_AES_CBC_ENCRYPT ) || defined( HAVE_AES_ECB_ENCRYPT ) )
 	/* No additional initialization necessary */
 
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
+#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && ( defined( HAVE_EVP_CRYPTO_AES_CBC ) || defined( HAVE_EVP_CRYPTO_AES_ECB ) )
 #if defined( HAVE_EVP_CIPHER_CTX_INIT )
 	EVP_CIPHER_CTX_init(
 	 &( internal_context->internal_evp_cipher_context ) );
@@ -378,7 +378,7 @@ int libcaes_context_initialize(
 		}
 		libcaes_tables_initialized = 1;
 	}
-#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) */
+#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) && ( defined( HAVE_AES_CBC_ENCRYPT ) || defined( HAVE_AES_ECB_ENCRYPT ) ) */
 
 	*context = (libcaes_context_t *) internal_context;
 
@@ -402,6 +402,7 @@ int libcaes_context_free(
 {
 	libcaes_internal_context_t *internal_context = NULL;
 	static char *function                        = "libcaes_context_free";
+	int result                                   = 1;
 
 	if( context == NULL )
 	{
@@ -419,10 +420,10 @@ int libcaes_context_free(
 		internal_context = (libcaes_internal_context_t *) *context;
 		*context         = NULL;
 
-#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) && ( defined( HAVE_AES_CBC_ENCRYPT ) || defined( HAVE_AES_ECB_ENCRYPT ) )
 		/* No additional clean up necessary */
 
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
+#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && ( defined( HAVE_EVP_CRYPTO_AES_CBC ) || defined( HAVE_EVP_CRYPTO_AES_ECB ) )
 #if defined( HAVE_EVP_CIPHER_CTX_CLEANUP )
 		if( EVP_CIPHER_CTX_cleanup(
 		     &( internal_context->internal_evp_cipher_context ) ) != 1 )
@@ -433,6 +434,8 @@ int libcaes_context_free(
 			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 			 "%s: unable to clean up EVP cipher context.",
 			 function );
+
+			result = -1;
 		}
 		/* Make sure the error state is removed otherwise OpenSSL will leak memory
 		 */
@@ -447,11 +450,13 @@ int libcaes_context_free(
 		internal_context->evp_cipher_context = NULL;
 #else
 		/* No additional clean up necessary */
-#endif
+
+#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) && ( defined( HAVE_AES_CBC_ENCRYPT ) || defined( HAVE_AES_ECB_ENCRYPT ) ) */
+
 		memory_free(
 		 internal_context );
 	}
-	return( 1 );
+	return( result );
 }
 
 /* Sets the key
@@ -505,7 +510,7 @@ int libcaes_context_set_key(
 
 		return( -1 );
 	}
-#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) && ( defined( HAVE_AES_CBC_ENCRYPT ) || defined( HAVE_AES_ECB_ENCRYPT ) )
 	if( mode == LIBCAES_CRYPT_MODE_ENCRYPT )
 	{
 		if( AES_set_encrypt_key(
@@ -541,7 +546,7 @@ int libcaes_context_set_key(
 		}
 	}
 
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
+#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && ( defined( HAVE_EVP_CRYPTO_AES_CBC ) || defined( HAVE_EVP_CRYPTO_AES_ECB ) )
 	if( key == NULL )
 	{
 		libcerror_error_set(
@@ -606,7 +611,7 @@ int libcaes_context_set_key(
 			return( -1 );
 		}
 	}
-#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) */
+#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) && ( defined( HAVE_AES_CBC_ENCRYPT ) || defined( HAVE_AES_ECB_ENCRYPT ) ) */
 
 	return( 1 );
 }
@@ -1161,7 +1166,7 @@ int libcaes_internal_context_set_encryption_key(
 
 #endif /* !defined( LIBCAES_HAVE_AES_SUPPORT ) */
 
-#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) && defined( HAVE_AES_CBC_ENCRYPT )
 
 /* De- or encrypts a block of data using AES-CBC (Cipher Block Chaining) using OpenSSL
  * The size must be a multitude of the AES block size (16 byte)
@@ -1348,7 +1353,7 @@ int libcaes_crypt_cbc(
 	return( 1 );
 }
 
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
+#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && defined( HAVE_EVP_CRYPTO_AES_CBC )
 
 /* De- or encrypts a block of data using AES-CBC (Cipher Block Chaining) using OpenSSL EVP
  * The size must be a multitude of the AES block size (16 byte)
@@ -1879,7 +1884,7 @@ on_error:
 	return( -1 );
 }
 
-#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) */
+#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) && defined( HAVE_AES_CBC_ENCRYPT ) */
 
 /* De- or encrypts a block of data using AES-CCM (Counter with CBC-MAC)
  * Note that the key must be set in encryption mode (LIBCAES_CRYPT_MODE_ENCRYPT) for both de- and encryption.
@@ -2349,7 +2354,7 @@ int libcaes_crypt_cfb(
 
 #endif /* TODO */
 
-#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) && defined( HAVE_AES_ECB_ENCRYPT )
 
 /* De- or encrypts a block of data using AES-ECB (Electronic CodeBook) using OpenSSL
  * The size must be a multitude of the AES block size (16 byte)
@@ -2449,13 +2454,13 @@ int libcaes_crypt_ecb(
 
 		return( -1 );
 	}
-	if( output_data_size < 16 )
+	if( output_data_size < input_data_size )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
-		 "%s: invalid output data size value too small.",
+		 "%s: invalid ouput data size smaller than input data size.",
 		 function );
 
 		return( -1 );
@@ -2477,7 +2482,7 @@ int libcaes_crypt_ecb(
 	return( result );
 }
 
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
+#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && defined( HAVE_EVP_CRYPTO_AES_ECB )
 
 /* De- or encrypts a block of data using AES-ECB (Electronic CodeBook) using OpenSSL EVP
  * The size must be a multitude of the AES block size (16 byte)
@@ -2580,13 +2585,13 @@ int libcaes_crypt_ecb(
 
 		return( -1 );
 	}
-	if( output_data_size < 16 )
+	if( output_data_size < input_data_size )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
-		 "%s: invalid output data size value too small.",
+		 "%s: invalid ouput data size smaller than input data size.",
 		 function );
 
 		return( -1 );
@@ -2767,13 +2772,13 @@ int libcaes_crypt_ecb(
 
 		return( -1 );
 	}
-	if( output_data_size < 16 )
+	if( output_data_size < input_data_size )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
-		 "%s: invalid output data size value too small.",
+		 "%s: invalid ouput data size smaller than input data size.",
 		 function );
 
 		return( -1 );
@@ -2926,5 +2931,5 @@ int libcaes_crypt_ecb(
 	return( result );
 }
 
-#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) */
+#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) && defined( HAVE_AES_ECB_ENCRYPT ) */
 
