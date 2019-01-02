@@ -9,6 +9,8 @@ Homepage: https://github.com/libyal/libcaes
 Package: libcaes
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Conflicts: libcaes1
+Replaces: libcaes1
 Suggests: libcaes-dbg
 Description: Library to support cross-platform AES encryption
  libcaes is a library to support cross-platform AES encryption.
@@ -31,6 +33,8 @@ Package: libcaes-python
 Section: python
 Architecture: any
 Depends: libcaes (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Conflicts: python-libcaes
+Replaces: python-libcaes
 Suggests: libcaes-python-dbg
 Description: Python 2 bindings for libcaes
  Python 2 bindings for libcaes.
@@ -46,6 +50,8 @@ Package: libcaes-python3
 Section: python
 Architecture: any
 Depends: libcaes (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Conflicts: python3-libcaes
+Replaces: python3-libcaes
 Suggests: libcaes-python3-dbg
 Description: Python 3 bindings for libcaes
  Python 3 bindings for libcaes.

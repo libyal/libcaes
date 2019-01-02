@@ -1,7 +1,7 @@
 /*
  * Library tweaked_context type test program
  *
- * Copyright (C) 2011-2018, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2019, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -577,7 +577,7 @@ int caes_test_crypt_xts(
 	uint8_t key[ 16 ];
 	uint8_t output_data[ 200 ];
 	uint8_t tweak_key[ 16 ];
-	uint8_t tweak_value[ 8 ];
+	uint8_t tweak_value[ 16 ];
 
 	libcaes_tweaked_context_t *tweaked_context = NULL;
 	libcerror_error_t *error                   = NULL;
