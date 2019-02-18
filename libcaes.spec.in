@@ -13,6 +13,14 @@ BuildRequires: gcc @ax_libcerror_spec_build_requires@ @ax_libcrypto_spec_build_r
 %description -n libcaes
 Library to support cross-platform AES encryption
 
+%package -n libcaes-static
+Summary: Library to support cross-platform AES encryption
+Group: Development/Libraries
+Requires: libcaes = %{version}-%{release}
+
+%description -n libcaes-static
+Static library version of libcaes.
+
 %package -n libcaes-devel
 Summary: Header files and libraries for developing applications for libcaes
 Group: Development/Libraries
@@ -65,11 +73,16 @@ rm -rf %{buildroot}
 %doc AUTHORS README
 %attr(755,root,root) %{_libdir}/*.so.*
 
+%files -n libcaes-static
+%defattr(644,root,root,755)
+%license COPYING
+%doc AUTHORS README
+%attr(755,root,root) %{_libdir}/*.a
+
 %files -n libcaes-devel
 %defattr(644,root,root,755)
 %license COPYING
 %doc AUTHORS README
-%{_libdir}/*.a
 %{_libdir}/*.la
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/libcaes.pc
