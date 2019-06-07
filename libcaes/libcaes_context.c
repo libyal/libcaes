@@ -262,6 +262,12 @@ int libcaes_context_initialize(
 	libcaes_internal_context_t *internal_context = NULL;
 	static char *function                        = "libcaes_context_initialize";
 
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && ( defined( HAVE_EVP_CRYPTO_AES_CBC ) || defined( HAVE_EVP_CRYPTO_AES_ECB ) )
+	char error_string[ 256 ];
+
+	unsigned long error_code                     = 0;
+#endif
+
 	if( context == NULL )
 	{
 		libcerror_error_set(
@@ -326,12 +332,20 @@ int libcaes_context_initialize(
 
 	if( internal_context->evp_cipher_context == NULL )
 	{
+		error_code = ERR_get_error();
+
+		ERR_error_string_n(
+		 error_code,
+		 error_string,
+		 256 );
+
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create EVP cipher context.",
-		 function );
+		 "%s: unable to create EVP cipher context with error: %s.",
+		 function,
+		 error_string );
 
 		goto on_error;
 	}
@@ -341,12 +355,20 @@ int libcaes_context_initialize(
 	     internal_context->evp_cipher_context,
 	     1 ) != 1 )
 	{
+		error_code = ERR_get_error();
+
+		ERR_error_string_n(
+		 error_code,
+		 error_string,
+		 256 );
+
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to set padding in context.",
-		 function );
+		 "%s: unable to set padding in context with error: %s.",
+		 function,
+		 error_string );
 
 #if defined( HAVE_EVP_CIPHER_CTX_CLEANUP )
 		EVP_CIPHER_CTX_cleanup(
@@ -404,6 +426,12 @@ int libcaes_context_free(
 	static char *function                        = "libcaes_context_free";
 	int result                                   = 1;
 
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_EVP_CIPHER_CTX_CLEANUP )
+	char error_string[ 256 ];
+
+	unsigned long error_code                     = 0;
+#endif
+
 	if( context == NULL )
 	{
 		libcerror_error_set(
@@ -428,12 +456,20 @@ int libcaes_context_free(
 		if( EVP_CIPHER_CTX_cleanup(
 		     &( internal_context->internal_evp_cipher_context ) ) != 1 )
 		{
+			error_code = ERR_get_error();
+
+			ERR_error_string_n(
+			 error_code,
+			 error_string,
+			 256 );
+
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to clean up EVP cipher context.",
-			 function );
+			 "%s: unable to clean up EVP cipher context with error: %s.",
+			 function,
+			 error_string );
 
 			result = -1;
 		}
@@ -1371,10 +1407,12 @@ int libcaes_crypt_cbc(
      libcerror_error_t **error )
 {
 	uint8_t block_data[ EVP_MAX_BLOCK_LENGTH ];
+	char error_string[ 256 ];
 
 	const EVP_CIPHER *cipher                     = NULL;
 	libcaes_internal_context_t *internal_context = NULL;
 	static char *function                        = "libcaes_crypt_cbc";
+	unsigned long error_code                     = 0;
 	int safe_output_data_size                    = 0;
 
 	if( context == NULL )
@@ -1526,12 +1564,20 @@ int libcaes_crypt_cbc(
 	     (unsigned char *) initialization_vector,
 	     mode ) != 1 )
 	{
+		error_code = ERR_get_error();
+
+		ERR_error_string_n(
+		 error_code,
+		 error_string,
+		 256 );
+
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to initialize cipher.",
-		 function );
+		 "%s: unable to initialize cipher with error: %s.",
+		 function,
+		 error_string );
 
 		return( -1 );
 	}
@@ -1542,12 +1588,20 @@ int libcaes_crypt_cbc(
 	     (unsigned char *) input_data,
 	     input_data_size ) != 1 )
 	{
+		error_code = ERR_get_error();
+
+		ERR_error_string_n(
+		 error_code,
+		 error_string,
+		 256 );
+
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to update cipher.",
-		 function );
+		 "%s: unable to update cipher with error: %s.",
+		 function,
+		 error_string );
 
 		return( -1 );
 	}
@@ -2498,10 +2552,12 @@ int libcaes_crypt_ecb(
      libcerror_error_t **error )
 {
 	uint8_t block_data[ EVP_MAX_BLOCK_LENGTH ];
+	char error_string[ 256 ];
 
 	const EVP_CIPHER *cipher                     = NULL;
 	libcaes_internal_context_t *internal_context = NULL;
 	static char *function                        = "libcaes_crypt_ecb";
+	unsigned long error_code                     = 0;
 	int result                                   = 1;
 	int safe_output_data_size                    = 0;
 
@@ -2630,12 +2686,20 @@ int libcaes_crypt_ecb(
 	     NULL,
 	     mode ) != 1 )
 	{
+		error_code = ERR_get_error();
+
+		ERR_error_string_n(
+		 error_code,
+		 error_string,
+		 256 );
+
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to initialize cipher.",
-		 function );
+		 "%s: unable to initialize cipher with error: %s.",
+		 function,
+		 error_string );
 
 		return( -1 );
 	}
@@ -2646,12 +2710,20 @@ int libcaes_crypt_ecb(
 	     (unsigned char *) input_data,
 	     16 ) != 1 )
 	{
+		error_code = ERR_get_error();
+
+		ERR_error_string_n(
+		 error_code,
+		 error_string,
+		 256 );
+
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to update cipher.",
-		 function );
+		 "%s: unable to update cipher with error: %s.",
+		 function,
+		 error_string );
 
 		return( -1 );
 	}
