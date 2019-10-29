@@ -1,4 +1,6 @@
 environment:
+  pypi_token:
+    secure: VHuZiUWgTqTciKE2nsv/Lo8Jj6f2/80BmiWPpxyM+JUTIPzO3hfb0Nehz2gAHwvFv+nmsuCGvpC+xW8zA3WNepjLRRo2HE4m0hzXiM8sb2nEPvl+5ysW7S+Otwus94+Pc1vabTsvu4RRLZcxkM9ktMiFhhxdK6sG3LNYNRvrhEvFh0VVHIB6uhREkXJQd8uKMbqL3GL2A101jsmv060Ttlf5wp7l3cZQmPZPM0lVX1EK7Y61Enx/zV5Ck/zI/3k9SFcALVa+FzdKMDgwzIFf4Q==
   matrix:
   - TARGET: vs2008
     BUILD_ENVIRONMENT: msbuild
@@ -126,15 +128,12 @@ environment:
     CPPFLAGS: "-DOPTIMIZATION_DISABLED"
     LDFLAGS: "--coverage"
 
-matrix:
-  allow_failures:
-  - TARGET: vs2010
-  - TARGET: python27-x64
-
 install:
 - cmd: git clone https://github.com/codecov/codecov-bash.git ..\codecov-bash
 - cmd: if [%BUILD_ENVIRONMENT%]==[msbuild] (
     git clone https://github.com/libyal/vstools.git ..\vstools )
+- cmd: if [%BUILD_ENVIRONMENT%]==[python] (
+    "%PYTHON%\\python.exe" -m pip install -U pip setuptools twine wheel )
 - cmd: if [%BUILD_ENVIRONMENT%]==[cygwin] (
     C:\cygwin\setup-x86.exe -qgnNdO -l C:\cygwin\var\cache\setup -R c:\cygwin -s http://cygwin.mirror.constant.com -P zlib-devel -P openssl-devel -P python2-devel -P python3-devel )
 - cmd: if [%BUILD_ENVIRONMENT%]==[cygwin64] (
@@ -168,7 +167,7 @@ build_script:
     msbuild /verbosity:quiet vs2017\libcaes.sln /property:Platform=Win32 /property:PlatformToolset=v141 /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" &&
     msbuild /verbosity:quiet vs2017\libcaes.sln /property:Platform=x64 /property:PlatformToolset=v141 /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" )
 - cmd: if [%BUILD_ENVIRONMENT%]==[python] (
-    "%PYTHON%\\python.exe" setup.py bdist_msi )
+    "%PYTHON%\\python.exe" setup.py bdist_msi bdist_wheel )
 - cmd: if [%BUILD_ENVIRONMENT%]==[cygwin] (
     xcopy /i /q /s C:\projects\libcaes C:\cygwin\home\appveyor\libcaes &&
     C:\cygwin\bin\bash -e -l -c "cd libcaes && ./synclibs.sh --use-head && ./autogen.sh" )
@@ -199,4 +198,11 @@ after_test:
 - cmd: if [%TARGET%]==[mingw-gcc-no-optimization] (
     copy C:\projects\codecov-bash\codecov C:\MinGW\msys\1.0\home\appveyor\libcaes\codecov.sh &&
     C:\MinGW\msys\1.0\bin\bash -e -l -c "cd libcaes && chmod a+x ./codecov.sh && sed -i 's/-execdir /-exec /' ./codecov.sh && ./codecov.sh -n ${TARGET} -y .codecov.yml" )
+
+artifacts:
+- path: dist\*.whl
+
+deploy_script:
+- ps: If ($env:APPVEYOR_REPO_TAG -eq "true") {
+    Invoke-Expression "${env:PYTHON}\\python.exe -m twine upload dist/*.whl --username __token__ --password ${env:PYPI_TOKEN} --skip-existing" }
 
