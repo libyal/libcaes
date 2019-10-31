@@ -128,6 +128,10 @@ environment:
     CPPFLAGS: "-DOPTIMIZATION_DISABLED"
     LDFLAGS: "--coverage"
 
+matrix:
+  allow_failures:
+  - TARGET: vs2010
+
 install:
 - cmd: git clone https://github.com/codecov/codecov-bash.git ..\codecov-bash
 - cmd: if [%BUILD_ENVIRONMENT%]==[msbuild] (
