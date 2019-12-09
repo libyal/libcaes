@@ -69,19 +69,19 @@ rm -rf %{buildroot}
 
 %files -n libcaes
 %defattr(644,root,root,755)
-%license COPYING
+%license COPYING COPYING.LESSER
 %doc AUTHORS README
 %attr(755,root,root) %{_libdir}/*.so.*
 
 %files -n libcaes-static
 %defattr(644,root,root,755)
-%license COPYING
+%license COPYING COPYING.LESSER
 %doc AUTHORS README
 %attr(755,root,root) %{_libdir}/*.a
 
 %files -n libcaes-devel
 %defattr(644,root,root,755)
-%license COPYING
+%license COPYING COPYING.LESSER
 %doc AUTHORS README
 %{_libdir}/*.la
 %{_libdir}/*.so
@@ -91,7 +91,7 @@ rm -rf %{buildroot}
 
 %files -n libcaes-python2
 %defattr(644,root,root,755)
-%license COPYING
+%license COPYING COPYING.LESSER
 %doc AUTHORS README
 %{_libdir}/python2*/site-packages/*.a
 %{_libdir}/python2*/site-packages/*.la
@@ -99,7 +99,7 @@ rm -rf %{buildroot}
 
 %files -n libcaes-python3
 %defattr(644,root,root,755)
-%license COPYING
+%license COPYING COPYING.LESSER
 %doc AUTHORS README
 %{_libdir}/python3*/site-packages/*.a
 %{_libdir}/python3*/site-packages/*.la
