@@ -253,6 +253,8 @@ int caes_test_tweaked_context_initialize(
 	          &tweaked_context,
 	          &error );
 
+	tweaked_context = NULL;
+
 	CAES_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
@@ -264,8 +266,6 @@ int caes_test_tweaked_context_initialize(
 
 	libcerror_error_free(
 	 &error );
-
-	tweaked_context = NULL;
 
 #if defined( HAVE_CAES_TEST_MEMORY )
 
@@ -1215,6 +1215,10 @@ int caes_test_crypt_xts(
 		libcerror_error_free(
 		 &error );
 	}
+/* Even though optimization should be disabled here earlier versions of GNU C do optimize this memcpy
+ */
+#if __GNUC__ > 5
+
 	/* Test libcaes_crypt_xts with memcpy of encrypted_tweak_value to encrypted_tweak_value_copy failing
 	 */
 	caes_test_memcpy_attempts_before_fail = 1;
@@ -1248,6 +1252,7 @@ int caes_test_crypt_xts(
 		libcerror_error_free(
 		 &error );
 	}
+#endif /* __GNUC__ > 5 */
 #endif /* defined( HAVE_CAES_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED ) */
 
 #endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && defined( HAVE_EVP_CRYPTO_AES_XTS ) */

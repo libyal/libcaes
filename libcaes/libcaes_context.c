@@ -2030,6 +2030,17 @@ int libcaes_crypt_ccm(
 
 		return( -1 );
 	}
+	if( input_data_size < 16 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+		 "%s: invalid input data size value too small.",
+		 function );
+
+		return( -1 );
+	}
 	if( output_data == NULL )
 	{
 		libcerror_error_set(
@@ -2101,7 +2112,7 @@ int libcaes_crypt_ccm(
 
 		goto on_error;
 	}
-	while( ( data_offset + 16 ) < input_data_size )
+	while( data_offset <= ( input_data_size - 16 ) )
 	{
 		if( libcaes_crypt_ecb(
 		     context,

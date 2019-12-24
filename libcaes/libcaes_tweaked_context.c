@@ -877,7 +877,7 @@ int libcaes_crypt_xts(
 	}
 	remaining_data_size = input_data_size;
 
-	while( ( data_offset + 16 ) <= input_data_size )
+	while( data_offset <= ( input_data_size - 16 ) )
 	{
 		if( ( remaining_data_size < 32 )
 		 && ( remaining_data_size != 16 ) )

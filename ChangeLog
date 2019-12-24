@@ -1,5 +1,5 @@
 TODO
-* Look into slow processing when using wincrypt
+* look into supporting input buffer == output buffer for optimization
 * CCM add separate function for authentication data support
 * implement libcaes_crypt_cfb; complete CFB suport
 * add OFB suport ?
@@ -14,11 +14,6 @@ Tests:
   - OFB ?
   - XTS (add more test vectors?) 256-bit
   - make sure to test non-16 byte aligned data for the different implementations
-
-Windows:
-* WinXP no AES support ?
-* WINAPI initialize provider only once - where to stick the init functions ?
-* wincrypt and EVP - make sure to pass block sized blocks ?
 
 20130331
 * see `git log' for more recent change log

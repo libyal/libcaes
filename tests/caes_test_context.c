@@ -339,6 +339,8 @@ int caes_test_context_initialize(
 	          &context,
 	          &error );
 
+	context = NULL;
+
 	CAES_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
@@ -350,8 +352,6 @@ int caes_test_context_initialize(
 
 	libcerror_error_free(
 	 &error );
-
-	context = NULL;
 
 #if defined( HAVE_CAES_TEST_MEMORY )
 
