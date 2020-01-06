@@ -31,8 +31,6 @@ check_PROGRAMS = \
 	caes_test_context \
 	caes_test_crypt_cbc \
 	caes_test_crypt_ccm \
-	caes_test_crypt_cfb \
-	caes_test_crypt_ecb \
 	caes_test_crypt_xts \
 	caes_test_error \
 	caes_test_support \
@@ -67,26 +65,6 @@ caes_test_crypt_ccm_SOURCES = \
 	caes_test_unused.h
 
 caes_test_crypt_ccm_LDADD = \
-	../libcaes/libcaes.la \
-	@LIBCERROR_LIBADD@
-
-caes_test_crypt_cfb_SOURCES = \
-	caes_test_crypt_cfb.c \
-	caes_test_libcaes.h \
-	caes_test_libcerror.h \
-	caes_test_unused.h
-
-caes_test_crypt_cfb_LDADD = \
-	../libcaes/libcaes.la \
-	@LIBCERROR_LIBADD@
-
-caes_test_crypt_ecb_SOURCES = \
-	caes_test_crypt_ecb.c \
-	caes_test_libcaes.h \
-	caes_test_libcerror.h \
-	caes_test_unused.h
-
-caes_test_crypt_ecb_LDADD = \
 	../libcaes/libcaes.la \
 	@LIBCERROR_LIBADD@
 

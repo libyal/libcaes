@@ -2244,9 +2244,8 @@ on_error:
 	return( -1 );
 }
 
-#ifdef TODO
-
 /* De- or encrypts a block of data using AES-CFB (Cipher Feedback Mode)
+ * Note that the key must be set with mode LIBCAES_CRYPT_MODE_ENCRYPT
  * Returns 1 if successful or -1 on error
  */
 int libcaes_crypt_cfb(
@@ -2254,15 +2253,18 @@ int libcaes_crypt_cfb(
      int mode,
      const uint8_t *initialization_vector,
      size_t initialization_vector_size,
-     size_t *initialization_vector_index,
      const uint8_t *input_data,
      size_t input_data_size,
      uint8_t *output_data,
      size_t output_data_size,
      libcerror_error_t **error )
 {
-	static char *function = "libcaes_crypt_cfb";
-	size_t data_offset    = 0;
+	uint8_t internal_initialization_vector[ 16 ];
+
+	static char *function              = "libcaes_crypt_cfb";
+	size_t data_offset                 = 0;
+	size_t initialization_vector_index = 0;
+	uint8_t byte_value                 = 0;
 
 	if( ( mode != LIBCAES_CRYPT_MODE_DECRYPT )
 	 && ( mode != LIBCAES_CRYPT_MODE_ENCRYPT ) )
@@ -2298,28 +2300,6 @@ int libcaes_crypt_cfb(
 
 		return( -1 );
 	}
-	if( initialization_vector_index == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid initialization vector index.",
-		 function );
-
-		return( -1 );
-	}
-	if( *initialization_vector_index >= initialization_vector_size )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid initialization vector index value out of bounds.",
-		 function );
-
-		return( -1 );
-	}
 	if( input_data == NULL )
 	{
 		libcerror_error_set(
@@ -2338,6 +2318,17 @@ int libcaes_crypt_cfb(
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
 		 "%s: invalid input data size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
+	if( input_data_size < 16 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+		 "%s: invalid input data size value too small.",
 		 function );
 
 		return( -1 );
@@ -2388,18 +2379,34 @@ int libcaes_crypt_cfb(
 
 		return( -1 );
 	}
+	if( memory_copy(
+	     internal_initialization_vector,
+	     initialization_vector,
+	     16 ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
+		 "%s: unable to copy initialization vector.",
+		 function );
+
+		goto on_error;
+	}
+	initialization_vector_index = 16;
+
 	for( data_offset = 0;
 	     data_offset < input_data_size;
 	     data_offset++ )
 	{
-		if( *initialization_vector_index == 0 )
+		if( initialization_vector_index > 15 )
 		{
 			if( libcaes_crypt_ecb(
 			     context,
-			     mode,
-			     initialization_vector,
+			     LIBCAES_CRYPT_MODE_ENCRYPT,
+			     internal_initialization_vector,
 			     initialization_vector_size,
-			     initialization_vector,
+			     internal_initialization_vector,
 			     initialization_vector_size,
 			     error ) != 1 )
 			{
@@ -2410,26 +2417,46 @@ int libcaes_crypt_cfb(
 				 "%s: unable to de/encrypt initialization vector.",
 				 function );
 
-				return( -1 );
+				goto on_error;
 			}
+			initialization_vector_index = 0;
 		}
-		output_data[ data_offset ] = input_data[ data_offset ]
-		                           ^ initialization_vector[ *initialization_vector_index ];
+		output_data[ data_offset ] = input_data[ data_offset ] ^ internal_initialization_vector[ initialization_vector_index ];
 
 		if( mode == LIBCAES_CRYPT_MODE_ENCRYPT )
 		{
-			initialization_vector[ *initialization_vector_index ] = output_data[ data_offset ];
+			byte_value = output_data[ data_offset ];
 		}
 		else
 		{
-			initialization_vector[ *initialization_vector_index ] = input_data[ data_offset ];
+			byte_value = input_data[ data_offset ];
 		}
-		*initialization_vector_index = ( *initialization_vector_index + 1 ) & 0x0f;
+		internal_initialization_vector[ initialization_vector_index++ ] = byte_value;
+	}
+	if( memory_set(
+	     internal_initialization_vector,
+	     0,
+	     16 ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+		 "%s: unable to clear initialization vector.",
+		 function );
+
+		goto on_error;
 	}
 	return( 1 );
-}
 
-#endif /* TODO */
+on_error:
+	memory_set(
+	 internal_initialization_vector,
+	 0,
+	 16 );
+
+	return( -1 );
+}
 
 #if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) && defined( HAVE_AES_ECB_ENCRYPT )
 

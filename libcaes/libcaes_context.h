@@ -143,19 +143,17 @@ int libcaes_crypt_ccm(
      size_t output_data_size,
      libcerror_error_t **error );
 
-#ifdef TODO
+LIBCAES_EXTERN \
 int libcaes_crypt_cfb(
      libcaes_context_t *context,
      int mode,
      const uint8_t *initialization_vector,
      size_t initialization_vector_size,
-     size_t *initialization_vector_index,
      const uint8_t *input_data,
      size_t input_data_size,
      uint8_t *output_data,
      size_t output_data_size,
      libcerror_error_t **error );
-#endif
 
 LIBCAES_EXTERN \
 int libcaes_crypt_ecb(
