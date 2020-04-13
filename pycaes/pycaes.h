@@ -1,5 +1,5 @@
 /*
- * Python bindings for libcaes (pycaes)
+ * Python bindings module for libcaes (pycaes)
  *
  * Copyright (C) 2011-2020, Joachim Metz <joachim.metz@gmail.com>
  *
