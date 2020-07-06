@@ -17,8 +17,15 @@ then
 	then
 		install_name_tool -change /usr/local/lib/libcaes.1.dylib ${PWD}/libcaes/.libs/libcaes.1.dylib ./pycaes/.libs/pycaes.so;
 	fi
-	make check CHECK_WITH_STDERR=1;
-	RESULT=$?;
+	if test ${TARGET} = "linux-gcc-no-optimization";
+	then
+		# Skip the tools end-to-end tests otherwise gcov will not generate the reports properly.
+		make check CHECK_WITH_STDERR=1 SKIP_TOOLS_END_TO_END_TESTS=1;
+		RESULT=$?;
+	else
+		make check CHECK_WITH_STDERR=1;
+		RESULT=$?;
+	fi
 fi
 if test ${RESULT} -ne 0;
 then

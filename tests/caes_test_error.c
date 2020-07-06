@@ -28,7 +28,6 @@
 #endif
 
 #include "caes_test_libcaes.h"
-#include "caes_test_libcerror.h"
 #include "caes_test_macros.h"
 #include "caes_test_unused.h"
 
