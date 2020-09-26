@@ -228,7 +228,7 @@ on_error:
 	return( NULL );
 }
 
-/* Intializes a crypt modes object
+/* Initializes a crypt modes object
  * Returns 0 if successful or -1 on error
  */
 int pycaes_crypt_modes_init(

@@ -190,7 +190,7 @@ on_error:
 	return( NULL );
 }
 
-/* Intializes a context object
+/* Initializes a context object
  * Returns 0 if successful or -1 on error
  */
 int pycaes_context_init(

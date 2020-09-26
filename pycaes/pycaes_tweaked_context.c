@@ -190,7 +190,7 @@ on_error:
 	return( NULL );
 }
 
-/* Intializes a tweaked context object
+/* Initializes a tweaked context object
  * Returns 0 if successful or -1 on error
  */
 int pycaes_tweaked_context_init(
