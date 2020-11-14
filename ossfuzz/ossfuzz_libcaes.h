@@ -1,5 +1,5 @@
 /*
- * The internal extern definition
+ * The libcaes header wrapper
  *
  * Copyright (C) 2011-2020, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,28 +19,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBCAES_INTERNAL_EXTERN_H )
-#define _LIBCAES_INTERNAL_EXTERN_H
+#if !defined( _OSSFUZZ_LIBCAES_H )
+#define _OSSFUZZ_LIBCAES_H
 
 #include <common.h>
 
-/* Define HAVE_LOCAL_LIBCAES for local use of libcaes
- */
-#if !defined( HAVE_LOCAL_LIBCAES )
+#include <libcaes.h>
 
-#include <libcaes/extern.h>
-
-#if defined( __CYGWIN__ )
-#define LIBCAES_EXTERN_VARIABLE	extern
-#else
-#define LIBCAES_EXTERN_VARIABLE	LIBCAES_EXTERN
-#endif
-
-#else
-#define LIBCAES_EXTERN		/* extern */
-#define LIBCAES_EXTERN_VARIABLE	extern
-
-#endif /* !defined( HAVE_LOCAL_LIBCAES ) */
-
-#endif /* !defined( _LIBCAES_INTERNAL_EXTERN_H ) */
+#endif /* !defined( _OSSFUZZ_LIBCAES_H ) */
 
