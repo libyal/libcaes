@@ -158,11 +158,8 @@ PyMODINIT_FUNC initpycaes(
                 void )
 #endif
 {
-	PyObject *module                          = NULL;
-	PyTypeObject *context_type_object         = NULL;
-	PyTypeObject *crypt_modes_type_object     = NULL;
-	PyTypeObject *tweaked_context_type_object = NULL;
-	PyGILState_STATE gil_state                = 0;
+	PyObject *module           = NULL;
+	PyGILState_STATE gil_state = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	libcaes_notify_set_stream(
@@ -193,8 +190,9 @@ PyMODINIT_FUNC initpycaes(
 		return;
 #endif
 	}
+#if PY_VERSION_HEX < 0x03070000
 	PyEval_InitThreads();
-
+#endif
 	gil_state = PyGILState_Ensure();
 
 	/* Setup the context type object
@@ -209,31 +207,10 @@ PyMODINIT_FUNC initpycaes(
 	Py_IncRef(
 	 (PyObject *) &pycaes_context_type_object );
 
-	context_type_object = &pycaes_context_type_object;
-
 	PyModule_AddObject(
 	 module,
 	 "context",
-	 (PyObject *) context_type_object );
-
-	/* Setup the tweaked context type object
-	 */
-	pycaes_tweaked_context_type_object.tp_new = PyType_GenericNew;
-
-	if( PyType_Ready(
-	     &pycaes_tweaked_context_type_object ) < 0 )
-	{
-		goto on_error;
-	}
-	Py_IncRef(
-	 (PyObject *) &pycaes_tweaked_context_type_object );
-
-	tweaked_context_type_object = &pycaes_tweaked_context_type_object;
-
-	PyModule_AddObject(
-	 module,
-	 "tweaked_context",
-	 (PyObject *) tweaked_context_type_object );
+	 (PyObject *) &pycaes_context_type_object );
 
 	/* Setup the crypt modes type object
 	 */
@@ -252,12 +229,27 @@ PyMODINIT_FUNC initpycaes(
 	Py_IncRef(
 	 (PyObject *) &pycaes_crypt_modes_type_object );
 
-	crypt_modes_type_object = &pycaes_crypt_modes_type_object;
-
 	PyModule_AddObject(
 	 module,
 	 "crypt_modes",
-	 (PyObject *) crypt_modes_type_object );
+	 (PyObject *) &pycaes_crypt_modes_type_object );
+
+	/* Setup the tweaked context type object
+	 */
+	pycaes_tweaked_context_type_object.tp_new = PyType_GenericNew;
+
+	if( PyType_Ready(
+	     &pycaes_tweaked_context_type_object ) < 0 )
+	{
+		goto on_error;
+	}
+	Py_IncRef(
+	 (PyObject *) &pycaes_tweaked_context_type_object );
+
+	PyModule_AddObject(
+	 module,
+	 "tweaked_context",
+	 (PyObject *) &pycaes_tweaked_context_type_object );
 
 	PyGILState_Release(
 	 gil_state );
