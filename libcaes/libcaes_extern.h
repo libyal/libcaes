@@ -30,7 +30,7 @@
 
 #include <libcaes/extern.h>
 
-#if defined( __CYGWIN__ )
+#if defined( __CYGWIN__ ) || defined( __MINGW32__ )
 #define LIBCAES_EXTERN_VARIABLE	extern
 #else
 #define LIBCAES_EXTERN_VARIABLE	LIBCAES_EXTERN
