@@ -29,12 +29,12 @@ AC_DEFUN([AX_LIBCRYPTO_CHECK_XTS_DUPLICATE_KEYS_SUPPORT],
         [[#include <openssl/err.h>
 #include <openssl/evp.h>]],
         [[unsigned char key[ 16 ] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
-EVP_CIPHER_CTX ctx;
+EVP_CIPHER_CTX *ctx;
 int result;
 
-EVP_CIPHER_CTX_init( &ctx );
+ctx = EVP_CIPHER_CTX_new();
 result = EVP_CipherInit_ex(ctx, EVP_aes_128_xts(), NULL, key, key, 0);
-EVP_CIPHER_CTX_cleanup( &ctx );
+EVP_CIPHER_CTX_free(ctx);
 
 return( result == 1 ); ]] )],
       [ac_cv_openssl_xts_duplicate_keys=yes],
