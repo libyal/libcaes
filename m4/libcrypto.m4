@@ -116,7 +116,7 @@ AC_DEFUN([AX_LIBCRYPTO_CHECK_OPENSSL_EVP_MD],
     [ac_cv_libcrypto_evp_md=no])
 
   AS_IF(
-    [test "x$ac_cv_enable_openssl_evp_md" = xyes && "x$ac_cv_libcrypto_evp_md" = xno],
+    [test "x$ac_cv_enable_openssl_evp_md" = xyes && test "x$ac_cv_libcrypto_evp_md" = xno],
     [AC_MSG_FAILURE(
       [Missing OpenSSL EVP MD support],
       [1])
@@ -441,7 +441,7 @@ AC_DEFUN([AX_LIBCRYPTO_CHECK_OPENSSL_EVP_CIPHER],
     [ac_cv_libcrypto_evp_cipher=no])
 
   AS_IF(
-    [test "x$ac_cv_enable_openssl_evp_cipher" = xyes && "x$ac_cv_libcrypto_evp_cipher" = xno],
+    [test "x$ac_cv_enable_openssl_evp_cipher" = xyes && test "x$ac_cv_libcrypto_evp_cipher" = xno],
     [AC_MSG_FAILURE(
       [Missing OpenSSL EVP CIPHER support],
       [1])
