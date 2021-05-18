@@ -24,6 +24,8 @@ AC_DEFUN([AX_LIBCRYPTO_CHECK_XTS_DUPLICATE_KEYS_SUPPORT],
     [if `EVP_CipherInit_ex' can be used with duplicate keys],
     [ac_cv_openssl_xts_duplicate_keys],
     [AC_LANG_PUSH(C)
+    saved_LIBS="$LIBS"
+    LIBS="$LIBS $ac_cv_libcrypto_LIBADD"
     AC_LINK_IFELSE(
       [AC_LANG_PROGRAM(
         [[#include <openssl/err.h>
@@ -39,6 +41,7 @@ EVP_CIPHER_CTX_free(ctx);
 return( result == 1 ); ]] )],
       [ac_cv_openssl_xts_duplicate_keys=yes],
       [ac_cv_openssl_xts_duplicate_keys=no])
+    LIBS="$saved_LIBS"
     AC_LANG_POP(C)])
   ])
 
