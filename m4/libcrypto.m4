@@ -870,7 +870,7 @@ AC_DEFUN([AX_LIBCRYPTO_CHECK_ENABLE],
     [auto-detect])
 
   AS_IF(
-    [test "x$ac_cv_enable_static_executables" = xno],
+    [test "x$ac_cv_enable_static_executables" != xyes],
     [dnl Check for a shared library version
     AX_LIBCRYPTO_CHECK_LIB])
 
