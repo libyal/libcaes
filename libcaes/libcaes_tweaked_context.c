@@ -134,39 +134,6 @@ int libcaes_tweaked_context_initialize(
 		goto on_error;
 	}
 #endif /* defined( HAVE_EVP_CIPHER_CTX_INIT ) */
-
-	if( EVP_CIPHER_CTX_set_padding(
-	     internal_tweaked_context->evp_cipher_context,
-	     1 ) != 1 )
-	{
-		error_code = ERR_get_error();
-
-		ERR_error_string_n(
-		 error_code,
-		 error_string,
-		 256 );
-
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to set padding in context with error: %s.",
-		 function,
-		 error_string );
-
-#if defined( HAVE_EVP_CIPHER_CTX_CLEANUP )
-		EVP_CIPHER_CTX_cleanup(
-		 &( internal_tweaked_context->internal_evp_cipher_context ) );
-		ERR_remove_thread_state(
-		 NULL );
-#else
-		EVP_CIPHER_CTX_free(
-		 internal_tweaked_context->evp_cipher_context );
-#endif
-		internal_tweaked_context->evp_cipher_context = NULL;
-
-		goto on_error;
-	}
 #else
 	if( libcaes_context_initialize(
 	     &( internal_tweaked_context->main_context ),
@@ -663,6 +630,27 @@ int libcaes_crypt_xts(
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 		 "%s: unable to initialize cipher with error: %s.",
+		 function,
+		 error_string );
+
+		return( -1 );
+	}
+	if( EVP_CIPHER_CTX_set_padding(
+	     internal_tweaked_context->evp_cipher_context,
+	     1 ) != 1 )
+	{
+		error_code = ERR_get_error();
+
+		ERR_error_string_n(
+		 error_code,
+		 error_string,
+		 256 );
+
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set padding in context with error: %s.",
 		 function,
 		 error_string );
 
