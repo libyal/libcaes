@@ -1,7 +1,7 @@
 /*
  * Python definition of the libcaes crypt functions
  *
- * Copyright (C) 2010-2021, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2010-2022, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *

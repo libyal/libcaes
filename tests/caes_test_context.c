@@ -1,7 +1,7 @@
 /*
  * Library context type test program
  *
- * Copyright (C) 2011-2021, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2022, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -11901,54 +11901,6 @@ int caes_test_context_initialize(
 	}
 #endif /* defined( HAVE_CAES_TEST_MEMORY ) */
 
-#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) && ( defined( HAVE_AES_CBC_ENCRYPT ) || defined( HAVE_AES_EBC_ENCRYPT ) )
-	/* No additional test definitions needed */
-
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && ( defined( HAVE_EVP_CRYPTO_AES_CBC ) || defined( HAVE_EVP_CRYPTO_AES_ECB ) )
-
-#if defined( HAVE_GNU_DL_DLSYM ) && defined( __GNUC__ ) && !defined( __clang__ ) && !defined( __CYGWIN__ )
-
-	/* Test libcaes_context_initialize with EVP_CIPHER_CTX_set_padding failing
-	 */
-	caes_test_EVP_CIPHER_CTX_set_padding_attempts_before_fail = 0;
-
-	result = libcaes_context_initialize(
-	          &context,
-	          &error );
-
-	if( caes_test_EVP_CIPHER_CTX_set_padding_attempts_before_fail != -1 )
-	{
-		caes_test_EVP_CIPHER_CTX_set_padding_attempts_before_fail = -1;
-
-		if( context != NULL )
-		{
-			libcaes_context_free(
-			 &context,
-			 NULL );
-		}
-	}
-	else
-	{
-		CAES_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
-
-		CAES_TEST_ASSERT_IS_NULL(
-		 "context",
-		 context );
-
-		CAES_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
-
-		libcerror_error_free(
-		 &error );
-	}
-#endif /* defined( HAVE_GNU_DL_DLSYM ) && defined( __GNUC__ ) && !defined( __clang__ ) && !defined( __CYGWIN__ ) */
-
-#endif /* defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) && ( defined( HAVE_AES_CBC_ENCRYPT ) || defined( HAVE_AES_EBC_ENCRYPT ) ) */
-
 	return( 1 );
 
 on_error:
@@ -12706,6 +12658,24 @@ int caes_test_crypt_cbc(
 		 result,
 		 0 );
 	}
+	/* Initialize test
+	 */
+	result = libcaes_context_set_key(
+	          context,
+	          caes_context_aes_cbc_test_vectors[ 1 ].mode,
+	          caes_context_aes_cbc_test_vectors[ 1 ].key,
+	          caes_context_aes_cbc_test_vectors[ 1 ].key_bit_size,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	CAES_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
 	/* Test error cases
 	 */
 	result = libcaes_crypt_cbc(
@@ -13028,7 +12998,7 @@ int caes_test_crypt_cbc(
 
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && defined( HAVE_EVP_CRYPTO_AES_CBC )
 
-#if defined( HAVE_CAES_TEST_MEMORY )
+#if defined( HAVE_CAES_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED )
 
 	/* Test libcaes_crypt_cbc with memset of block_data failing
 	 */
@@ -13063,7 +13033,7 @@ int caes_test_crypt_cbc(
 		libcerror_error_free(
 		 &error );
 	}
-#endif /* defined( HAVE_CAES_TEST_MEMORY ) */
+#endif /* defined( HAVE_CAES_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED ) */
 
 #if defined( HAVE_GNU_DL_DLSYM ) && defined( __GNUC__ ) && !defined( __clang__ ) && !defined( __CYGWIN__ )
 
@@ -13100,6 +13070,10 @@ int caes_test_crypt_cbc(
 		libcerror_error_free(
 		 &error );
 	}
+	/* Test libcaes_crypt_cbc with EVP_CIPHER_CTX_set_padding failing
+	 */
+/* TODO implement */
+
 	/* Test libcaes_crypt_cbc with EVP_CipherUpdate failing
 	 */
 	caes_test_EVP_CipherUpdate_attempts_before_fail = 0;
@@ -14063,6 +14037,24 @@ int caes_test_crypt_ecb(
 		 result,
 		 0 );
 	}
+	/* Initialize test
+	 */
+	result = libcaes_context_set_key(
+	          context,
+	          caes_context_aes_ecb_test_vectors[ 1 ].mode,
+	          caes_context_aes_ecb_test_vectors[ 1 ].key,
+	          caes_context_aes_ecb_test_vectors[ 1 ].key_bit_size,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	CAES_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
 	/* Test error cases
 	 */
 	result = libcaes_crypt_ecb(
@@ -14250,7 +14242,7 @@ int caes_test_crypt_ecb(
 
 #elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && defined( HAVE_EVP_CRYPTO_AES_ECB )
 
-#if defined( HAVE_CAES_TEST_MEMORY )
+#if defined( HAVE_CAES_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED )
 
 	/* Test libcaes_crypt_ecb with memset of block_data failing
 	 */
@@ -14283,7 +14275,7 @@ int caes_test_crypt_ecb(
 		libcerror_error_free(
 		 &error );
 	}
-#endif /* defined( HAVE_CAES_TEST_MEMORY ) */
+#endif /* defined( HAVE_CAES_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED ) */
 
 #if defined( HAVE_GNU_DL_DLSYM ) && defined( __GNUC__ ) && !defined( __clang__ ) && !defined( __CYGWIN__ )
 
@@ -14318,6 +14310,10 @@ int caes_test_crypt_ecb(
 		libcerror_error_free(
 		 &error );
 	}
+	/* Test libcaes_crypt_ecb with EVP_CIPHER_CTX_set_padding failing
+	 */
+/* TODO implement */
+
 	/* Test libcaes_crypt_ecb with EVP_CipherUpdate failing
 	 */
 	caes_test_EVP_CipherUpdate_attempts_before_fail = 0;

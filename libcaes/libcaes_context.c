@@ -1,7 +1,7 @@
 /*
  * AES de/encryption context functions
  *
- * Copyright (C) 2011-2021, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2022, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -1395,6 +1395,19 @@ int libcaes_crypt_cbc(
 	}
 	internal_context = (libcaes_internal_context_t *) context;
 
+	if( ( internal_context->key_bit_size != 128 )
+	 && ( internal_context->key_bit_size != 192 )
+	 && ( internal_context->key_bit_size != 256 ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 "%s: invalid context - unsupported key bit size.",
+		 function );
+
+		return( -1 );
+	}
 	if( ( mode != LIBCAES_CRYPT_MODE_DECRYPT )
 	 && ( mode != LIBCAES_CRYPT_MODE_ENCRYPT ) )
 	{
@@ -2612,6 +2625,19 @@ int libcaes_crypt_ecb(
 	}
 	internal_context = (libcaes_internal_context_t *) context;
 
+	if( ( internal_context->key_bit_size != 128 )
+	 && ( internal_context->key_bit_size != 192 )
+	 && ( internal_context->key_bit_size != 256 ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 "%s: invalid context - unsupported key bit size.",
+		 function );
+
+		return( -1 );
+	}
 	if( ( mode != LIBCAES_CRYPT_MODE_DECRYPT )
 	 && ( mode != LIBCAES_CRYPT_MODE_ENCRYPT ) )
 	{
