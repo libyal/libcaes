@@ -1285,24 +1285,14 @@ int libcaes_crypt_cbc(
 
 		return( -1 );
 	}
-	if( output_data_size > (size_t) SSIZE_MAX )
+	if( ( output_data_size < input_data_size )
+	 || ( output_data_size > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid output data size value exceeds maximum.",
-		 function );
-
-		return( -1 );
-	}
-	if( output_data_size < input_data_size )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid ouput data size smaller than input data size.",
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid output data size value out of bounds.",
 		 function );
 
 		return( -1 );
@@ -1488,24 +1478,14 @@ int libcaes_crypt_cbc(
 
 		return( -1 );
 	}
-	if( output_data_size > (size_t) INT_MAX )
+	if( ( output_data_size < input_data_size )
+	 || ( output_data_size > (size_t) INT_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid output data size value exceeds maximum.",
-		 function );
-
-		return( -1 );
-	}
-	if( output_data_size < input_data_size )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid ouput data size smaller than input data size.",
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid output data size value out of bounds.",
 		 function );
 
 		return( -1 );
@@ -1698,24 +1678,14 @@ int libcaes_crypt_cbc(
 
 		return( -1 );
 	}
-	if( input_data_size > (size_t) SSIZE_MAX )
+	if( ( input_data_size < 16 )
+	 || ( input_data_size > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid input data size value exceeds maximum.",
-		 function );
-
-		return( -1 );
-	}
-	if( input_data_size < 16 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
-		 "%s: invalid input data size value too small.",
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid input data size value out of bounds.",
 		 function );
 
 		return( -1 );
@@ -1744,24 +1714,14 @@ int libcaes_crypt_cbc(
 
 		return( -1 );
 	}
-	if( output_data_size > (size_t) SSIZE_MAX )
+	if( ( output_data_size < input_data_size )
+	 || ( output_data_size > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid output data size value exceeds maximum.",
-		 function );
-
-		return( -1 );
-	}
-	if( output_data_size < input_data_size )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid ouput data size smaller than input data size.",
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid output data size value of bounds.",
 		 function );
 
 		return( -1 );
@@ -2032,24 +1992,14 @@ int libcaes_crypt_ccm(
 
 		return( -1 );
 	}
-	if( input_data_size > (size_t) SSIZE_MAX )
+	if( ( input_data_size < 16 )
+	 || ( input_data_size > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid input data size value exceeds maximum.",
-		 function );
-
-		return( -1 );
-	}
-	if( input_data_size < 16 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
-		 "%s: invalid input data size value too small.",
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid input data size value out of bounds.",
 		 function );
 
 		return( -1 );
@@ -2065,13 +2015,14 @@ int libcaes_crypt_ccm(
 
 		return( -1 );
 	}
-	if( output_data_size > (size_t) SSIZE_MAX )
+	if( ( output_data_size < input_data_size )
+	 || ( output_data_size > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid output data size value exceeds maximum.",
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid output data size value out of bounds.",
 		 function );
 
 		return( -1 );
@@ -2312,24 +2263,14 @@ int libcaes_crypt_cfb(
 
 		return( -1 );
 	}
-	if( input_data_size > (size_t) SSIZE_MAX )
+	if( ( input_data_size < 16 )
+	 || ( input_data_size > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid input data size value exceeds maximum.",
-		 function );
-
-		return( -1 );
-	}
-	if( input_data_size < 16 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
-		 "%s: invalid input data size value too small.",
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid input data size value out of bounds.",
 		 function );
 
 		return( -1 );
@@ -2358,24 +2299,14 @@ int libcaes_crypt_cfb(
 
 		return( -1 );
 	}
-	if( output_data_size > (size_t) SSIZE_MAX )
+	if( ( output_data_size < input_data_size )
+	 || ( output_data_size > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid output data size value exceeds maximum.",
-		 function );
-
-		return( -1 );
-	}
-	if( output_data_size > input_data_size )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid ouput data size value exceeds input data size.",
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid output data size value out of bounds.",
 		 function );
 
 		return( -1 );
@@ -2515,24 +2446,14 @@ int libcaes_crypt_ecb(
 
 		return( -1 );
 	}
-	if( input_data_size > (size_t) SSIZE_MAX )
+	if( ( input_data_size < 16 )
+	 || ( input_data_size > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid input data size value exceeds maximum.",
-		 function );
-
-		return( -1 );
-	}
-	if( input_data_size < 16 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
-		 "%s: invalid input data size value too small.",
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid input data size value out of bounds.",
 		 function );
 
 		return( -1 );
@@ -2548,24 +2469,14 @@ int libcaes_crypt_ecb(
 
 		return( -1 );
 	}
-	if( output_data_size > (size_t) SSIZE_MAX )
+	if( ( output_data_size < input_data_size )
+	 || ( output_data_size > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid output data size value exceeds maximum.",
-		 function );
-
-		return( -1 );
-	}
-	if( output_data_size < input_data_size )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
-		 "%s: invalid ouput data size smaller than input data size.",
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid output data size value out of bounds.",
 		 function );
 
 		return( -1 );
@@ -2661,24 +2572,14 @@ int libcaes_crypt_ecb(
 
 		return( -1 );
 	}
-	if( input_data_size > (size_t) INT_MAX )
+	if( ( input_data_size < 16 )
+	 || ( input_data_size > (size_t) INT_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid input data size value exceeds maximum.",
-		 function );
-
-		return( -1 );
-	}
-	if( input_data_size < 16 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
-		 "%s: invalid input data size value too small.",
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid input data size value out of bounds.",
 		 function );
 
 		return( -1 );
@@ -2694,24 +2595,14 @@ int libcaes_crypt_ecb(
 
 		return( -1 );
 	}
-	if( output_data_size > (size_t) INT_MAX )
+	if( ( output_data_size < input_data_size )
+	 || ( output_data_size > (size_t) INT_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid output data size value exceeds maximum.",
-		 function );
-
-		return( -1 );
-	}
-	if( output_data_size < input_data_size )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
-		 "%s: invalid ouput data size smaller than input data size.",
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid output data size value out of bounds.",
 		 function );
 
 		return( -1 );
@@ -2885,24 +2776,14 @@ int libcaes_crypt_ecb(
 
 		return( -1 );
 	}
-	if( input_data_size > (size_t) SSIZE_MAX )
+	if( ( input_data_size < 16 )
+	 || ( input_data_size > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid input data size value exceeds maximum.",
-		 function );
-
-		return( -1 );
-	}
-	if( input_data_size < 16 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
-		 "%s: invalid input data size value too small.",
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid input data size value out of bounds.",
 		 function );
 
 		return( -1 );
@@ -2918,24 +2799,14 @@ int libcaes_crypt_ecb(
 
 		return( -1 );
 	}
-	if( output_data_size > (size_t) SSIZE_MAX )
+	if( ( output_data_size < input_data_size )
+	 || ( output_data_size > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid output data size value exceeds maximum.",
-		 function );
-
-		return( -1 );
-	}
-	if( output_data_size < input_data_size )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
-		 "%s: invalid ouput data size smaller than input data size.",
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid output data size value out of bounds.",
 		 function );
 
 		return( -1 );
