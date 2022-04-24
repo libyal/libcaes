@@ -23,7 +23,6 @@ DPKG_FILES = \
 	dpkg/rules \
 	dpkg/libcaes.install \
 	dpkg/libcaes-dev.install \
-	dpkg/libcaes-python.install \
 	dpkg/libcaes-python3.install \
 	dpkg/source/format
 
