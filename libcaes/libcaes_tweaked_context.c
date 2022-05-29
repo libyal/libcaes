@@ -29,6 +29,10 @@
 #include <openssl/evp.h>
 #endif
 
+#if defined( HAVE_EVP_CIPHERINIT_EX2 )
+#include <openssl/core_names.h>
+#endif
+
 #include "libcaes_context.h"
 #include "libcaes_definitions.h"
 #include "libcaes_libcerror.h"
@@ -469,7 +473,16 @@ int libcaes_crypt_xts(
 	uint8_t block_data[ EVP_MAX_BLOCK_LENGTH ];
 	char error_string[ 256 ];
 
+#if defined( HAVE_EVP_CIPHERINIT_EX2 )
+	OSSL_PARAM parameters[2];
+
+	EVP_CIPHER *cipher                                           = NULL;
+	const char *cipher_string                                    = NULL;
+	unsigned int padding                                         = 0;
+#else
 	const EVP_CIPHER *cipher                                     = NULL;
+#endif
+
 	libcaes_internal_tweaked_context_t *internal_tweaked_context = NULL;
 	static char *function                                        = "libcaes_crypt_xts";
 	unsigned long error_code                                     = 0;
@@ -600,8 +613,85 @@ int libcaes_crypt_xts(
 		 "%s: unable to clear input block data.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
+#if defined( HAVE_EVP_CIPHERINIT_EX2 )
+	if( EVP_CIPHER_CTX_reset(
+	     internal_context->evp_cipher_context ) != 1 )
+	{
+		error_code = ERR_get_error();
+
+		ERR_error_string_n(
+		 error_code,
+		 error_string,
+		 256 );
+
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to reset cipher context with error: %s.",
+		 function,
+		 error_string );
+
+		goto on_error;
+	}
+	if( internal_tweaked_context->key_bit_size == 128 )
+	{
+		cipher_string = "AES-128-XTS";
+	}
+	else if( internal_tweaked_context->key_bit_size == 256 )
+	{
+		cipher_string = "AES-256-XTS";
+	}
+	cipher = EVP_CIPHER_fetch(
+	          NULL,
+	          cipher_string,
+	          NULL );
+
+	if( cipher == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: missing cipher.",
+		 function );
+
+		goto on_error;
+	}
+	parameters[0] = OSSL_PARAM_construct_uint(
+	                 OSSL_CIPHER_PARAM_PADDING,
+	                 &padding );
+
+	parameters[1] = OSSL_PARAM_construct_end();
+
+	if( EVP_CipherInit_ex2(
+	     internal_tweaked_context->evp_cipher_context,
+	     cipher,
+	     (unsigned char *) internal_tweaked_context->key,
+	     (unsigned char *) tweak_value,
+	     mode,
+	     parameters ) != 1 )
+	{
+		error_code = ERR_get_error();
+
+		ERR_error_string_n(
+		 error_code,
+		 error_string,
+		 256 );
+
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to initialize cipher with error: %s.",
+		 function,
+		 error_string );
+
+		goto on_error;
+	}
+#else
 	if( internal_tweaked_context->key_bit_size == 128 )
 	{
 		cipher = EVP_aes_128_xts();
@@ -633,7 +723,7 @@ int libcaes_crypt_xts(
 		 function,
 		 error_string );
 
-		return( -1 );
+		goto on_error;
 	}
 	if( EVP_CIPHER_CTX_set_padding(
 	     internal_tweaked_context->evp_cipher_context,
@@ -654,8 +744,10 @@ int libcaes_crypt_xts(
 		 function,
 		 error_string );
 
-		return( -1 );
+		goto on_error;
 	}
+#endif /* defined( HAVE_EVP_CIPHERINIT_EX2 ) */
+
 	if( EVP_CipherUpdate(
 	     internal_tweaked_context->evp_cipher_context,
 	     (unsigned char *) output_data,
@@ -678,7 +770,7 @@ int libcaes_crypt_xts(
 		 function,
 		 error_string );
 
-		return( -1 );
+		goto on_error;
 	}
 	/* Just ignore the output of this function
 	 */
@@ -687,7 +779,21 @@ int libcaes_crypt_xts(
 	 (unsigned char *) block_data,
 	 &safe_output_data_size );
 
+#if defined( HAVE_EVP_CIPHERINIT_EX2 )
+	EVP_CIPHER_free(
+	 cipher );
+#endif
 	return( 1 );
+
+on_error:
+#if defined( HAVE_EVP_CIPHERINIT_EX2 )
+	if( cipher != NULL )
+	{
+		EVP_CIPHER_free(
+		 cipher );
+	}
+#endif
+	return( -1 );
 }
 
 #else
