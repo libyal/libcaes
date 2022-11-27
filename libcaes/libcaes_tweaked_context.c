@@ -617,7 +617,7 @@ int libcaes_crypt_xts(
 	}
 #if defined( HAVE_EVP_CIPHERINIT_EX2 )
 	if( EVP_CIPHER_CTX_reset(
-	     internal_context->evp_cipher_context ) != 1 )
+	     internal_tweaked_context->evp_cipher_context ) != 1 )
 	{
 		error_code = ERR_get_error();
 
