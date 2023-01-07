@@ -1,7 +1,7 @@
 /*
  * Python bindings module for libcaes (pycaes)
  *
- * Copyright (C) 2011-2022, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2011-2023, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -50,14 +50,14 @@ PyMethodDef pycaes_module_methods[] = {
 	{ "crypt_cbc",
 	  (PyCFunction) pycaes_crypt_cbc,
 	  METH_VARARGS | METH_KEYWORDS,
-	  "crypt_cbc(context, mode, initialization_vector, data) -> String\n"
+	  "crypt_cbc(context, mode, initialization_vector, data) -> Bytes\n"
 	  "\n"
 	  "De- or encrypts a block of data using AES-CBC (Cipher Block Chaining)." },
 
 	{ "crypt_ccm",
 	  (PyCFunction) pycaes_crypt_ccm,
 	  METH_VARARGS | METH_KEYWORDS,
-	  "crypt_ccm(context, mode, nonce, data) -> String\n"
+	  "crypt_ccm(context, mode, nonce, data) -> Bytes\n"
 	  "\n"
 	  "De- or encrypts a block of data using AES-CCM (Counter with CBC-MAC)." },
 
@@ -65,7 +65,7 @@ PyMethodDef pycaes_module_methods[] = {
 	{ "crypt_cfb",
 	  (PyCFunction) pycaes_crypt_cfb,
 	  METH_VARARGS | METH_KEYWORDS,
-	  "crypt_cfb(context, mode, initialization_vector, data) -> String\n"
+	  "crypt_cfb(context, mode, initialization_vector, data) -> Bytes\n"
 	  "\n"
 	  "De- or encrypts a block of data using AES-CFB (Cipher Feedback Mode)." },
 #endif
@@ -73,14 +73,14 @@ PyMethodDef pycaes_module_methods[] = {
 	{ "crypt_ecb",
 	  (PyCFunction) pycaes_crypt_ecb,
 	  METH_VARARGS | METH_KEYWORDS,
-	  "crypt_ecb(context, mode, data) -> String\n"
+	  "crypt_ecb(context, mode, data) -> Bytes\n"
 	  "\n"
 	  "De- or encrypts a block of data using AES-ECB (Electronic CodeBook)." },
 
 	{ "crypt_xts",
 	  (PyCFunction) pycaes_crypt_xts,
 	  METH_VARARGS | METH_KEYWORDS,
-	  "crypt_xts(tweaked_context, mode, tweak_value, data) -> String\n"
+	  "crypt_xts(tweaked_context, mode, tweak_value, data) -> Bytes\n"
 	  "\n"
 	  "De- or encrypts a block of data using AES-XTS (XEX-based tweaked-codebook mode with ciphertext stealing)." },
 
