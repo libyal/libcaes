@@ -1254,20 +1254,10 @@ int libcaes_crypt_cbc(
 
 		return( -1 );
 	}
-	if( input_data_size > (size_t) SSIZE_MAX )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid input data size value exceeds maximum.",
-		 function );
-
-		return( -1 );
-	}
 	/* Check if the input data size is a multitude of 16-byte
 	 */
-	if( ( input_data_size & (size_t) 0x0f ) != 0 )
+	if( ( ( input_data_size & (size_t) 0x0f ) != 0 )
+	 || ( input_data_size > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -1456,20 +1446,10 @@ int libcaes_crypt_cbc(
 
 		return( -1 );
 	}
-	if( input_data_size > (size_t) INT_MAX )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid input data size value exceeds maximum.",
-		 function );
-
-		return( -1 );
-	}
 	/* Check if the input data size is a multitude of 16-byte
 	 */
-	if( ( input_data_size & (size_t) 0x0f ) != 0 )
+	if( ( ( input_data_size & (size_t) 0x0f ) != 0 )
+	 || ( input_data_size > (size_t) INT_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -1788,21 +1768,11 @@ int libcaes_crypt_cbc(
 
 		return( -1 );
 	}
-	if( ( input_data_size < 16 )
-	 || ( input_data_size > (size_t) SSIZE_MAX ) )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid input data size value out of bounds.",
-		 function );
-
-		return( -1 );
-	}
 	/* Check if the input data size is a multitude of 16-byte
 	 */
-	if( ( input_data_size & (size_t) 0x0f ) != 0 )
+	if( ( ( input_data_size & (size_t) 0x0f ) != 0 )
+	 || ( input_data_size < 16 )
+	 || ( input_data_size > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -2373,21 +2343,11 @@ int libcaes_crypt_cfb(
 
 		return( -1 );
 	}
-	if( ( input_data_size < 16 )
-	 || ( input_data_size > (size_t) SSIZE_MAX ) )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid input data size value out of bounds.",
-		 function );
-
-		return( -1 );
-	}
 	/* Check if the input data size is a multitude of 16-byte
 	 */
-	if( ( input_data_size & (size_t) 0x0f ) != 0 )
+	if( ( ( input_data_size & (size_t) 0x0f ) != 0 )
+	 || ( input_data_size < 16 )
+	 || ( input_data_size > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -2991,7 +2951,10 @@ int libcaes_crypt_ecb(
 
 		return( -1 );
 	}
-	if( ( input_data_size < 16 )
+	/* Check if the input data size is a multitude of 16-byte
+	 */
+	if( ( ( input_data_size & (size_t) 0x0f ) != 0 )
+	 || ( input_data_size < 16 )
 	 || ( input_data_size > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
