@@ -3,10 +3,9 @@ Version: @VERSION@
 Release: 1
 Summary: Library to support cross-platform AES encryption
 Group: System Environment/Libraries
-License: LGPLv3+
+License: LGPL-3.0-or-later
 Source: %{name}-%{version}.tar.gz
 URL: https://github.com/libyal/libcaes
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 @libcaes_spec_requires@ @ax_libcerror_spec_requires@ @ax_libcrypto_spec_requires@
 BuildRequires: gcc @ax_libcerror_spec_build_requires@ @ax_libcrypto_spec_build_requires@
 
@@ -57,19 +56,16 @@ rm -rf %{buildroot}
 %postun -p /sbin/ldconfig
 
 %files -n libcaes
-%defattr(644,root,root,755)
 %license COPYING COPYING.LESSER
 %doc AUTHORS README
-%attr(755,root,root) %{_libdir}/*.so.*
+%{_libdir}/*.so.*
 
 %files -n libcaes-static
-%defattr(644,root,root,755)
 %license COPYING COPYING.LESSER
 %doc AUTHORS README
-%attr(755,root,root) %{_libdir}/*.a
+%{_libdir}/*.a
 
 %files -n libcaes-devel
-%defattr(644,root,root,755)
 %license COPYING COPYING.LESSER
 %doc AUTHORS README
 %{_libdir}/*.so
@@ -78,7 +74,6 @@ rm -rf %{buildroot}
 %{_mandir}/man3/*
 
 %files -n libcaes-python3
-%defattr(644,root,root,755)
 %license COPYING COPYING.LESSER
 %doc AUTHORS README
 %{_libdir}/python3*/site-packages/*.a
