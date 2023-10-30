@@ -18,9 +18,9 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 distclean: clean
-	/bin/rm -f libcaes.h
-	/bin/rm -f libcaes/definitions.h
-	/bin/rm -f libcaes/features.h
-	/bin/rm -f libcaes/types.h
-	/bin/rm -f Makefile
+	-rm -f libcaes.h
+	-rm -f libcaes/definitions.h
+	-rm -f libcaes/features.h
+	-rm -f libcaes/types.h
+	-rm -f Makefile
 

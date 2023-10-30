@@ -2,13 +2,14 @@ AC_PREREQ([2.71])
 
 AC_INIT(
  [libcaes],
- [20231007],
+ [20231030],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
  [include/libcaes.h.in])
 
 AM_INIT_AUTOMAKE([gnu 1.6 tar-ustar])
+AM_EXTRA_RECURSIVE_TARGETS([sources splint])
 
 AC_CONFIG_MACRO_DIR([m4])
 
