@@ -2,7 +2,7 @@ AC_PREREQ([2.71])
 
 AC_INIT(
  [libcaes],
- [20231030],
+ [20231120],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -65,7 +65,7 @@ dnl Check if libcaes Python bindings (pycaes) required headers and functions are
 AX_PYTHON_CHECK_ENABLE
 
 AS_IF(
-  [test "x${ac_cv_enable_python}" != xno || test "x${ac_cv_enable_python2}" != xno || test "x${ac_cv_enable_python3}" != xno],
+  [test "x${ac_cv_enable_python}" != xno],
   [dnl Headers included in pycaes/pycaes_error.c
   AC_CHECK_HEADERS([stdarg.h varargs.h])
 
@@ -112,8 +112,6 @@ AC_CONFIG_FILES([common/Makefile])
 AC_CONFIG_FILES([libcerror/Makefile])
 AC_CONFIG_FILES([libcaes/Makefile])
 AC_CONFIG_FILES([pycaes/Makefile])
-AC_CONFIG_FILES([pycaes-python2/Makefile])
-AC_CONFIG_FILES([pycaes-python3/Makefile])
 AC_CONFIG_FILES([po/Makefile.in])
 AC_CONFIG_FILES([po/Makevars])
 AC_CONFIG_FILES([manuals/Makefile])

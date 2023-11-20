@@ -6,8 +6,6 @@ SUBDIRS = \
 	libcerror \
 	libcaes \
 	pycaes \
-	pycaes-python2 \
-	pycaes-python3 \
 	po \
 	manuals \
 	tests \
