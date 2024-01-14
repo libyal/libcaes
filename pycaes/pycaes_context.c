@@ -374,7 +374,7 @@ PyObject *pycaes_context_set_key(
 	{
 		pycaes_error_raise(
 		 error,
-		 PyExc_IOError,
+		 PyExc_ValueError,
 		 "%s: unable to set key.",
 		 function );
 

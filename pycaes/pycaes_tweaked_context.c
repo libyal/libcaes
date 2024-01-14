@@ -403,7 +403,7 @@ PyObject *pycaes_tweaked_context_set_keys(
 	{
 		pycaes_error_raise(
 		 error,
-		 PyExc_IOError,
+		 PyExc_ValueError,
 		 "%s: unable to set keys.",
 		 function );
 
