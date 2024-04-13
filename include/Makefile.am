@@ -14,13 +14,11 @@ EXTRA_DIST = \
 	libcaes/features.h.in \
 	libcaes/types.h.in
 
-MAINTAINERCLEANFILES = \
+DISTCLEANFILES = \
+	libcaes.h \
+	libcaes/definitions.h \
+	libcaes/features.h \
+	libcaes/types.h \
+	Makefile \
 	Makefile.in
-
-distclean: clean
-	-rm -f libcaes.h
-	-rm -f libcaes/definitions.h
-	-rm -f libcaes/features.h
-	-rm -f libcaes/types.h
-	-rm -f Makefile
 

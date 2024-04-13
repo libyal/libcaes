@@ -1,7 +1,8 @@
 AM_CPPFLAGS = \
-	-I$(top_srcdir)/include \
-	-I$(top_srcdir)/common \
+	-I../include -I$(top_srcdir)/include \
+	-I../common -I$(top_srcdir)/common \
 	@LIBCERROR_CPPFLAGS@ \
+	@LIBCRYPTO_CPPFLAGS@ \
 	@LIBCAES_DLL_EXPORT@
 
 lib_LTLIBRARIES = libcaes.la
@@ -30,13 +31,11 @@ EXTRA_DIST = \
 	libcaes.rc \
 	libcaes.rc.in
 
-MAINTAINERCLEANFILES = \
+DISTCLEANFILES = \
+	libcaes_definitions.h \
+	libcaes.rc \
+	Makefile \
 	Makefile.in
-
-distclean: clean
-	-rm -f libcaes_definitions.h
-	-rm -f libcaes.rc
-	-rm -f Makefile
 
 sources-local: $(BUILT_SOURCES)
 

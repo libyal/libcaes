@@ -1,7 +1,7 @@
 if HAVE_LIB_FUZZING_ENGINE
 AM_CPPFLAGS = \
-	-I$(top_srcdir)/include \
-	-I$(top_srcdir)/common
+	-I../include -I$(top_srcdir)/include \
+	-I../common -I$(top_srcdir)/common
 
 bin_PROGRAMS = \
 	crypt_cbc_fuzzer \
@@ -42,11 +42,9 @@ crypt_xts_fuzzer_LDADD = \
 	../libcaes/libcaes.la
 endif
 
-MAINTAINERCLEANFILES = \
+DISTCLEANFILES = \
+	Makefile \
 	Makefile.in
-
-distclean: clean
-	-rm -f Makefile
 
 splint-local:
 	@echo "Running splint on crypt_cbc_fuzzer ..."
