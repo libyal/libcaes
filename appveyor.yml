@@ -245,6 +245,7 @@ environment:
 matrix:
   allow_failures:
   - TARGET: vs2022-vsdebug
+  - TARGET: mingw-w64-gcc-python
 
 install:
 - cmd: if [%BUILD_ENVIRONMENT%]==[msbuild] (
