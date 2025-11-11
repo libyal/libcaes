@@ -445,7 +445,7 @@ run_test_with_arguments()
 
 	if test ${IS_PYTHON_SCRIPT} -eq 0 && test -z ${PYTHON};
 	then
-		local PYTHON=`which python 2> /dev/null`;
+		local PYTHON=`which python3 2> /dev/null`;
 
 		if ! test -x ${PYTHON};
 		then
@@ -765,7 +765,7 @@ run_test_with_input_and_arguments()
 
 	if test ${IS_PYTHON_SCRIPT} -eq 0 && test -z ${PYTHON};
 	then
-		local PYTHON=`which python 2> /dev/null`;
+		local PYTHON=`which python3 2> /dev/null`;
 
 		if ! test -x ${PYTHON};
 		then
