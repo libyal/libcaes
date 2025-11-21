@@ -50,10 +50,10 @@ enum LIBCAES_CRYPT_MODES
 
 #endif /* !defined( HAVE_LOCAL_LIBCAES ) */
 
-#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H )
+#if defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_AES_H ) && defined( HAVE_AES_ECB_ENCRYPT )
 #define LIBCAES_HAVE_AES_SUPPORT
 
-#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H )
+#elif defined( HAVE_LIBCRYPTO ) && defined( HAVE_OPENSSL_EVP_H ) && defined( HAVE_EVP_CRYPTO_AES_ECB )
 #define LIBCAES_HAVE_AES_SUPPORT
 
 #endif
