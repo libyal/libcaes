@@ -98,7 +98,7 @@ jobs:
         PYTHON_VERSION: ${{ matrix.python_version }}
       run: |
         tests/runtests.sh
-  build_setup_py_ubuntu:
+  build_pyproject_ubuntu:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -106,18 +106,13 @@ jobs:
         - os: ubuntu-24.04
           compiler: 'gcc'
           configure_options: ''
-          python-version: '3.12'
     steps:
     - uses: actions/checkout@v6
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v6
-      with:
-        python-version: ${{ matrix.python-version }}
     - name: Install build dependencies
       run: |
         sudo add-apt-repository universe &&
         sudo apt-get update &&
-        sudo apt-get -y install autoconf automake autopoint build-essential git libssl-dev libtool pkg-config python3-dev
+        sudo apt-get -y install autoconf automake autopoint build-essential git libssl-dev libtool pkg-config python3 python3-build python3-dev
     - name: Building from source
       env:
         CC: ${{ matrix.compiler }}
@@ -125,7 +120,7 @@ jobs:
         tests/build.sh ${{ matrix.configure_options }}
     - name: Build Python module
       run: |
-        python setup.py build
+        python -m build
   build_shared:
     runs-on: ${{ matrix.os }}
     strategy:
