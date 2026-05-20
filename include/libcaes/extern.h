@@ -31,14 +31,17 @@
  */
 #if defined( LIBCAES_DLL_EXPORT )
 #define LIBCAES_EXTERN __declspec(dllexport)
+#define LIBCAES_EXTERN_VARIABLE extern __declspec(dllexport)
 
 #elif defined( LIBCAES_DLL_IMPORT )
-#define LIBCAES_EXTERN extern __declspec(dllimport)
+#define LIBCAES_EXTERN __declspec(dllimport)
+#define LIBCAES_EXTERN_VARIABLE extern __declspec(dllimport)
 
 #else
 #define LIBCAES_EXTERN extern
+#define LIBCAES_EXTERN_VARIABLE extern
 
-#endif
+#endif /* defined( LIBCAES_DLL_EXPORT ) */
 
 #endif /* !defined( _LIBCAES_EXTERN_H ) */
 
