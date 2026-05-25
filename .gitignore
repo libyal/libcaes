@@ -132,6 +132,7 @@ stamp-h[1-9]
 /tests/caes_test_context
 /tests/caes_test_crypt_cbc
 /tests/caes_test_crypt_ccm
+/tests/caes_test_crypt_ecb
 /tests/caes_test_crypt_xts
 /tests/caes_test_error
 /tests/caes_test_support

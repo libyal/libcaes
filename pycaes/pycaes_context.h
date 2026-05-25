@@ -43,13 +43,16 @@ struct pycaes_context
 	/* The libcaes context
 	 */
 	libcaes_context_t *context;
+
+#if defined( Py_GIL_DISABLED )
+	/* Mutex
+	 */
+	PyMutex mutex;
+#endif
 };
 
 extern PyMethodDef pycaes_context_object_methods[];
 extern PyTypeObject pycaes_context_type_object;
-
-PyObject *pycaes_context_new(
-           void );
 
 int pycaes_context_init(
      pycaes_context_t *pycaes_context );

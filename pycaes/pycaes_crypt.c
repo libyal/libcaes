@@ -54,8 +54,8 @@ PyObject *pycaes_crypt_cbc(
 	char *initialization_vector_data              = NULL;
 	char *input_data                              = NULL;
 	char *output_data                             = NULL;
-        Py_ssize_t initialization_vector_data_size    = 0;
-        Py_ssize_t input_data_size                    = 0;
+	Py_ssize_t initialization_vector_data_size    = 0;
+	Py_ssize_t input_data_size                    = 0;
 	int mode                                      = 0;
 	int result                                    = 0;
 
@@ -155,6 +155,10 @@ PyObject *pycaes_crypt_cbc(
 #endif
 	Py_BEGIN_ALLOW_THREADS
 
+#if defined( Py_GIL_DISABLED )
+	PyMutex_Lock(
+	 &( pycaes_context->mutex ) );
+#endif
 	result = libcaes_crypt_cbc(
 	          pycaes_context->context,
 	          mode,
@@ -166,6 +170,10 @@ PyObject *pycaes_crypt_cbc(
 	          (size_t) input_data_size,
 	          &error );
 
+#if defined( Py_GIL_DISABLED )
+	PyMutex_Unlock(
+	 &( pycaes_context->mutex ) );
+#endif
 	Py_END_ALLOW_THREADS
 
 	if( result != 1 )
@@ -207,8 +215,8 @@ PyObject *pycaes_crypt_ccm(
 	char *nonce_data                    = NULL;
 	char *input_data                    = NULL;
 	char *output_data                   = NULL;
-        Py_ssize_t nonce_data_size          = 0;
-        Py_ssize_t input_data_size          = 0;
+	Py_ssize_t nonce_data_size          = 0;
+	Py_ssize_t input_data_size          = 0;
 	int mode                            = 0;
 	int result                          = 0;
 
@@ -308,6 +316,10 @@ PyObject *pycaes_crypt_ccm(
 #endif
 	Py_BEGIN_ALLOW_THREADS
 
+#if defined( Py_GIL_DISABLED )
+	PyMutex_Lock(
+	 &( pycaes_context->mutex ) );
+#endif
 	result = libcaes_crypt_ccm(
 	          pycaes_context->context,
 	          mode,
@@ -319,6 +331,10 @@ PyObject *pycaes_crypt_ccm(
 	          (size_t) input_data_size,
 	          &error );
 
+#if defined( Py_GIL_DISABLED )
+	PyMutex_Unlock(
+	 &( pycaes_context->mutex ) );
+#endif
 	Py_END_ALLOW_THREADS
 
 	if( result != 1 )
@@ -361,8 +377,8 @@ PyObject *pycaes_crypt_cfb(
 	char *initialization_vector_data              = NULL;
 	char *input_data                              = NULL;
 	char *output_data                             = NULL;
-        Py_ssize_t initialization_vector_data_size    = 0;
-        Py_ssize_t input_data_size                    = 0;
+	Py_ssize_t initialization_vector_data_size    = 0;
+	Py_ssize_t input_data_size                    = 0;
 	int mode                                      = 0;
 	int result                                    = 0;
 
@@ -462,6 +478,10 @@ PyObject *pycaes_crypt_cfb(
 #endif
 	Py_BEGIN_ALLOW_THREADS
 
+#if defined( Py_GIL_DISABLED )
+	PyMutex_Lock(
+	 &( pycaes_context->mutex ) );
+#endif
 	result = libcaes_crypt_cfb(
 	          pycaes_context->context,
 	          mode,
@@ -473,6 +493,10 @@ PyObject *pycaes_crypt_cfb(
 	          (size_t) input_data_size,
 	          &error );
 
+#if defined( Py_GIL_DISABLED )
+	PyMutex_Unlock(
+	 &( pycaes_context->mutex ) );
+#endif
 	Py_END_ALLOW_THREADS
 
 	if( result != 1 )
@@ -513,7 +537,7 @@ PyObject *pycaes_crypt_ecb(
 	static char *keyword_list[]         = { "context", "mode", "data", NULL };
 	char *input_data                    = NULL;
 	char *output_data                   = NULL;
-        Py_ssize_t input_data_size          = 0;
+	Py_ssize_t input_data_size          = 0;
 	int mode                            = 0;
 	int result                          = 0;
 
@@ -589,6 +613,10 @@ PyObject *pycaes_crypt_ecb(
 #endif
 	Py_BEGIN_ALLOW_THREADS
 
+#if defined( Py_GIL_DISABLED )
+	PyMutex_Lock(
+	 &( pycaes_context->mutex ) );
+#endif
 	result = libcaes_crypt_ecb(
 	          pycaes_context->context,
 	          mode,
@@ -598,6 +626,10 @@ PyObject *pycaes_crypt_ecb(
 	          (size_t) input_data_size,
 	          &error );
 
+#if defined( Py_GIL_DISABLED )
+	PyMutex_Unlock(
+	 &( pycaes_context->mutex ) );
+#endif
 	Py_END_ALLOW_THREADS
 
 	if( result != 1 )
@@ -627,21 +659,21 @@ PyObject *pycaes_crypt_xts(
            PyObject *arguments,
            PyObject *keywords )
 {
-	libcerror_error_t *error                 = NULL;
-	pycaes_tweaked_context_t *pycaes_context = NULL;
-	PyObject *context_object                 = NULL;
-	PyObject *tweak_value_string_object      = NULL;
-	PyObject *input_data_string_object       = NULL;
-	PyObject *output_data_string_object      = NULL;
-	static char *function                    = "pycaes_crypt_xts";
-	static char *keyword_list[]              = { "context", "mode", "tweak_value", "data", NULL };
-	char *tweak_value_data                   = NULL;
-	char *input_data                         = NULL;
-	char *output_data                        = NULL;
-        Py_ssize_t tweak_value_data_size         = 0;
-        Py_ssize_t input_data_size               = 0;
-	int mode                                 = 0;
-	int result                               = 0;
+	libcerror_error_t *error                         = NULL;
+	pycaes_tweaked_context_t *pycaes_tweaked_context = NULL;
+	PyObject *context_object                         = NULL;
+	PyObject *tweak_value_string_object              = NULL;
+	PyObject *input_data_string_object               = NULL;
+	PyObject *output_data_string_object              = NULL;
+	static char *function                            = "pycaes_crypt_xts";
+	static char *keyword_list[]                      = { "context", "mode", "tweak_value", "data", NULL };
+	char *tweak_value_data                           = NULL;
+	char *input_data                                 = NULL;
+	char *output_data                                = NULL;
+	Py_ssize_t tweak_value_data_size                 = 0;
+	Py_ssize_t input_data_size                       = 0;
+	int mode                                         = 0;
+	int result                                       = 0;
 
 	PYCAES_UNREFERENCED_PARAMETER( self )
 
@@ -674,7 +706,7 @@ PyObject *pycaes_crypt_xts(
 
 		return( NULL );
 	}
-	pycaes_context = (pycaes_tweaked_context_t *) context_object;
+	pycaes_tweaked_context = (pycaes_tweaked_context_t *) context_object;
 
 #if PY_MAJOR_VERSION >= 3
 	tweak_value_data = PyBytes_AsString(
@@ -739,8 +771,12 @@ PyObject *pycaes_crypt_xts(
 #endif
 	Py_BEGIN_ALLOW_THREADS
 
+#if defined( Py_GIL_DISABLED )
+	PyMutex_Lock(
+	 &( pycaes_tweaked_context->mutex ) );
+#endif
 	result = libcaes_crypt_xts(
-	          pycaes_context->tweaked_context,
+	          pycaes_tweaked_context->tweaked_context,
 	          mode,
 	          (uint8_t *) tweak_value_data,
 	          (size_t) tweak_value_data_size,
@@ -750,6 +786,10 @@ PyObject *pycaes_crypt_xts(
 	          (size_t) input_data_size,
 	          &error );
 
+#if defined( Py_GIL_DISABLED )
+	PyMutex_Unlock(
+	 &( pycaes_tweaked_context->mutex ) );
+#endif
 	Py_END_ALLOW_THREADS
 
 	if( result != 1 )

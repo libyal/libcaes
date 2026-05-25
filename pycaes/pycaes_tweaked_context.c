@@ -147,49 +147,6 @@ PyTypeObject pycaes_tweaked_context_type_object = {
 	0
 };
 
-/* Creates a new tweaked context object
- * Returns a Python object if successful or NULL on error
- */
-PyObject *pycaes_tweaked_context_new(
-           void )
-{
-	pycaes_tweaked_context_t *pycaes_tweaked_context = NULL;
-	static char *function                            = "pycaes_tweaked_context_new";
-
-	pycaes_tweaked_context = PyObject_New(
-	                          struct pycaes_tweaked_context,
-	                          &pycaes_tweaked_context_type_object );
-
-	if( pycaes_tweaked_context == NULL )
-	{
-		PyErr_Format(
-		 PyExc_MemoryError,
-		 "%s: unable to initialize tweaked context.",
-		 function );
-
-		goto on_error;
-	}
-	if( pycaes_tweaked_context_init(
-	     pycaes_tweaked_context ) != 0 )
-	{
-		PyErr_Format(
-		 PyExc_MemoryError,
-		 "%s: unable to initialize tweaked context.",
-		 function );
-
-		goto on_error;
-	}
-	return( (PyObject *) pycaes_tweaked_context );
-
-on_error:
-	if( pycaes_tweaked_context != NULL )
-	{
-		Py_DecRef(
-		 (PyObject *) pycaes_tweaked_context );
-	}
-	return( NULL );
-}
-
 /* Initializes a tweaked context object
  * Returns 0 if successful or -1 on error
  */
@@ -225,6 +182,9 @@ int pycaes_tweaked_context_init(
 
 		return( -1 );
 	}
+#if defined( Py_GIL_DISABLED )
+	memset( &( pycaes_tweaked_context->mutex ), 0, sizeof( PyMutex ) );
+#endif
 	return( 0 );
 }
 
@@ -388,6 +348,10 @@ PyObject *pycaes_tweaked_context_set_keys(
 	}
 	Py_BEGIN_ALLOW_THREADS
 
+#if defined( Py_GIL_DISABLED )
+	PyMutex_Lock(
+	 &( pycaes_tweaked_context->mutex ) );
+#endif
 	result = libcaes_tweaked_context_set_keys(
 	          pycaes_tweaked_context->tweaked_context,
 	          mode,
@@ -397,13 +361,17 @@ PyObject *pycaes_tweaked_context_set_keys(
 	          (size_t) ( tweak_key_data_size * 8 ),
 	          &error );
 
+#if defined( Py_GIL_DISABLED )
+	PyMutex_Unlock(
+	 &( pycaes_tweaked_context->mutex ) );
+#endif
 	Py_END_ALLOW_THREADS
 
 	if( result != 1 )
 	{
 		pycaes_error_raise(
 		 error,
-		 PyExc_ValueError,
+		 PyExc_IOError,
 		 "%s: unable to set keys.",
 		 function );
 

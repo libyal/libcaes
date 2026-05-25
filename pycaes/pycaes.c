@@ -189,9 +189,22 @@ PyMODINIT_FUNC initpycaes(
 		return;
 #endif
 	}
+#ifdef Py_GIL_DISABLED
+	if( PyUnstable_Module_SetGIL(
+	     module,
+	     Py_MOD_GIL_NOT_USED ) != 0 )
+	{
+		Py_DecRef(
+		 module );
+
+		return( NULL );
+	}
+#endif
+
 #if PY_VERSION_HEX < 0x03070000
 	PyEval_InitThreads();
 #endif
+
 	gil_state = PyGILState_Ensure();
 
 	/* Setup the context type object
@@ -262,6 +275,9 @@ PyMODINIT_FUNC initpycaes(
 on_error:
 	PyGILState_Release(
 	 gil_state );
+
+	Py_DecRef(
+	 module );
 
 #if PY_MAJOR_VERSION >= 3
 	return( NULL );

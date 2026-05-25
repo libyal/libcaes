@@ -147,49 +147,6 @@ PyTypeObject pycaes_context_type_object = {
 	0
 };
 
-/* Creates a new context object
- * Returns a Python object if successful or NULL on error
- */
-PyObject *pycaes_context_new(
-           void )
-{
-	pycaes_context_t *pycaes_context = NULL;
-	static char *function            = "pycaes_context_new";
-
-	pycaes_context = PyObject_New(
-	                  struct pycaes_context,
-	                  &pycaes_context_type_object );
-
-	if( pycaes_context == NULL )
-	{
-		PyErr_Format(
-		 PyExc_MemoryError,
-		 "%s: unable to initialize context.",
-		 function );
-
-		goto on_error;
-	}
-	if( pycaes_context_init(
-	     pycaes_context ) != 0 )
-	{
-		PyErr_Format(
-		 PyExc_MemoryError,
-		 "%s: unable to initialize context.",
-		 function );
-
-		goto on_error;
-	}
-	return( (PyObject *) pycaes_context );
-
-on_error:
-	if( pycaes_context != NULL )
-	{
-		Py_DecRef(
-		 (PyObject *) pycaes_context );
-	}
-	return( NULL );
-}
-
 /* Initializes a context object
  * Returns 0 if successful or -1 on error
  */
@@ -225,6 +182,9 @@ int pycaes_context_init(
 
 		return( -1 );
 	}
+#if defined( Py_GIL_DISABLED )
+	memset( &( pycaes_context->mutex ), 0, sizeof( PyMutex ) );
+#endif
 	return( 0 );
 }
 
@@ -313,7 +273,7 @@ PyObject *pycaes_context_set_key(
 	static char *function       = "pycaes_context_set_key";
 	char *key_data              = NULL;
 	static char *keyword_list[] = { "mode", "key", NULL };
-        Py_ssize_t key_data_size    = 0;
+	Py_ssize_t key_data_size    = 0;
 	int mode                    = 0;
 	int result                  = 0;
 
@@ -354,13 +314,17 @@ PyObject *pycaes_context_set_key(
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid argument key data size value out of bounds.",
+		 "%s: invalid key data size value out of bounds.",
 		 function );
 
 		return( NULL );
 	}
 	Py_BEGIN_ALLOW_THREADS
 
+#if defined( Py_GIL_DISABLED )
+	PyMutex_Lock(
+	 &( pycaes_context->mutex ) );
+#endif
 	result = libcaes_context_set_key(
 	          pycaes_context->context,
 	          mode,
@@ -368,13 +332,17 @@ PyObject *pycaes_context_set_key(
 	          (size_t) ( key_data_size * 8 ),
 	          &error );
 
+#if defined( Py_GIL_DISABLED )
+	PyMutex_Unlock(
+	 &( pycaes_context->mutex ) );
+#endif
 	Py_END_ALLOW_THREADS
 
 	if( result != 1 )
 	{
 		pycaes_error_raise(
 		 error,
-		 PyExc_ValueError,
+		 PyExc_IOError,
 		 "%s: unable to set key.",
 		 function );
 

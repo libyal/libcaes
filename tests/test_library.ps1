@@ -6,7 +6,7 @@ $ExitSuccess = 0
 $ExitFailure = 1
 $ExitIgnore = 77
 
-$LibraryTests = "context error support tweaked_context"
+$LibraryTests = "context crypt_cbc crypt_ccm crypt_ecb crypt_xts error support tweaked_context"
 $LibraryTestsWithInput = ""
 $OptionSets = ""
 

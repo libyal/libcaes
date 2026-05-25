@@ -7,7 +7,7 @@ EXIT_SUCCESS=0;
 EXIT_FAILURE=1;
 EXIT_IGNORE=77;
 
-LIBRARY_TESTS="context error support tweaked_context";
+LIBRARY_TESTS="context crypt_cbc crypt_ccm crypt_ecb crypt_xts error support tweaked_context";
 LIBRARY_TESTS_WITH_INPUT="";
 OPTION_SETS=();
 
@@ -89,12 +89,12 @@ run_test_with_input()
 					INPUT_FILES+=("${TEST_SET_INPUT_DIRECTORY}/${FILENAME}")
 				fi
 			done < "${TEST_SET_DIRECTORY}/files"
-                else
+		else
 			for FILENAME in ${TEST_SET_INPUT_DIRECTORY}/${INPUT_GLOB};
 			do
 				INPUT_FILES+=("${FILENAME}")
 			done
-                fi
+		fi
 		for INPUT_FILE in "${INPUT_FILES[@]}";
 		do
 			OPTION_INPUT_FILE="${INPUT_FILE}";

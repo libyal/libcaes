@@ -5,6 +5,9 @@ AM_CPPFLAGS = \
 	@LIBCRYPTO_CPPFLAGS@ \
 	@LIBCAES_DLL_IMPORT@
 
+AM_TESTS_ENVIRONMENT = \
+	export PYTHON="@PYTHON@";
+
 if HAVE_PYTHON_TESTS
 TESTS_PYCAES = \
 	test_python_module.sh
@@ -32,6 +35,7 @@ check_PROGRAMS = \
 	caes_test_context \
 	caes_test_crypt_cbc \
 	caes_test_crypt_ccm \
+	caes_test_crypt_ecb \
 	caes_test_crypt_xts \
 	caes_test_error \
 	caes_test_support \
@@ -66,6 +70,16 @@ caes_test_crypt_ccm_SOURCES = \
 	caes_test_unused.h
 
 caes_test_crypt_ccm_LDADD = \
+	../libcaes/libcaes.la \
+	@LIBCERROR_LIBADD@
+
+caes_test_crypt_ecb_SOURCES = \
+	caes_test_crypt_ecb.c \
+	caes_test_libcaes.h \
+	caes_test_libcerror.h \
+	caes_test_unused.h
+
+caes_test_crypt_ecb_LDADD = \
 	../libcaes/libcaes.la \
 	@LIBCERROR_LIBADD@
 

@@ -19,19 +19,34 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import sys
 import unittest
 
 import pycaes
 
 
-class SupportFunctionsTests(unittest.TestCase):
-  """Tests the support functions."""
+def is_free_threaded_python():
+    """True when running on a free-threaded Python build."""
+    # pylint: disable=protected-access
+    return hasattr(sys, "_is_gil_enabled") and not sys._is_gil_enabled()
 
-  def test_get_version(self):
-    """Tests the get_version function."""
-    version = pycaes.get_version()
-    self.assertIsNotNone(version)
+
+class SupportFunctionsTests(unittest.TestCase):
+    """Tests the support functions."""
+
+    @unittest.skipUnless(
+        is_free_threaded_python(), "requires a free-threaded Python build"
+    )
+    def test_gil_enforcement(self):
+        """Test if the module enforces the GIL in a free-threaded Python."""
+        # pylint: disable=protected-access
+        self.assertFalse(sys._is_gil_enabled())
+
+    def test_get_version(self):
+        """Tests the get_version function."""
+        version = pycaes.get_version()
+        self.assertIsNotNone(version)
 
 
 if __name__ == "__main__":
-  unittest.main(verbosity=2)
+    unittest.main(verbosity=2)

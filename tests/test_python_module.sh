@@ -8,7 +8,7 @@ EXIT_FAILURE=1;
 EXIT_NO_TESTS_RAN=5;
 EXIT_IGNORE=77;
 
-TEST_FUNCTIONS="support";
+TEST_FUNCTIONS="context crypt_cbc crypt_ccm crypt_ecb crypt_xts support tweaked_context";
 TEST_FUNCTIONS_WITH_INPUT="";
 OPTION_SETS=();
 

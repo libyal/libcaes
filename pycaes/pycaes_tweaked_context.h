@@ -43,13 +43,16 @@ struct pycaes_tweaked_context
 	/* The libcaes tweaked context
 	 */
 	libcaes_tweaked_context_t *tweaked_context;
+
+#if defined( Py_GIL_DISABLED )
+	/* Mutex
+	 */
+	PyMutex mutex;
+#endif
 };
 
 extern PyMethodDef pycaes_tweaked_context_object_methods[];
 extern PyTypeObject pycaes_tweaked_context_type_object;
-
-PyObject *pycaes_tweaked_context_new(
-           void );
 
 int pycaes_tweaked_context_init(
      pycaes_tweaked_context_t *pycaes_tweaked_context );
