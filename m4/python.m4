@@ -1,6 +1,6 @@
 dnl Functions for Python bindings
 dnl
-dnl Version: 20260524
+dnl Version: 20260529
 
 dnl Function to check if the python binary is available
 dnl "python${PYTHON_VERSION} python python# python#.#"
@@ -78,6 +78,13 @@ AC_DEFUN([AX_PYTHON_CHECK],
       [for Python libraries])
     AC_MSG_RESULT(
       [$PYTHON_LDFLAGS])
+
+    dnl Check for Python extension suffix
+    ac_cv_python_exention_suffix=`${PYTHON_CONFIG} --extension-suffix 2>/dev/null`;
+
+    AS_IF(
+      [test "x${ac_cv_python_exention_suffix}" != x],
+      [PYTHON_LDFLAGS="${PYTHON_LDFLAGS} -shrext ${ac_cv_python_exention_suffix}"])
 
     dnl For CygWin and MinGW add the -no-undefined linker flag
     AS_CASE(
