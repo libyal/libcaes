@@ -24,6 +24,19 @@
 
 #include <common.h>
 
+#if !defined( __CYGWIN__ ) && !defined( _WIN32 ) && defined( __has_attribute )
+#if __has_attribute( visibility )
+#define LIBCAES_INTERNAL	__attribute__((visibility("hidden"))) extern
+
+#else
+#define LIBCAES_INTERNAL	extern
+
+#endif /* __has_attribute( visibility ) */
+#else
+#define LIBCAES_INTERNAL	extern
+
+#endif /* !defined( __CYGWIN__ ) && !defined( _WIN32 ) && defined( __has_attribute ) */
+
 /* Define HAVE_LOCAL_LIBCAES for local use of libcaes
  */
 #if !defined( HAVE_LOCAL_LIBCAES )
@@ -32,7 +45,7 @@
 
 #else
 #define LIBCAES_EXTERN		/* extern */
-#define LIBCAES_EXTERN_VARIABLE	extern
+#define LIBCAES_EXTERN_VARIABLE	LIBCAES_INTERNAL
 
 #endif /* !defined( HAVE_LOCAL_LIBCAES ) */
 

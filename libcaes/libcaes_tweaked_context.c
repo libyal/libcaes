@@ -955,6 +955,20 @@ int libcaes_crypt_xts(
 
 		goto on_error;
 	}
+	if( memory_set(
+	     encrypted_tweak_value_copy,
+	     0,
+	     16 ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+		 "%s: unable to clear encrypted tweak value copy.",
+		 function );
+
+		goto on_error;
+	}
 	if( memory_copy(
 	     output_data,
 	     input_data,
@@ -991,7 +1005,7 @@ int libcaes_crypt_xts(
 					 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
 					 "%s: unable to copy encrypted tweak value.",
 					 function );
-				
+
 					goto on_error;
 				}
 				/* Update the encrypted tweak value for the next 16-byte block
@@ -1120,7 +1134,7 @@ int libcaes_crypt_xts(
 				 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
 				 "%s: unable to copy encrypted tweak value.",
 				 function );
-			
+
 				goto on_error;
 			}
 			if( memory_set(

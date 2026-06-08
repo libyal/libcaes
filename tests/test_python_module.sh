@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Tests Python module functions and types.
 #
-# Version: 20260530
+# Version: 20260606
 
 EXIT_SUCCESS=0;
 EXIT_FAILURE=1;
@@ -72,11 +72,25 @@ test_python_function_with_input()
 
 		local TEST_SET_DIRECTORY=$(get_test_set_directory "${TEST_PROFILE_DIRECTORY}" "${TEST_SET_INPUT_DIRECTORY}");
 
+		local INPUT_FILES=()
+
 		if test -f "${TEST_SET_DIRECTORY}/files";
 		then
-			IFS="" read -a INPUT_FILES <<< $(cat ${TEST_SET_DIRECTORY}/files | sed "s?^?${TEST_SET_INPUT_DIRECTORY}/?");
+			while IFS= read -r FILENAME;
+			do
+				if test -n "${FILENAME}}";
+				then
+					INPUT_FILES+=("${TEST_SET_INPUT_DIRECTORY}/${FILENAME}")
+				fi
+			done < "${TEST_SET_DIRECTORY}/files"
 		else
-			IFS="" read -a INPUT_FILES <<< $(ls -1d ${TEST_SET_INPUT_DIRECTORY}/${INPUT_GLOB});
+			for FILENAME in ${TEST_SET_INPUT_DIRECTORY}/${INPUT_GLOB};
+			do
+				if test -e "${FILENAME}";
+				then
+					INPUT_FILES+=("${FILENAME}")
+				fi
+			done
 		fi
 		for INPUT_FILE in "${INPUT_FILES[@]}";
 		do
@@ -149,7 +163,9 @@ if test "${PLATFORM}" = "MINGW32_NT" || test "${PLATFORM}" = "MINGW64_NT" || tes
 then
 	# Copy the library DLL to the Python module directory so Python can load it
 	# given LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR.
-	cp ../${LIBRARY_NAME}/.libs/${LIBRARY_NAME}*.dll ../${PYTHON_MODULE}/.libs
+	cp ../${LIBRARY_NAME}/.libs/${LIBRARY_NAME}*.dll ../${PYTHON_MODULE}/.libs;
+	# Also make sure the Python module directory is in PATH.
+	export PATH="../${PYTHON_MODULE}/.libs:${PATH}";
 fi
 
 RESULT=${EXIT_IGNORE};
