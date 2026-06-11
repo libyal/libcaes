@@ -30,6 +30,7 @@
 
 #include "caes_test_libcaes.h"
 #include "caes_test_libcerror.h"
+#include "caes_test_macros.h"
 #include "caes_test_unused.h"
 
 typedef struct caes_test_vector_128bit caes_test_vector_128bit_t;
@@ -84,7 +85,7 @@ struct caes_test_vector_256bit
 };
 
 /* Values from NIST Cryptographic Algorithm Validation Program (CAVP)
- * ECBVarKey128.rsp.rsp
+ * ECBVarKey128.rsp
  */
 caes_test_vector_128bit_t caes_crypt_ecb_decryption_test_vectors_128bit[ 128 ] = {
         { { 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
@@ -861,7 +862,7 @@ caes_test_vector_128bit_t caes_crypt_ecb_encryption_test_vectors_128bit[ 128 ] =
 };
 
 /* Values from NIST Cryptographic Algorithm Validation Program (CAVP)
- * ECBVarKey192.rsp.rsp
+ * ECBVarKey192.rsp
  */
 caes_test_vector_192bit_t caes_crypt_ecb_decryption_test_vectors_192bit[ 192 ] = {
         { { 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -2407,7 +2408,7 @@ caes_test_vector_192bit_t caes_crypt_ecb_encryption_test_vectors_192bit[ 192 ] =
 
 
 /* Values from NIST Cryptographic Algorithm Validation Program (CAVP)
- * ECBVarKey256.rsp.rsp
+ * ECBVarKey256.rsp
  */
 caes_test_vector_256bit_t caes_crypt_ecb_decryption_test_vectors_256bit[ 256 ] = {
         { { 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -4464,7 +4465,7 @@ caes_test_vector_256bit_t caes_crypt_ecb_encryption_test_vectors_256bit[ 256 ] =
 };
 
 /* Tests AES-ECB de/encryption
- * Returns 1 if successful, 0 if not or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int caes_test_crypt_ecb(
      int mode,
@@ -4494,84 +4495,89 @@ int caes_test_crypt_ecb(
 
 		goto on_error;
 	}
-	if( libcaes_context_initialize(
-	     &context,
-	     &error ) != 1 )
-	{
-		libcerror_error_set(
-		 &error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create context.",
-		 function );
+	result = libcaes_context_initialize(
+	          &context,
+	          &error );
 
-		goto on_error;
-	}
-	if( libcaes_context_set_key(
-	     context,
-	     mode,
-	     key,
-	     key_bit_size,
-	     &error ) != 1 )
-	{
-		libcerror_error_set(
-		 &error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to set key in context.",
-		 function );
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
 
-		goto on_error;
-	}
-	if( libcaes_crypt_ecb(
-	     context,
-	     mode,
-	     input_data,
-	     input_data_size,
-	     output_data,
-	     output_data_size,
-	     &error ) != 1 )
-	{
-		libcerror_error_set(
-		 &error,
-		 LIBCERROR_ERROR_DOMAIN_ENCRYPTION,
-		 LIBCERROR_ENCRYPTION_ERROR_GENERIC,
-		 "%s: unable to de/encrypt data.",
-		 function );
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "context",
+	 context );
 
-		goto on_error;
-	}
+	CAES_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libcaes_context_set_key(
+	          context,
+	          mode,
+	          key,
+	          key_bit_size,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	CAES_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libcaes_crypt_ecb(
+	          context,
+	          mode,
+	          input_data,
+	          input_data_size,
+	          output_data,
+	          output_data_size,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	CAES_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
 	result = memory_compare(
 	          output_data,
 	          expected_output_data,
 	          expected_output_data_size );
 
-	if( libcaes_context_free(
-	     &context,
-	     &error ) != 1 )
-	{
-		libcerror_error_set(
-		 &error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-		 "%s: unable to free context.",
-		 function );
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
 
-		goto on_error;
-	}
-	if( result != 0 )
-	{
-		return( 0 );
-	}
+	result = libcaes_context_free(
+	          &context,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	CAES_TEST_ASSERT_IS_NULL(
+	 "context",
+	 context );
+
+	CAES_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
 	return( 1 );
 
 on_error:
 	if( error != NULL )
 	{
-		libcerror_error_backtrace_fprint(
-		 error,
-		 stdout );
-
 		libcerror_error_free(
 		 &error );
 	}
@@ -4585,7 +4591,7 @@ on_error:
 }
 
 /* Tests AES-ECB 128-bit decryption
- * Returns 1 if successful, 0 if not or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int caes_test_crypt_ecb_decryption_128bits(
      void )
@@ -4593,10 +4599,6 @@ int caes_test_crypt_ecb_decryption_128bits(
 	caes_test_vector_128bit_t *test_vector_128bit = NULL;
 	int result                                    = 0;
 	int test_index                                = 0;
-
-	fprintf(
-	 stdout,
-	 "Testing AES-ECB 128-bit decryption\t" );
 
 	for( test_index = 0;
 	     test_index < 128;
@@ -4613,34 +4615,19 @@ int caes_test_crypt_ecb_decryption_128bits(
 		          test_vector_128bit->plain_text,
 		          16 );
 
-		if( result != 1 )
-		{
-			break;
-		}
+		CAES_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 1 );
 	}
-	if( result == -1 )
-	{
-		fprintf(
-		 stderr,
-		 "(ERROR)\n" );
-	}
-	else if( result != 1 )
-	{
-		fprintf(
-		 stdout,
-		 "(FAIL: %d)\n", test_index );
-	}
-	else
-	{
-		fprintf(
-		 stdout,
-		 "(PASS)\n" );
-	}
-	return( result );
+	return( 1 );
+
+on_error:
+	return( -1 );
 }
 
 /* Tests AES-ECB 128-bit encryption
- * Returns 1 if successful, 0 if not or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int caes_test_crypt_ecb_encryption_128bits(
      void )
@@ -4648,10 +4635,6 @@ int caes_test_crypt_ecb_encryption_128bits(
 	caes_test_vector_128bit_t *test_vector_128bit = NULL;
 	int result                                    = 0;
 	int test_index                                = 0;
-
-	fprintf(
-	 stdout,
-	 "Testing AES-ECB 128-bit encryption\t" );
 
 	for( test_index = 0;
 	     test_index < 128;
@@ -4668,34 +4651,19 @@ int caes_test_crypt_ecb_encryption_128bits(
 		          test_vector_128bit->cipher_text,
 		          16 );
 
-		if( result != 1 )
-		{
-			break;
-		}
+		CAES_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 1 );
 	}
-	if( result == -1 )
-	{
-		fprintf(
-		 stderr,
-		 "(ERROR)\n" );
-	}
-	else if( result != 1 )
-	{
-		fprintf(
-		 stdout,
-		 "(FAIL)\n" );
-	}
-	else
-	{
-		fprintf(
-		 stdout,
-		 "(PASS)\n" );
-	}
-	return( result );
+	return( 1 );
+
+on_error:
+	return( -1 );
 }
 
 /* Tests AES-ECB 192-bit decryption
- * Returns 1 if successful, 0 if not or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int caes_test_crypt_ecb_decryption_192bits(
      void )
@@ -4703,10 +4671,6 @@ int caes_test_crypt_ecb_decryption_192bits(
 	caes_test_vector_192bit_t *test_vector_192bit = NULL;
 	int result                                    = 0;
 	int test_index                                = 0;
-
-	fprintf(
-	 stdout,
-	 "Testing AES-ECB 192-bit decryption\t" );
 
 	for( test_index = 0;
 	     test_index < 192;
@@ -4723,34 +4687,19 @@ int caes_test_crypt_ecb_decryption_192bits(
 		          test_vector_192bit->plain_text,
 		          16 );
 
-		if( result != 1 )
-		{
-			break;
-		}
+		CAES_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 1 );
 	}
-	if( result == -1 )
-	{
-		fprintf(
-		 stderr,
-		 "(ERROR)\n" );
-	}
-	else if( result != 1 )
-	{
-		fprintf(
-		 stdout,
-		 "(FAIL)\n" );
-	}
-	else
-	{
-		fprintf(
-		 stdout,
-		 "(PASS)\n" );
-	}
-	return( result );
+	return( 1 );
+
+on_error:
+	return( -1 );
 }
 
 /* Tests AES-ECB 192-bit encryption
- * Returns 1 if successful, 0 if not or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int caes_test_crypt_ecb_encryption_192bits(
      void )
@@ -4758,10 +4707,6 @@ int caes_test_crypt_ecb_encryption_192bits(
 	caes_test_vector_192bit_t *test_vector_192bit = NULL;
 	int result                                    = 0;
 	int test_index                                = 0;
-
-	fprintf(
-	 stdout,
-	 "Testing AES-ECB 192-bit encryption\t" );
 
 	for( test_index = 0;
 	     test_index < 192;
@@ -4778,34 +4723,19 @@ int caes_test_crypt_ecb_encryption_192bits(
 		          test_vector_192bit->cipher_text,
 		          16 );
 
-		if( result != 1 )
-		{
-			break;
-		}
+		CAES_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 1 );
 	}
-	if( result == -1 )
-	{
-		fprintf(
-		 stderr,
-		 "(ERROR)\n" );
-	}
-	else if( result != 1 )
-	{
-		fprintf(
-		 stdout,
-		 "(FAIL)\n" );
-	}
-	else
-	{
-		fprintf(
-		 stdout,
-		 "(PASS)\n" );
-	}
-	return( result );
+	return( 1 );
+
+on_error:
+	return( -1 );
 }
 
 /* Tests AES-ECB 256-bit decryption
- * Returns 1 if successful, 0 if not or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int caes_test_crypt_ecb_decryption_256bits(
      void )
@@ -4813,10 +4743,6 @@ int caes_test_crypt_ecb_decryption_256bits(
 	caes_test_vector_256bit_t *test_vector_256bit = NULL;
 	int result                                    = 0;
 	int test_index                                = 0;
-
-	fprintf(
-	 stdout,
-	 "Testing AES-ECB 256-bit decryption\t" );
 
 	for( test_index = 0;
 	     test_index < 256;
@@ -4833,34 +4759,19 @@ int caes_test_crypt_ecb_decryption_256bits(
 		          test_vector_256bit->plain_text,
 		          16 );
 
-		if( result != 1 )
-		{
-			break;
-		}
+		CAES_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 1 );
 	}
-	if( result == -1 )
-	{
-		fprintf(
-		 stderr,
-		 "(ERROR)\n" );
-	}
-	else if( result != 1 )
-	{
-		fprintf(
-		 stdout,
-		 "(FAIL)\n" );
-	}
-	else
-	{
-		fprintf(
-		 stdout,
-		 "(PASS)\n" );
-	}
-	return( result );
+	return( 1 );
+
+on_error:
+	return( -1 );
 }
 
 /* Tests AES-ECB 256-bit encryption
- * Returns 1 if successful, 0 if not or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int caes_test_crypt_ecb_encryption_256bits(
      void )
@@ -4868,10 +4779,6 @@ int caes_test_crypt_ecb_encryption_256bits(
 	caes_test_vector_256bit_t *test_vector_256bit = NULL;
 	int result                                    = 0;
 	int test_index                                = 0;
-
-	fprintf(
-	 stdout,
-	 "Testing AES-ECB 256-bit encryption\t" );
 
 	for( test_index = 0;
 	     test_index < 256;
@@ -4888,74 +4795,59 @@ int caes_test_crypt_ecb_encryption_256bits(
 		          test_vector_256bit->cipher_text,
 		          16 );
 
-		if( result != 1 )
-		{
-			break;
-		}
+		CAES_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 1 );
 	}
-	if( result == -1 )
-	{
-		fprintf(
-		 stderr,
-		 "(ERROR)\n" );
-	}
-	else if( result != 1 )
-	{
-		fprintf(
-		 stdout,
-		 "(FAIL)\n" );
-	}
-	else
-	{
-		fprintf(
-		 stdout,
-		 "(PASS)\n" );
-	}
-	return( result );
+	return( 1 );
+
+on_error:
+	return( -1 );
 }
 
 /* The main program
  */
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-int wmain( int argc, wchar_t * const argv[] CAES_TEST_ATTRIBUTE_UNUSED )
+int wmain(
+     int argc CAES_TEST_ATTRIBUTE_UNUSED,
+     wchar_t * const argv[] CAES_TEST_ATTRIBUTE_UNUSED )
 #else
-int main( int argc, char * const argv[] CAES_TEST_ATTRIBUTE_UNUSED )
+int main(
+     int argc CAES_TEST_ATTRIBUTE_UNUSED,
+     char * const argv[] CAES_TEST_ATTRIBUTE_UNUSED )
 #endif
 {
 	CAES_TEST_UNREFERENCED_PARAMETER( argv )
+	CAES_TEST_UNREFERENCED_PARAMETER( argc )
 
-	if( argc != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unsupported number of arguments.\n" );
+	CAES_TEST_RUN(
+	 "libcaes_crypt_ecb",
+	 caes_test_crypt_ecb_decryption_128bits );
 
-		return( EXIT_FAILURE );
-	}
-	if( caes_test_crypt_ecb_decryption_128bits() != 1 )
-	{
-		return( EXIT_FAILURE );
-	}
-	if( caes_test_crypt_ecb_encryption_128bits() != 1 )
-	{
-		return( EXIT_FAILURE );
-	}
-	if( caes_test_crypt_ecb_decryption_192bits() != 1 )
-	{
-		return( EXIT_FAILURE );
-	}
-	if( caes_test_crypt_ecb_encryption_192bits() != 1 )
-	{
-		return( EXIT_FAILURE );
-	}
-	if( caes_test_crypt_ecb_decryption_256bits() != 1 )
-	{
-		return( EXIT_FAILURE );
-	}
-	if( caes_test_crypt_ecb_encryption_256bits() != 1 )
-	{
-		return( EXIT_FAILURE );
-	}
+	CAES_TEST_RUN(
+	 "libcaes_crypt_ecb",
+	 caes_test_crypt_ecb_encryption_128bits );
+
+	CAES_TEST_RUN(
+	 "libcaes_crypt_ecb",
+	 caes_test_crypt_ecb_decryption_192bits );
+
+	CAES_TEST_RUN(
+	 "libcaes_crypt_ecb",
+	 caes_test_crypt_ecb_encryption_192bits );
+
+	CAES_TEST_RUN(
+	 "libcaes_crypt_ecb",
+	 caes_test_crypt_ecb_decryption_256bits );
+
+	CAES_TEST_RUN(
+	 "libcaes_crypt_ecb",
+	 caes_test_crypt_ecb_encryption_256bits );
+
 	return( EXIT_SUCCESS );
+
+on_error:
+	return( EXIT_FAILURE );
 }
 

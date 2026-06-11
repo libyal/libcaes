@@ -30,6 +30,7 @@
 
 #include "caes_test_libcaes.h"
 #include "caes_test_libcerror.h"
+#include "caes_test_macros.h"
 #include "caes_test_unused.h"
 
 typedef struct caes_test_vector_256bit caes_test_vector_256bit_t;
@@ -73,7 +74,7 @@ caes_test_vector_256bit_t caes_crypt_ccm_test_vectors_256bit[ 1 ] = {
 };
 
 /* Tests AES-CCM de/encryption
- * Returns 1 if successful, 0 if not or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int caes_test_crypt_ccm(
      int mode,
@@ -105,86 +106,94 @@ int caes_test_crypt_ccm(
 
 		goto on_error;
 	}
-	if( libcaes_context_initialize(
-	     &context,
-	     &error ) != 1 )
-	{
-		libcerror_error_set(
-		 &error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create context.",
-		 function );
+	result = libcaes_context_initialize(
+	          &context,
+	          &error );
 
-		goto on_error;
-	}
-	if( libcaes_context_set_key(
-	     context,
-	     LIBCAES_CRYPT_MODE_ENCRYPT,
-	     key,
-	     key_bit_size,
-	     &error ) != 1 )
-	{
-		libcerror_error_set(
-		 &error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to set key in context.",
-		 function );
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
 
-		goto on_error;
-	}
-	if( libcaes_crypt_ccm(
-	     context,
-	     mode,
-	     nonce,
-	     nonce_size,
-	     input_data,
-	     input_data_size,
-	     output_data,
-	     output_data_size,
-	     &error ) != 1 )
-	{
-		libcerror_error_set(
-		 &error,
-		 LIBCERROR_ERROR_DOMAIN_ENCRYPTION,
-		 LIBCERROR_ENCRYPTION_ERROR_GENERIC,
-		 "%s: unable to de/encrypt data.",
-		 function );
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "context",
+	 context );
 
-		goto on_error;
-	}
+	CAES_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+        /* Note that the key must be set in encryption mode (LIBCAES_CRYPT_MODE_ENCRYPT)
+         * for both decryption and encryption.
+	 */
+	result = libcaes_context_set_key(
+	          context,
+	          LIBCAES_CRYPT_MODE_ENCRYPT,
+	          key,
+	          key_bit_size,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	CAES_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libcaes_crypt_ccm(
+	          context,
+	          mode,
+	          nonce,
+	          nonce_size,
+	          input_data,
+	          input_data_size,
+	          output_data,
+	          output_data_size,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	CAES_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
 	result = memory_compare(
 	          output_data,
 	          expected_output_data,
 	          expected_output_data_size );
 
-	if( libcaes_context_free(
-	     &context,
-	     &error ) != 1 )
-	{
-		libcerror_error_set(
-		 &error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-		 "%s: unable to free context.",
-		 function );
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
 
-		goto on_error;
-	}
-	if( result != 0 )
-	{
-		return( 0 );
-	}
+	result = libcaes_context_free(
+	          &context,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	CAES_TEST_ASSERT_IS_NULL(
+	 "context",
+	 context );
+
+	CAES_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
 	return( 1 );
 
 on_error:
 	if( error != NULL )
 	{
-		libcerror_error_backtrace_fprint(
-		 error,
-		 stdout );
-
 		libcerror_error_free(
 		 &error );
 	}
@@ -198,7 +207,7 @@ on_error:
 }
 
 /* Tests AES-CCM 256-bit decryption
- * Returns 1 if successful, 0 if not or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int caes_test_crypt_ccm_decryption_256bits(
      void )
@@ -206,10 +215,6 @@ int caes_test_crypt_ccm_decryption_256bits(
 	caes_test_vector_256bit_t *test_vector_256bit = NULL;
 	int result                                    = 0;
 	int test_index                                = 0;
-
-	fprintf(
-	 stdout,
-	 "Testing AES-CCM 256-bit decryption\t" );
 
 	for( test_index = 0;
 	     test_index < 1;
@@ -228,34 +233,19 @@ int caes_test_crypt_ccm_decryption_256bits(
 		          test_vector_256bit->plain_text,
 		          test_vector_256bit->text_size );
 
-		if( result != 1 )
-		{
-			break;
-		}
+		CAES_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 1 );
 	}
-	if( result == -1 )
-	{
-		fprintf(
-		 stderr,
-		 "(ERROR)\n" );
-	}
-	else if( result != 1 )
-	{
-		fprintf(
-		 stdout,
-		 "(FAIL)\n" );
-	}
-	else
-	{
-		fprintf(
-		 stdout,
-		 "(PASS)\n" );
-	}
-	return( result );
+	return( 1 );
+
+on_error:
+	return( -1 );
 }
 
 /* Tests AES-CCM 256-bit encryption
- * Returns 1 if successful, 0 if not or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int caes_test_crypt_ccm_encryption_256bits(
      void )
@@ -263,10 +253,6 @@ int caes_test_crypt_ccm_encryption_256bits(
 	caes_test_vector_256bit_t *test_vector_256bit = NULL;
 	int result                                    = 0;
 	int test_index                                = 0;
-
-	fprintf(
-	 stdout,
-	 "Testing AES-CCM 256-bit encryption\t" );
 
 	for( test_index = 0;
 	     test_index < 1;
@@ -285,58 +271,43 @@ int caes_test_crypt_ccm_encryption_256bits(
 		          test_vector_256bit->cipher_text,
 		          test_vector_256bit->text_size );
 
-		if( result != 1 )
-		{
-			break;
-		}
+		CAES_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 1 );
 	}
-	if( result == -1 )
-	{
-		fprintf(
-		 stderr,
-		 "(ERROR)\n" );
-	}
-	else if( result != 1 )
-	{
-		fprintf(
-		 stdout,
-		 "(FAIL)\n" );
-	}
-	else
-	{
-		fprintf(
-		 stdout,
-		 "(PASS)\n" );
-	}
-	return( result );
+	return( 1 );
+
+on_error:
+	return( -1 );
 }
 
 /* The main program
  */
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-int wmain( int argc, wchar_t * const argv[] CAES_TEST_ATTRIBUTE_UNUSED )
+int wmain(
+     int argc CAES_TEST_ATTRIBUTE_UNUSED,
+     wchar_t * const argv[] CAES_TEST_ATTRIBUTE_UNUSED )
 #else
-int main( int argc, char * const argv[] CAES_TEST_ATTRIBUTE_UNUSED )
+int main(
+     int argc CAES_TEST_ATTRIBUTE_UNUSED,
+     char * const argv[] CAES_TEST_ATTRIBUTE_UNUSED )
 #endif
 {
 	CAES_TEST_UNREFERENCED_PARAMETER( argv )
+	CAES_TEST_UNREFERENCED_PARAMETER( argc )
 
-	if( argc != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unsupported number of arguments.\n" );
+	CAES_TEST_RUN(
+	 "libcaes_crypt_ccm",
+	 caes_test_crypt_ccm_decryption_256bits );
 
-		return( EXIT_FAILURE );
-	}
-	if( caes_test_crypt_ccm_decryption_256bits() != 1 )
-	{
-		return( EXIT_FAILURE );
-	}
-	if( caes_test_crypt_ccm_encryption_256bits() != 1 )
-	{
-		return( EXIT_FAILURE );
-	}
+	CAES_TEST_RUN(
+	 "libcaes_crypt_ccm",
+	 caes_test_crypt_ccm_encryption_256bits );
+
 	return( EXIT_SUCCESS );
+
+on_error:
+	return( EXIT_FAILURE );
 }
 

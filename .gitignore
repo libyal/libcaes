@@ -1,6 +1,6 @@
 # Files to ignore by git
 #
-# Version: 20251129
+# Version: 20260604
 
 # Generic auto-generated build files
 *~
@@ -128,7 +128,12 @@ stamp-h[1-9]
 /libcaes/libcaes.rc
 /libcaes/libcaes_definitions.h
 /pyproject.toml
+/tests/*.dir
 /tests/*.exe
+/tests/*.log
+/tests/*.tmp
+/tests/atconfig
+/tests/atlocal
 /tests/caes_test_context
 /tests/caes_test_crypt_cbc
 /tests/caes_test_crypt_ccm
@@ -137,6 +142,10 @@ stamp-h[1-9]
 /tests/caes_test_error
 /tests/caes_test_support
 /tests/caes_test_tweaked_context
+/tests/package.m4
+/tests/test_library
+/tests/test_manpages
+/tests/test_python_module
 /tests/tmp*
 
 # Local library dependencies specific files
