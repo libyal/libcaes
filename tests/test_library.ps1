@@ -2,7 +2,6 @@
 
 $LibraryTests = "context crypt_cbc crypt_ccm crypt_ecb crypt_xts error support tweaked_context"
 $LibraryTestsWithInput = ""
-# TODO: read options sets from project.ini
 $OptionSets = "" -split " "
 
 . .\test_functions.ps1
