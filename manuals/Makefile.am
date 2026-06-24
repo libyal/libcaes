@@ -2,7 +2,7 @@ man_MANS = \
 	libcaes.3
 
 EXTRA_DIST = \
-	libcaes.3
+	$(man_MANS)
 
 DISTCLEANFILES = \
 	Makefile \
