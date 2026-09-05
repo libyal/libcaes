@@ -42,6 +42,11 @@ PyObject *pycaes_crypt_ccm(
            PyObject *arguments,
            PyObject *keywords );
 
+PyObject *pycaes_crypt_ccm_ctr_only(
+           PyObject *self,
+           PyObject *arguments,
+           PyObject *keywords );
+
 #ifdef TODO
 PyObject *pycaes_crypt_cfb(
            PyObject *self,

@@ -59,7 +59,14 @@ PyMethodDef pycaes_module_methods[] = {
 	  METH_VARARGS | METH_KEYWORDS,
 	  "crypt_ccm(context, mode, nonce, data) -> Bytes\n"
 	  "\n"
-	  "De- or encrypts a block of data using AES-CCM (Counter with CBC-MAC)." },
+	  "De- or encrypts a block of data using AES-CCM (Counter with CBC-MAC) ." },
+
+	{ "crypt_ccm_ctr_only",
+	  (PyCFunction) pycaes_crypt_ccm_ctr_only,
+	  METH_VARARGS | METH_KEYWORDS,
+	  "crypt_ccm_ctr_only(context, mode, nonce, data) -> Bytes\n"
+	  "\n"
+	  "De- or encrypts a block of data using only the Counter (CTR) mode of AES-CCM (Counter with CBC-MAC) ." },
 
 #ifdef TODO
 	{ "crypt_cfb",

@@ -638,6 +638,7 @@ int libcaes_initialize_tables(
 	uint16_t byte_index          = 0;
 	uint16_t table_index         = 0;
 	uint8_t byte_value           = 0;
+	uint8_t log_value            = 0;
 	uint8_t round_constant_index = 0;
 	uint8_t substitution_value   = 0;
 
@@ -694,6 +695,7 @@ int libcaes_initialize_tables(
 			byte_value = ( ( byte_value << 1 ) & 0xff ) ^ 0x1b;
 		}
 	}
+
 	/* Fill the forward and reverse S-boxes
 	 */
 	libcaes_forward_substitution_box[ 0x00 ] = 0x63;
@@ -771,30 +773,24 @@ int libcaes_initialize_tables(
 
 		if( substitution_value != 0 )
 		{
-			table_index  = logs_table[ 0x0b ];
-			table_index += logs_table[ substitution_value ];
-			table_index %= 255;
+			log_value = logs_table[ substitution_value ];
+
+			table_index = (logs_table[ 0x0b ] + log_value) % 255;
 
 			libcaes_reverse_table0[ byte_index ] ^= powers_table[ table_index ];
 			libcaes_reverse_table0[ byte_index ] <<= 8;
 
-			table_index  = logs_table[ 0x0d ];
-			table_index += logs_table[ substitution_value ];
-			table_index %= 255;
+			table_index = ( logs_table[ 0x0d ] + log_value ) % 255;
 
 			libcaes_reverse_table0[ byte_index ] ^= powers_table[ table_index ];
 			libcaes_reverse_table0[ byte_index ] <<= 8;
 
-			table_index  = logs_table[ 0x09 ];
-			table_index += logs_table[ substitution_value ];
-			table_index %= 255;
+			table_index = ( logs_table[ 0x09 ] + log_value ) % 255;
 
 			libcaes_reverse_table0[ byte_index ] ^= powers_table[ table_index ];
 			libcaes_reverse_table0[ byte_index ] <<= 8;
 
-			table_index  = logs_table[ 0x0e ];
-			table_index += logs_table[ substitution_value ];
-			table_index %= 255;
+			table_index = ( logs_table[ 0x0e ] + log_value ) % 255;
 
 			libcaes_reverse_table0[ byte_index ] ^= powers_table[ table_index ];
 		}
@@ -1995,6 +1991,10 @@ on_error:
 
 /* De- or encrypts a block of data using AES-CCM (Counter with CBC-MAC)
  * Note that the key must be set in encryption mode (LIBCAES_CRYPT_MODE_ENCRYPT) for both de- and encryption.
+ *
+ * WARNING: this function does not implement RFC 3610 compliant AES-CCM
+ * This function is deprecated use libcaes_crypt_ccm_ctr_only instead.
+ *
  * Returns 1 if successful or -1 on error
  */
 int libcaes_crypt_ccm(
@@ -2206,6 +2206,295 @@ int libcaes_crypt_ccm(
 	if( data_offset < input_data_size )
 	{
 		remaining_data_size = input_data_size - data_offset;
+
+		if( libcaes_crypt_ecb(
+		     context,
+		     LIBCAES_CRYPT_MODE_ENCRYPT,
+		     internal_initialization_vector,
+		     16,
+		     block_data,
+		     16,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_ENCRYPTION,
+			 LIBCERROR_ENCRYPTION_ERROR_ENCRYPT_FAILED,
+			 "%s: unable to encrypt initialization vector.",
+			 function );
+
+			goto on_error;
+		}
+		for( block_index = 0;
+		     block_index < (uint8_t) remaining_data_size;
+		     block_index++ )
+		{
+			output_data[ data_offset++ ] ^= block_data[ block_index ];
+		}
+	}
+	if( memory_set(
+	     block_data,
+	     0,
+	     16 ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+		 "%s: unable to clear block data.",
+		 function );
+
+		goto on_error;
+	}
+	if( memory_set(
+	     internal_initialization_vector,
+	     0,
+	     16 ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+		 "%s: unable to clear initialization vector.",
+		 function );
+
+		goto on_error;
+	}
+	return( 1 );
+
+on_error:
+	memory_set(
+	 block_data,
+	 0,
+	 16 );
+
+	memory_set(
+	 internal_initialization_vector,
+	 0,
+	 16 );
+
+	return( -1 );
+}
+
+/* De- or encrypts a block of data using only the Counter (CTR) mode of AES-CCM (Counter with CBC-MAC)
+ * Note that the key must be set in encryption mode (LIBCAES_CRYPT_MODE_ENCRYPT) for both de- and encryption.
+ * Returns 1 if successful or -1 on error
+ */
+int libcaes_crypt_ccm_ctr_only(
+     libcaes_context_t *context,
+     int mode,
+     const uint8_t *nonce,
+     size_t nonce_size,
+     const uint8_t *input_data,
+     size_t input_data_size,
+     uint8_t *output_data,
+     size_t output_data_size,
+     libcerror_error_t **error )
+{
+	uint8_t block_data[ 16 ];
+	uint8_t internal_initialization_vector[ 16 ];
+
+	static char *function      = "libcaes_crypt_ccm_ctr_only";
+	size_t data_offset         = 0;
+	size_t remaining_data_size = 0;
+	uint8_t block_index        = 0;
+	uint8_t l_prime            = 0;
+
+	if( context == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid context.",
+		 function );
+
+		return( -1 );
+	}
+	if( ( mode != LIBCAES_CRYPT_MODE_DECRYPT )
+	 && ( mode != LIBCAES_CRYPT_MODE_ENCRYPT ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported mode.",
+		 function );
+
+		return( -1 );
+	}
+	if( nonce == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid nonce.",
+		 function );
+
+		return( -1 );
+	}
+	if( nonce_size >= (size_t) 15 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid nonce size value out of bounds.",
+		 function );
+
+		return( -1 );
+	}
+	if( input_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid input data.",
+		 function );
+
+		return( -1 );
+	}
+	if( ( input_data_size < 16 )
+	 || ( input_data_size > (size_t) SSIZE_MAX ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid input data size value out of bounds.",
+		 function );
+
+		return( -1 );
+	}
+	if( output_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid output data.",
+		 function );
+
+		return( -1 );
+	}
+	if( ( output_data_size < input_data_size )
+	 || ( output_data_size > (size_t) SSIZE_MAX ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid output data size value out of bounds.",
+		 function );
+
+		return( -1 );
+	}
+	l_prime = 15 - (uint8_t) nonce_size - 1;
+
+	/* The IV consists of:
+	 * 1 byte size value formatted as: 15 - nonce size - 1
+	 * a maximum of 14 bytes containing nonce bytes
+	 * 1 byte counter
+	 */
+	if( memory_set(
+	     internal_initialization_vector,
+	     0,
+	     16 ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+		 "%s: unable to clear initialization vector.",
+		 function );
+
+		goto on_error;
+	}
+	internal_initialization_vector[ 0 ] = l_prime;
+
+	if( memory_copy(
+	     &( internal_initialization_vector[ 1 ] ),
+	     nonce,
+	     nonce_size ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
+		 "%s: unable to copy nonce to initialization vector.",
+		 function );
+
+		goto on_error;
+	}
+	if( memory_copy(
+	     output_data,
+	     input_data,
+	     input_data_size ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
+		 "%s: unable to copy input data to output data.",
+		 function );
+
+		goto on_error;
+	}
+	while( data_offset <= ( input_data_size - 16 ) )
+	{
+		internal_initialization_vector[ 15 ] += 1;
+
+		if( libcaes_crypt_ecb(
+		     context,
+		     LIBCAES_CRYPT_MODE_ENCRYPT,
+		     internal_initialization_vector,
+		     16,
+		     block_data,
+		     16,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_ENCRYPTION,
+			 LIBCERROR_ENCRYPTION_ERROR_ENCRYPT_FAILED,
+			 "%s: unable to encrypt initialization vector.",
+			 function );
+
+			goto on_error;
+		}
+#if defined( LIBCAES_UNFOLLED_LOOPS )
+		output_data[ data_offset++ ] ^= block_data[ 0 ];
+		output_data[ data_offset++ ] ^= block_data[ 1 ];
+		output_data[ data_offset++ ] ^= block_data[ 2 ];
+		output_data[ data_offset++ ] ^= block_data[ 3 ];
+		output_data[ data_offset++ ] ^= block_data[ 4 ];
+		output_data[ data_offset++ ] ^= block_data[ 5 ];
+		output_data[ data_offset++ ] ^= block_data[ 6 ];
+		output_data[ data_offset++ ] ^= block_data[ 7 ];
+		output_data[ data_offset++ ] ^= block_data[ 8 ];
+		output_data[ data_offset++ ] ^= block_data[ 9 ];
+		output_data[ data_offset++ ] ^= block_data[ 10 ];
+		output_data[ data_offset++ ] ^= block_data[ 11 ];
+		output_data[ data_offset++ ] ^= block_data[ 12 ];
+		output_data[ data_offset++ ] ^= block_data[ 13 ];
+		output_data[ data_offset++ ] ^= block_data[ 14 ];
+		output_data[ data_offset++ ] ^= block_data[ 15 ];
+#else
+		for( block_index = 0;
+		     block_index < 16;
+		     block_index++ )
+		{
+			output_data[ data_offset++ ] ^= block_data[ block_index ];
+		}
+#endif
+	}
+	if( data_offset < input_data_size )
+	{
+		remaining_data_size = input_data_size - data_offset;
+
+		internal_initialization_vector[ 15 ] += 1;
 
 		if( libcaes_crypt_ecb(
 		     context,

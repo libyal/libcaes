@@ -21,6 +21,7 @@
 
 #include <common.h>
 #include <file_stream.h>
+#include <memory.h>
 #include <types.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( WINAPI )
@@ -759,11 +760,21 @@ on_error:
 int caes_test_crypt_xts(
      void )
 {
-	uint8_t input_data[ 200 ];
-	uint8_t key[ 16 ];
-	uint8_t output_data[ 200 ];
-	uint8_t tweak_key[ 16 ];
-	uint8_t tweak_value[ 16 ];
+	uint8_t key[ 16 ] = {
+		0x8a, 0xfb, 0x90, 0xc2, 0xec, 0x92, 0x4c, 0x4b, 0x0b, 0x0b, 0xd8, 0x40, 0xfb, 0x1e, 0xfc, 0x84 };
+	uint8_t tweak_key[ 16 ] = {
+		0x2c, 0x93, 0x85, 0xa1, 0x4d, 0x1c, 0xa9, 0x5b, 0xd4, 0xd1, 0x2c, 0xbf, 0x9a, 0xb5, 0x88, 0xed };
+	uint8_t tweak_value[ 16 ] = {
+		0xb2, 0xf8, 0xc6, 0x37, 0x4e, 0xb2, 0x75, 0xc1, 0x74, 0x4e, 0x85, 0xaa, 0x21, 0xf8, 0xea, 0x6b };
+
+	uint8_t input_data[ 25 ] = {
+		0xf4, 0xbb, 0xaa, 0x8e, 0xbd, 0x48, 0x0d, 0x2a, 0x2a, 0x37, 0x1b, 0xea, 0xb3, 0xd8, 0xb3, 0x87,
+		0xc0, 0x22, 0x82, 0x67, 0x8c, 0x60, 0x00, 0x22, 0x7b };
+
+	uint8_t expected_output_data[ 25 ] = {
+		0xd9, 0xd8, 0xf0, 0x06, 0x83, 0xbc, 0xd4, 0x89, 0x15, 0x48, 0x82, 0x29, 0x0f, 0x24, 0x62, 0x47,
+		0x26, 0xe0, 0x93, 0x39, 0x07, 0x83, 0xd4, 0x95, 0x9a };
+	uint8_t output_data[ 25 ];
 
 	libcaes_tweaked_context_t *tweaked_context = NULL;
 	libcerror_error_t *error                   = NULL;
@@ -821,9 +832,9 @@ int caes_test_crypt_xts(
 	          tweak_value,
 	          16,
 	          input_data,
-	          200,
+	          25,
 	          output_data,
-	          200,
+	          25,
 	          &error );
 
 	CAES_TEST_ASSERT_EQUAL_INT(
@@ -835,6 +846,16 @@ int caes_test_crypt_xts(
 	 "error",
 	 error );
 
+	result = memory_compare(
+	          output_data,
+	          expected_output_data,
+		  25 );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
 	/* Test error cases
 	 */
 	result = libcaes_crypt_xts(
@@ -843,9 +864,9 @@ int caes_test_crypt_xts(
 	          tweak_value,
 	          16,
 	          input_data,
-	          200,
+	          25,
 	          output_data,
-	          200,
+	          25,
 	          &error );
 
 	CAES_TEST_ASSERT_EQUAL_INT(
@@ -866,9 +887,9 @@ int caes_test_crypt_xts(
 	          tweak_value,
 	          16,
 	          input_data,
-	          200,
+	          25,
 	          output_data,
-	          200,
+	          25,
 	          &error );
 
 	CAES_TEST_ASSERT_EQUAL_INT(
@@ -889,9 +910,9 @@ int caes_test_crypt_xts(
 	          NULL,
 	          16,
 	          input_data,
-	          200,
+	          25,
 	          output_data,
-	          200,
+	          25,
 	          &error );
 
 	CAES_TEST_ASSERT_EQUAL_INT(
@@ -912,9 +933,9 @@ int caes_test_crypt_xts(
 	          tweak_value,
 	          0,
 	          input_data,
-	          200,
+	          25,
 	          output_data,
-	          200,
+	          25,
 	          &error );
 
 	CAES_TEST_ASSERT_EQUAL_INT(
@@ -935,9 +956,9 @@ int caes_test_crypt_xts(
 	          tweak_value,
 	          16,
 	          NULL,
-	          200,
+	          25,
 	          output_data,
-	          200,
+	          25,
 	          &error );
 
 	CAES_TEST_ASSERT_EQUAL_INT(
@@ -962,7 +983,7 @@ int caes_test_crypt_xts(
 		          input_data,
 		          maximum_size + 1,
 		          output_data,
-		          200,
+		          25,
 		          &error );
 
 		CAES_TEST_ASSERT_EQUAL_INT(
@@ -985,7 +1006,7 @@ int caes_test_crypt_xts(
 	          input_data,
 	          0,
 	          output_data,
-	          200,
+	          25,
 	          &error );
 
 	CAES_TEST_ASSERT_EQUAL_INT(
@@ -1006,9 +1027,9 @@ int caes_test_crypt_xts(
 	          tweak_value,
 	          16,
 	          input_data,
-	          200,
+	          25,
 	          NULL,
-	          200,
+	          25,
 	          &error );
 
 	CAES_TEST_ASSERT_EQUAL_INT(
@@ -1029,7 +1050,7 @@ int caes_test_crypt_xts(
 	          tweak_value,
 	          16,
 	          input_data,
-	          200,
+	          25,
 	          output_data,
 	          (size_t) SSIZE_MAX + 1,
 	          &error );
@@ -1052,7 +1073,7 @@ int caes_test_crypt_xts(
 	          tweak_value,
 	          16,
 	          input_data,
-	          200,
+	          25,
 	          output_data,
 	          0,
 	          &error );
@@ -1083,9 +1104,9 @@ int caes_test_crypt_xts(
 	          tweak_value,
 	          16,
 	          input_data,
-	          200,
+	          25,
 	          output_data,
-	          200,
+	          25,
 	          &error );
 
 	if( caes_test_memset_attempts_before_fail != -1 )
@@ -1120,9 +1141,9 @@ int caes_test_crypt_xts(
 	          tweak_value,
 	          16,
 	          input_data,
-	          200,
+	          25,
 	          output_data,
-	          200,
+	          25,
 	          &error );
 
 	if( caes_test_EVP_CipherInit_ex_attempts_before_fail != -1 )
@@ -1153,9 +1174,9 @@ int caes_test_crypt_xts(
 	          tweak_value,
 	          16,
 	          input_data,
-	          200,
+	          25,
 	          output_data,
-	          200,
+	          25,
 	          &error );
 
 	if( caes_test_EVP_CipherUpdate_attempts_before_fail != -1 )
@@ -1192,9 +1213,9 @@ int caes_test_crypt_xts(
 	          tweak_value,
 	          16,
 	          input_data,
-	          200,
+	          25,
 	          output_data,
-	          200,
+	          25,
 	          &error );
 
 	if( caes_test_memcpy_attempts_before_fail != -1 )
@@ -1229,9 +1250,9 @@ int caes_test_crypt_xts(
 	          tweak_value,
 	          16,
 	          input_data,
-	          200,
+	          25,
 	          output_data,
-	          200,
+	          25,
 	          &error );
 
 	if( caes_test_memcpy_attempts_before_fail != -1 )

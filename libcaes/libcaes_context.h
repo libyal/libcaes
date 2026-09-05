@@ -144,6 +144,18 @@ int libcaes_crypt_ccm(
      libcerror_error_t **error );
 
 LIBCAES_EXTERN \
+int libcaes_crypt_ccm_ctr_only(
+     libcaes_context_t *context,
+     int mode,
+     const uint8_t *nonce,
+     size_t nonce_size,
+     const uint8_t *input_data,
+     size_t input_data_size,
+     uint8_t *output_data,
+     size_t output_data_size,
+     libcerror_error_t **error );
+
+LIBCAES_EXTERN \
 int libcaes_crypt_cfb(
      libcaes_context_t *context,
      int mode,

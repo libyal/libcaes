@@ -356,6 +356,167 @@ PyObject *pycaes_crypt_ccm(
 	return( output_data_string_object );
 }
 
+/* De- or encrypts a block of data using only the Counter (CTR) mode of AES-CCM (Counter with CBC-MAC)
+ * Note that the key must be set in encryption mode (LIBCAES_CRYPT_MODE_ENCRYPT) for both de- and encryption.
+ * Returns 1 if successful or -1 on error
+ */
+PyObject *pycaes_crypt_ccm_ctr_only(
+           PyObject *self PYCAES_ATTRIBUTE_UNUSED,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	libcerror_error_t *error            = NULL;
+	pycaes_context_t *pycaes_context    = NULL;
+	PyObject *context_object            = NULL;
+	PyObject *nonce_string_object       = NULL;
+	PyObject *input_data_string_object  = NULL;
+	PyObject *output_data_string_object = NULL;
+	static char *function               = "pycaes_crypt_ccm_ctr_only";
+	static char *keyword_list[]         = { "context", "mode", "nonce", "data", NULL };
+	char *nonce_data                    = NULL;
+	char *input_data                    = NULL;
+	char *output_data                   = NULL;
+	Py_ssize_t nonce_data_size          = 0;
+	Py_ssize_t input_data_size          = 0;
+	int mode                            = 0;
+	int result                          = 0;
+
+	PYCAES_UNREFERENCED_PARAMETER( self )
+
+	if( PyArg_ParseTupleAndKeywords(
+	     arguments,
+	     keywords,
+	     "OiOO",
+	     keyword_list,
+	     &context_object,
+	     &mode,
+	     &nonce_string_object,
+	     &input_data_string_object ) == 0 )
+	{
+		return( NULL );
+	}
+	result = PyObject_IsInstance(
+	          context_object,
+	          (PyObject *) &pycaes_context_type_object );
+
+	if( result == -1 )
+	{
+		return( NULL );
+	}
+	else if( result != 1 )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: unsupported type of argument context value.",
+		 function );
+
+		return( NULL );
+	}
+	pycaes_context = (pycaes_context_t *) context_object;
+
+#if PY_MAJOR_VERSION >= 3
+	nonce_data = PyBytes_AsString(
+	              nonce_string_object );
+
+	nonce_data_size = PyBytes_Size(
+	                   nonce_string_object );
+#else
+	nonce_data = PyString_AsString(
+	              nonce_string_object );
+
+	nonce_data_size = PyString_Size(
+	                   nonce_string_object );
+#endif
+	if( ( nonce_data_size < 0 )
+	 || ( nonce_data_size > (Py_ssize_t) SSIZE_MAX ) )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid argument nonce data size value out of bounds.",
+		 function );
+
+		return( NULL );
+	}
+#if PY_MAJOR_VERSION >= 3
+	input_data = PyBytes_AsString(
+	              input_data_string_object );
+
+	input_data_size = PyBytes_Size(
+	                   input_data_string_object );
+#else
+	input_data = PyString_AsString(
+	              input_data_string_object );
+
+	input_data_size = PyString_Size(
+	                   input_data_string_object );
+#endif
+	if( ( input_data_size < 0 )
+	 || ( input_data_size > (Py_ssize_t) SSIZE_MAX ) )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid argument input data size value out of bounds.",
+		 function );
+
+		return( NULL );
+	}
+#if PY_MAJOR_VERSION >= 3
+	output_data_string_object = PyBytes_FromStringAndSize(
+	                             NULL,
+	                             input_data_size );
+
+	output_data = PyBytes_AsString(
+	               output_data_string_object );
+#else
+	output_data_string_object = PyString_FromStringAndSize(
+	                             NULL,
+	                             input_data_size );
+
+	output_data = PyString_AsString(
+	               output_data_string_object );
+#endif
+	Py_BEGIN_ALLOW_THREADS
+
+#if defined( Py_GIL_DISABLED )
+	PyMutex_Lock(
+	 &( pycaes_context->mutex ) );
+#endif
+	result = libcaes_crypt_ccm_ctr_only(
+	          pycaes_context->context,
+	          mode,
+	          (uint8_t *) nonce_data,
+	          (size_t) nonce_data_size,
+	          (uint8_t *) input_data,
+	          (size_t) input_data_size,
+	          (uint8_t *) output_data,
+	          (size_t) input_data_size,
+	          &error );
+
+#if defined( Py_GIL_DISABLED )
+	PyMutex_Unlock(
+	 &( pycaes_context->mutex ) );
+#endif
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pycaes_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to crypt data.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		Py_DecRef(
+		 (PyObject *) output_data_string_object );
+
+		return( NULL );
+	}
+	return( output_data_string_object );
+}
+
 #ifdef TODO
 
 /* De- or encrypts a block of data using AES-CFB (Cipher Feedback Mode)

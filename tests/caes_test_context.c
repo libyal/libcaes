@@ -7073,6 +7073,401 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libcaes_crypt_ccm_ctr_only function
+ * Returns 1 if successful or 0 if not
+ */
+int caes_test_crypt_ccm_ctr_only(
+     void )
+{
+	uint8_t input_data[ 208 ];
+	uint8_t key[ 16 ];
+	uint8_t nonce[ 8 ];
+	uint8_t output_data[ 208 ];
+
+	libcaes_context_t *context = NULL;
+	libcerror_error_t *error   = NULL;
+	int result                 = 0;
+
+#if defined( HAVE_CAES_TEST_MEMORY )
+	int number_of_memset_fail_tests = 1;
+	int test_number                 = 0;
+
+#if defined( OPTIMIZATION_DISABLED )
+	int number_of_memcpy_fail_tests = 2;
+#endif
+#endif /* defined( HAVE_CAES_TEST_MEMORY ) */
+
+	/* Initialize test
+	 */
+	result = libcaes_context_initialize(
+	          &context,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "context",
+	 context );
+
+	CAES_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libcaes_context_set_key(
+	          context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          key,
+	          128,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	CAES_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libcaes_crypt_ccm_ctr_only(
+	          context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          nonce,
+	          8,
+	          input_data,
+	          208,
+	          output_data,
+	          208,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	CAES_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libcaes_crypt_ccm_ctr_only(
+	          NULL,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          nonce,
+	          8,
+	          input_data,
+	          208,
+	          output_data,
+	          208,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libcaes_crypt_ccm_ctr_only(
+	          context,
+	          -1,
+	          nonce,
+	          8,
+	          input_data,
+	          208,
+	          output_data,
+	          208,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libcaes_crypt_ccm_ctr_only(
+	          context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          NULL,
+	          8,
+	          input_data,
+	          208,
+	          output_data,
+	          208,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libcaes_crypt_ccm_ctr_only(
+	          context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          nonce,
+	          15,
+	          input_data,
+	          208,
+	          output_data,
+	          208,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libcaes_crypt_ccm_ctr_only(
+	          context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          nonce,
+	          8,
+	          NULL,
+	          208,
+	          output_data,
+	          208,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libcaes_crypt_ccm_ctr_only(
+	          context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          nonce,
+	          8,
+	          input_data,
+	          (size_t) SSIZE_MAX + 1,
+	          output_data,
+	          208,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libcaes_crypt_ccm_ctr_only(
+	          context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          nonce,
+	          8,
+	          input_data,
+	          208,
+	          NULL,
+	          208,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libcaes_crypt_ccm_ctr_only(
+	          context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          nonce,
+	          8,
+	          input_data,
+	          208,
+	          output_data,
+	          (size_t) SSIZE_MAX + 1,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+#if defined( HAVE_CAES_TEST_MEMORY )
+
+	/* 1 memset of internal_initialization_vector
+	 *
+	 * TODO determine how many memsets are introduced by libcaes_crypt_ecb
+	 * # - 1 memset of block_data
+	 * # memset of internal_initialization_vector
+	 */
+	for( test_number = 0;
+	     test_number < number_of_memset_fail_tests;
+	     test_number++ )
+	{
+		/* Test libcaes_context_initialize with memset failing
+		 */
+		caes_test_memset_attempts_before_fail = test_number;
+
+		result = libcaes_crypt_ccm_ctr_only(
+		          context,
+		          LIBCAES_CRYPT_MODE_DECRYPT,
+		          nonce,
+		          8,
+		          input_data,
+		          208,
+		          output_data,
+		          208,
+		          &error );
+
+		if( caes_test_memset_attempts_before_fail != -1 )
+		{
+			caes_test_memset_attempts_before_fail = -1;
+		}
+		else
+		{
+			CAES_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 -1 );
+
+			CAES_TEST_ASSERT_IS_NOT_NULL(
+			 "error",
+			 error );
+
+			libcerror_error_free(
+			 &error );
+		}
+	}
+#if defined( OPTIMIZATION_DISABLED )
+
+	/* 1 memcpy of nonce to internal_initialization_vector
+	 * 2 memcpy of input_data cwtoot output_data
+	 */
+	for( test_number = 0;
+	     test_number < number_of_memcpy_fail_tests;
+	     test_number++ )
+	{
+		/* Test libcaes_context_initialize with memcpy failing
+		 */
+		caes_test_memcpy_attempts_before_fail = test_number;
+
+		result = libcaes_crypt_ccm_ctr_only(
+		          context,
+		          LIBCAES_CRYPT_MODE_DECRYPT,
+		          nonce,
+		          8,
+		          input_data,
+		          208,
+		          output_data,
+		          208,
+		          &error );
+
+		if( caes_test_memcpy_attempts_before_fail != -1 )
+		{
+			caes_test_memcpy_attempts_before_fail = -1;
+		}
+		else
+		{
+			CAES_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 -1 );
+
+			CAES_TEST_ASSERT_IS_NOT_NULL(
+			 "error",
+			 error );
+
+			libcerror_error_free(
+			 &error );
+		}
+	}
+#endif /* defined( OPTIMIZATION_DISABLED ) */
+#endif /* defined( HAVE_CAES_TEST_MEMORY ) */
+
+	/* Clean up
+	 */
+	result = libcaes_context_free(
+	          &context,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	CAES_TEST_ASSERT_IS_NULL(
+	 "context",
+	 context );
+
+	CAES_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( context != NULL )
+	{
+		libcaes_context_free(
+		 &context,
+		 NULL );
+	}
+	return( 0 );
+}
+
 /* Tests the libcaes_crypt_cfb function
  * Returns 1 if successful or 0 if not
  */
@@ -7863,6 +8258,10 @@ int main(
 	CAES_TEST_RUN(
 	 "libcaes_crypt_ccm",
 	 caes_test_crypt_ccm );
+
+	CAES_TEST_RUN(
+	 "libcaes_crypt_ccm_ctr_only",
+	 caes_test_crypt_ccm_ctr_only );
 
 	CAES_TEST_RUN(
 	 "libcaes_crypt_cfb",
