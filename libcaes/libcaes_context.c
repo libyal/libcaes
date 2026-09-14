@@ -3217,6 +3217,17 @@ int libcaes_crypt_ecb(
 	}
 	internal_context = (libcaes_internal_context_t *) context;
 
+	if( internal_context->round_keys == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid context - missing round keys.",
+		 function );
+
+		return( -1 );
+	}
 	if( ( mode != LIBCAES_CRYPT_MODE_DECRYPT )
 	 && ( mode != LIBCAES_CRYPT_MODE_ENCRYPT ) )
 	{
