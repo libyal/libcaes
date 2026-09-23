@@ -26,7 +26,6 @@ import os
 import sys
 import unittest
 
-
 test_profile = ".pycaes"
 input_glob = "*"
 option_sets = []
