@@ -2,7 +2,7 @@
 #
 # Script to run Python test scripts.
 #
-# Version: 20260524
+# Version: 20260923
 #
 # Copyright (C) 2011-2026, Joachim Metz <joachim.metz@gmail.com>
 #

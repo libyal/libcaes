@@ -446,8 +446,7 @@ int libcaes_context_free(
 		}
 		/* Make sure the error state is removed otherwise OpenSSL will leak memory
 		 */
-		ERR_remove_thread_state(
-		 NULL );
+		ERR_clear_error();
 #else
 		EVP_CIPHER_CTX_free(
 		 internal_context->evp_cipher_context );
@@ -1353,7 +1352,6 @@ int libcaes_crypt_cbc(
      size_t output_data_size,
      libcerror_error_t **error )
 {
-	uint8_t block_data[ EVP_MAX_BLOCK_LENGTH ];
 	char error_string[ 256 ];
 
 #if defined( HAVE_EVP_CIPHERINIT_EX2 )
@@ -1370,6 +1368,7 @@ int libcaes_crypt_cbc(
 	static char *function                        = "libcaes_crypt_cbc";
 	unsigned long error_code                     = 0;
 	int safe_output_data_size                    = 0;
+	int total_data_size                          = 0;
 
 	if( context == NULL )
 	{
@@ -1478,20 +1477,6 @@ int libcaes_crypt_cbc(
 		 function );
 
 		return( -1 );
-	}
-	if( memory_set(
-	     block_data,
-	     0,
-	     EVP_MAX_BLOCK_LENGTH ) == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_MEMORY,
-		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
-		 "%s: unable to clear input block data.",
-		 function );
-
-		goto on_error;
 	}
 #if defined( HAVE_EVP_CIPHERINIT_EX2 )
 	if( EVP_CIPHER_CTX_reset(
@@ -1613,7 +1598,7 @@ int libcaes_crypt_cbc(
 	}
 	if( EVP_CIPHER_CTX_set_padding(
 	     internal_context->evp_cipher_context,
-	     1 ) != 1 )
+	     0 ) != 1 )
 	{
 		error_code = ERR_get_error();
 
@@ -1658,12 +1643,34 @@ int libcaes_crypt_cbc(
 
 		goto on_error;
 	}
-	/* Just ignore the output of this function
+	/* Get any remaining data, i.e. the final block, and write it
+	 * to the output data
 	 */
-	EVP_CipherFinal_ex(
-	 internal_context->evp_cipher_context,
-	 (unsigned char *) block_data,
-	 &safe_output_data_size );
+	total_data_size = 0;
+
+	if( EVP_CipherFinal_ex(
+	     internal_context->evp_cipher_context,
+	     (unsigned char *) &( output_data[ (size_t) safe_output_data_size ] ),
+	     &total_data_size ) != 1 )
+	{
+		error_code = ERR_get_error();
+
+		ERR_error_string_n(
+		 error_code,
+		 error_string,
+		 256 );
+
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to finalize cipher with error: %s.",
+		 function,
+		 error_string );
+
+		goto on_error;
+	}
+	safe_output_data_size += total_data_size;
 
 #if defined( HAVE_EVP_CIPHERINIT_EX2 )
 	EVP_CIPHER_free(
@@ -2872,7 +2879,6 @@ int libcaes_crypt_ecb(
      size_t output_data_size,
      libcerror_error_t **error )
 {
-	uint8_t block_data[ EVP_MAX_BLOCK_LENGTH ];
 	char error_string[ 256 ];
 
 #if defined( HAVE_EVP_CIPHERINIT_EX2 )
@@ -2889,6 +2895,7 @@ int libcaes_crypt_ecb(
 	static char *function                        = "libcaes_crypt_ecb";
 	unsigned long error_code                     = 0;
 	int safe_output_data_size                    = 0;
+	int total_data_size                          = 0;
 
 	if( context == NULL )
 	{
@@ -2973,20 +2980,6 @@ int libcaes_crypt_ecb(
 		 function );
 
 		return( -1 );
-	}
-	if( memory_set(
-	     block_data,
-	     0,
-	     EVP_MAX_BLOCK_LENGTH ) == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_MEMORY,
-		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
-		 "%s: unable to clear block data.",
-		 function );
-
-		goto on_error;
 	}
 #if defined( HAVE_EVP_CIPHERINIT_EX2 )
 	if( EVP_CIPHER_CTX_reset(
@@ -3108,7 +3101,7 @@ int libcaes_crypt_ecb(
 	}
 	if( EVP_CIPHER_CTX_set_padding(
 	     internal_context->evp_cipher_context,
-	     1 ) != 1 )
+	     0 ) != 1 )
 	{
 		error_code = ERR_get_error();
 
@@ -3153,12 +3146,34 @@ int libcaes_crypt_ecb(
 
 		goto on_error;
 	}
-	/* Just ignore the output of this function
+	/* Get any remaining data, i.e. the final block, and write it
+	 * to the output data
 	 */
-	EVP_CipherFinal_ex(
-	 internal_context->evp_cipher_context,
-	 (unsigned char *) block_data,
-	 &safe_output_data_size );
+	total_data_size = 0;
+
+	if( EVP_CipherFinal_ex(
+	     internal_context->evp_cipher_context,
+	     (unsigned char *) &( output_data[ (size_t) safe_output_data_size ] ),
+	     &total_data_size ) != 1 )
+	{
+		error_code = ERR_get_error();
+
+		ERR_error_string_n(
+		 error_code,
+		 error_string,
+		 256 );
+
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to finalize cipher with error: %s.",
+		 function,
+		 error_string );
+
+		goto on_error;
+	}
+	safe_output_data_size += total_data_size;
 
 #if defined( HAVE_EVP_CIPHERINIT_EX2 )
 	EVP_CIPHER_free(

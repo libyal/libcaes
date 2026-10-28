@@ -249,8 +249,7 @@ int libcaes_tweaked_context_free(
 		}
 		/* Make sure the error state is removed otherwise OpenSSL will leak memory
 		 */
-		ERR_remove_thread_state(
-		 NULL );
+		ERR_clear_error();
 #else
 		EVP_CIPHER_CTX_free(
 		 internal_tweaked_context->evp_cipher_context );

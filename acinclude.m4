@@ -1,6 +1,6 @@
 dnl Checks for required headers and functions
 dnl
-dnl Version: 20240520
+dnl Version: 20260905
 
 dnl Function to detect if libcaes dependencies are available
 AC_DEFUN([AX_LIBCAES_CHECK_LOCAL],
