@@ -2,7 +2,7 @@ AC_PREREQ([2.71])
 
 AC_INIT(
   [libcaes],
-  [20261030],
+  [20261118],
   [https://github.com/libyal/libcaes/issues])
 
 AC_CONFIG_SRCDIR(

@@ -2283,6 +2283,75 @@ on_error:
 	return( -1 );
 }
 
+/* Increments the big-endian counter part of the CCM internal initialization vector
+ * The counter spans the last (15 - nonce size) bytes of the initialization vector
+ * Returns 1 if successful or -1 on error
+ */
+static int libcaes_crypt_ccm_ctr_only_increment_counter(
+     uint8_t *internal_initialization_vector,
+     size_t nonce_size,
+     libcerror_error_t **error )
+{
+	static char *function   = "libcaes_crypt_ccm_ctr_only_increment_counter";
+	uint8_t *counter_data   = NULL;
+	size_t counter_size     = 0;
+	size_t offset           = 0;
+
+	if( internal_initialization_vector == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid initialization vector.",
+		 function );
+
+		return( -1 );
+	}
+	if( nonce_size >= (size_t) 15 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid nonce size value out of bounds.",
+		 function );
+
+		return( -1 );
+	}
+	counter_data = &( internal_initialization_vector[ 1 + nonce_size ] );
+	counter_size = 15 - nonce_size;
+
+	/* Propagate the carry big-endian from the last counter byte
+	 * over the (15 - nonce size) counter bytes */
+	for( offset = counter_size;
+	     offset > 0;
+	     offset-- )
+	{
+		counter_data[ offset - 1 ] += 1;
+
+		if( counter_data[ offset - 1 ] != 0 )
+		{
+			break;
+		}
+		if( offset == (size_t) 1 )
+		{
+			/* The counter wrapped around to the all-zero value
+			 * which is reserved for the A_0 block of the
+			 * authentication tag */
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_ENCRYPTION,
+			 LIBCERROR_ENCRYPTION_ERROR_GENERIC,
+			 "%s: counter overflow.",
+			 function );
+
+			return( -1 );
+		}
+	}
+	return( 1 );
+}
+
 /* De- or encrypts a block of data using only the Counter (CTR) mode of AES-CCM (Counter with CBC-MAC)
  * Note that the key must be set in encryption mode (LIBCAES_CRYPT_MODE_ENCRYPT) for both de- and encryption.
  * Returns 1 if successful or -1 on error
@@ -2375,6 +2444,25 @@ int libcaes_crypt_ccm_ctr_only(
 
 		return( -1 );
 	}
+	/* The number of counter blocks is limited by the width of the counter
+	 * (15 - nonce size bytes) in the internal initialization vector.
+	 * The counter starts at 1, the all-zero block (A_0) is only used for
+	 * the authentication tag and the counter must not wrap around,
+	 * so the maximum number of counter blocks is
+	 * (1 << (8 * (15 - nonce size))) - 1 blocks of 16 bytes
+	 */
+	if( ( nonce_size > (size_t) 7 )
+	 && ( input_data_size > ( ( ( (unsigned long long) 1 << ( 8 * ( 15 - nonce_size ) ) ) - 1 ) * 16 ) ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid input data size value out of bounds.",
+		 function );
+
+		return( -1 );
+	}
 	if( output_data == NULL )
 	{
 		libcerror_error_set(
@@ -2403,8 +2491,7 @@ int libcaes_crypt_ccm_ctr_only(
 	/* The IV consists of:
 	 * 1 byte size value formatted as: 15 - nonce size - 1
 	 * a maximum of 14 bytes containing nonce bytes
-	 * 1 byte counter
-	 */
+	 * 1 to 15 bytes counter (15 - nonce size) stored in big-endian order */
 	if( memory_set(
 	     internal_initialization_vector,
 	     0,
@@ -2451,8 +2538,20 @@ int libcaes_crypt_ccm_ctr_only(
 	}
 	while( data_offset <= ( input_data_size - 16 ) )
 	{
-		internal_initialization_vector[ 15 ] += 1;
+		if( libcaes_crypt_ccm_ctr_only_increment_counter(
+		     internal_initialization_vector,
+		     nonce_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_ENCRYPTION,
+			 LIBCERROR_ENCRYPTION_ERROR_ENCRYPT_FAILED,
+			 "%s: unable to increment counter.",
+			 function );
 
+			goto on_error;
+		}
 		if( libcaes_crypt_ecb(
 		     context,
 		     LIBCAES_CRYPT_MODE_ENCRYPT,
@@ -2501,8 +2600,20 @@ int libcaes_crypt_ccm_ctr_only(
 	{
 		remaining_data_size = input_data_size - data_offset;
 
-		internal_initialization_vector[ 15 ] += 1;
+		if( libcaes_crypt_ccm_ctr_only_increment_counter(
+		     internal_initialization_vector,
+		     nonce_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_ENCRYPTION,
+			 LIBCERROR_ENCRYPTION_ERROR_ENCRYPT_FAILED,
+			 "%s: unable to increment counter.",
+			 function );
 
+			goto on_error;
+		}
 		if( libcaes_crypt_ecb(
 		     context,
 		     LIBCAES_CRYPT_MODE_ENCRYPT,

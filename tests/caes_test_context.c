@@ -7294,6 +7294,58 @@ int caes_test_crypt_ccm_ctr_only(
 	libcerror_error_free(
 	 &error );
 
+	/* Test with a 14-byte nonce (1-byte counter) an input data size
+	 * that exceeds the maximum of 255 counter blocks (4080 bytes)
+	 */
+	result = libcaes_crypt_ccm_ctr_only(
+	          context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          nonce,
+	          14,
+	          input_data,
+	          4081,
+	          output_data,
+	          4081,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Test with a 13-byte nonce (2-byte counter) an input data size
+	 * that exceeds the maximum of 65535 counter blocks
+	 */
+	result = libcaes_crypt_ccm_ctr_only(
+	          context,
+	          LIBCAES_CRYPT_MODE_DECRYPT,
+	          nonce,
+	          13,
+	          input_data,
+	          1048561,
+	          output_data,
+	          1048561,
+	          &error );
+
+	CAES_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	CAES_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
 	result = libcaes_crypt_ccm_ctr_only(
 	          context,
 	          LIBCAES_CRYPT_MODE_DECRYPT,
